@@ -1,14 +1,13 @@
 import * as React from 'react';
 import {Helmet} from 'react-helmet';
-import {withNamespaces} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {connect} from 'react-redux';
-import actions from '../actions';
+import {actions, IActions} from '../actions';
+import {IState} from '../reducers';
 
-interface IProps {
-	t: ()=> void,
-}
+type Props = WithNamespaces & IPropsState & IActions;
 
-class Home extends React.Component<any, IProps> {
+class Home extends React.Component<Props, any> {
 	public componentDidMount() {
 		// this.props.getHome(this.props.etag);
 	}
@@ -33,14 +32,16 @@ class Home extends React.Component<any, IProps> {
 	}
 }
 
-const mapStateToProps = (state: any) => {
+interface IPropsState {
+	etag: string | null,
+	value: string | null,
+}
+
+const mapStateToProps = (state: IState): IPropsState => {
 	return {
 		etag: state.app.etag,
 		value: state.app.value,
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	actions,
-)(withNamespaces()(Home));
+export default connect<IPropsState>(mapStateToProps,actions)(withNamespaces()<Props>(Home));

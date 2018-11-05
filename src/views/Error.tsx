@@ -1,8 +1,14 @@
 import * as React from 'react';
 import {Helmet} from 'react-helmet';
-import {withNamespaces} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 
-class ErrorView extends React.Component<any,any> {
+type Props = WithNamespaces & IErrorViewProps;
+
+interface IErrorViewProps {
+	error: Error,
+}
+
+class ErrorView extends React.Component<Props,any> {
 	public render() {
 		const {t} = this.props;
 		return (

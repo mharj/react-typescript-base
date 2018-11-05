@@ -1,16 +1,14 @@
 import {combineReducers} from 'redux';
-import app from './appReducer';
-import {ACTION_TYPES, IState as IAppState} from './appReducer';
+import {IState as IAppState, reducer as appReducer, Types as AppTypes} from './appReducer';
 
 export interface IState {
-	app: IAppState
+	app: IAppState;
 }
 
 export const Types = {
-	app: ACTION_TYPES,
-}
+	app: AppTypes,
+};
 
-const appReducer = combineReducers({
-	app,
+export const rootReducer = combineReducers({
+	app: appReducer,
 });
-export default appReducer;

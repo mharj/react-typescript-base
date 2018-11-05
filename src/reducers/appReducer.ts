@@ -1,4 +1,6 @@
-export enum ACTION_TYPES {
+import {Reducer} from 'redux';
+
+export enum Types {
 	LOADING = 'LOADING',
 	LOADING_DONE = 'LOADING_DONE',
 	LOADING_ERROR = 'LOADING_ERROR',
@@ -6,10 +8,6 @@ export enum ACTION_TYPES {
 	LOGIN = 'LOGIN',
 	LOGIN_ERROR = 'LOGIN_ERROR',
 	LOGOUT = 'LOGOUT',
-}
-
-interface IAppReducer extends IState {
-	type: ACTION_TYPES,
 }
 
 export interface IState {
@@ -28,28 +26,28 @@ const initialState: IState = {
 	value: null,
 }
 
-export default (state = {...initialState}, action: IAppReducer) => {
+export const reducer: Reducer<IState> = (state = initialState, action) => {
 	switch (action.type) {
-		case ACTION_TYPES.LOADING:
+		case Types.LOADING:
 			return {
 				...state,
 				error: null,
 				isLoading: true,
 			};
-		case ACTION_TYPES.LOADING_DONE:
+		case Types.LOADING_DONE:
 			return {
 				...state,
 				etag: action.etag,
 				isLoading: false,
 				value: action.value,
 			};
-		case ACTION_TYPES.LOADING_NO_CHANGE:
+		case Types.LOADING_NO_CHANGE:
 			return {
 				...state,
 				etag: action.etag,
 				isLoading: false,
 			};
-		case ACTION_TYPES.LOADING_ERROR:
+		case Types.LOADING_ERROR:
 			return {
 				...state,
 				error: action.error,
@@ -57,19 +55,19 @@ export default (state = {...initialState}, action: IAppReducer) => {
 				isLoading: false,
 				value: null,
 			};
-		case ACTION_TYPES.LOGIN:
+		case Types.LOGIN:
 			return {
 				...state,
 				error: null,
 				isLoggedIn: true,
 			};
-		case ACTION_TYPES.LOGIN_ERROR:
+		case Types.LOGIN_ERROR:
 			return {
 				...state,
 				error: action.error,
 				isLoggedIn: false,
 			};
-		case ACTION_TYPES.LOGOUT:
+		case Types.LOGOUT:
 			return {
 				...state,
 				error: null,

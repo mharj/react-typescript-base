@@ -1,7 +1,8 @@
 import fetch from 'cross-fetch';
-import {Dispatch} from 'redux';
+import {AnyAction, Dispatch} from 'redux';
+import {ThunkAction} from 'redux-thunk';
 import {IState, Types} from '../reducers';
-
+// https://github.com/reduxjs/redux-thunk/blob/master/test/typescript.ts
 interface IApiDAta {
 	hello: string;
 }
@@ -11,7 +12,13 @@ interface IData {
 	json: IApiDAta | null;
 }
 
-export const getHome = (etag: string) => (dispatch: Dispatch, getState: () => IState ) => {
+export interface IActions {
+	getHome: (etag: string) => void;
+	doLogin: (username: string, password: string) => Promise<any>;
+	doLogout: () => Promise<any>;
+}
+
+export const getHome = (etag: string) => (dispatch: Dispatch, getState: () => IState) => {
 	dispatch({type: Types.app.LOADING});
 	setTimeout(() => {
 		//  ajax delay 1sec
@@ -27,7 +34,7 @@ export const getHome = (etag: string) => (dispatch: Dispatch, getState: () => IS
 				} else {
 					if (response.headers.has('ETag')) {
 						const respEtag = response.headers.get('ETag');
-						if ( respEtag !== null ) {
+						if (respEtag !== null) {
 							etagValue = respEtag;
 						}
 					}
@@ -63,4 +70,8 @@ export const doLogin = (username: string, password: string) => (dispatch: Dispat
 
 export const doLogout = () => (dispatch: Dispatch) => {
 	return Promise.resolve(dispatch({type: Types.app.LOGOUT}));
+};
+
+export const test = (): ThunkAction<any, IState, void, AnyAction> => (dispatch, getState: () => IState) => {
+	dispatch({type: Types.app.LOGOUT});
 };

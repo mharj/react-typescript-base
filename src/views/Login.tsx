@@ -1,11 +1,15 @@
 import * as React from 'react';
 import {Helmet} from 'react-helmet';
-import {withNamespaces} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {connect} from 'react-redux';
-import {withRouter} from 'react-router-dom';
-import actions from '../actions';
+import {RouteComponentProps} from 'react-router';
+import {withRouter, } from 'react-router-dom';
+import {actions, IActions} from '../actions';
+import {IState} from '../reducers';
 
-class Login extends React.Component<any, any> {
+type Props = WithNamespaces & RouteComponentProps & IPropsState & IActions;
+
+class Login extends React.Component<Props, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
@@ -75,9 +79,11 @@ class Login extends React.Component<any, any> {
 		return false;
 	}
 }
-
-const mapStateToProps = (state: any) => {
+interface IPropsState {
+	isLoggedIn: boolean,
+}
+const mapStateToProps = (state: IState) => {
 	return {isLoggedIn: state.app.isLoggedIn};
 };
 
-export default withRouter(connect<any, any, any>(mapStateToProps,actions)(withNamespaces()(Login)));
+export default withRouter(connect<IPropsState, any, any>(mapStateToProps,actions)(withNamespaces()(Login)));
