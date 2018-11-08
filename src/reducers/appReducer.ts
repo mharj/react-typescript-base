@@ -1,4 +1,5 @@
 import {Reducer} from 'redux';
+import {GlobalTypes} from './index';
 
 export enum Types {
 	LOADING = 'LOADING',
@@ -18,7 +19,7 @@ export interface IState {
 	error: Error | null,
 }
 
-const initialState: IState = {
+export const initialState: IState = {
 	error: null,
 	etag: null,
 	isLoading: false,
@@ -73,6 +74,8 @@ export const reducer: Reducer<IState> = (state = initialState, action) => {
 				error: null,
 				isLoggedIn: false,
 			};
+		case GlobalTypes.RESET:
+			return initialState;
 		default:
 			return state;
 	}

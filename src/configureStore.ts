@@ -2,18 +2,11 @@ import {applyMiddleware, compose, createStore, StoreEnhancer} from 'redux';
 import {persistReducer, persistStore} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
-import {rootReducer} from './reducers';
+import {initialState, rootReducer} from './reducers';
 
 const persistConfig = {
 	key: 'root',
 	storage,
-};
-
-const initialState = {
-	app: {
-		error: null,
-		etag: null,
-	},
 };
 
 const enhancers: StoreEnhancer[] = [];

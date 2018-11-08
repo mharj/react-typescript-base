@@ -1,24 +1,30 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import {I18nextProvider} from 'react-i18next';
-import {Provider} from 'react-redux';
-import {PersistGate} from 'redux-persist/integration/react';
-import App from './App';
-import configureStore from './configureStore';
-import i18n from './i18n';
 import './index.css';
-import registerServiceWorker from './registerServiceWorker';
+import {ServiceWorkerProvider} from './ServiceWorkerProvider';
 
-const {store, persistor} = configureStore();
-
-ReactDOM.render(
-	<Provider store={store}>
-		<PersistGate loading={null} persistor={persistor}>
-			<I18nextProvider i18n={i18n}>
-				<App />
-			</I18nextProvider>
-		</PersistGate>
-	</Provider>,
-	document.getElementById('root') as HTMLElement,
-);
-registerServiceWorker();
+Promise.all([
+	import('./configureStore' /* webpackChunkName: "configurestore", webpackPreload: true */),
+	import('./i18n' /* webpackChunkName: "i18n", webpackPreload: true */),
+	import('react-dom' /* webpackChunkName: "react-dom", webpackPreload: true */),
+	import('react-redux' /* webpackChunkName: "redux", webpackPreload: true */),
+	import('redux-persist/integration/react' /* webpackChunkName: "persist", webpackPreload: true */),
+	import('react-i18next' /* webpackChunkName: "i18next", webpackPreload: true */),
+	import('./App' /* webpackChunkName: "app", webpackPreload: true */),
+	import('cross-fetch/polyfill' /* webpackChunkName: "fetch", webpackPreload: true */),
+])
+	.then( (loaded) => {
+		const [configureStore, i18n, ReactDOM, Redux, Persist, I18next, App] = loaded;
+		const {store, persistor} = configureStore.default();
+		ReactDOM.render(
+			<Redux.Provider store={store}>
+				<Persist.PersistGate loading={null} persistor={persistor}>
+					<I18next.I18nextProvider i18n={i18n.default}>
+						<ServiceWorkerProvider>
+							<App.default />
+						</ServiceWorkerProvider>
+					</I18next.I18nextProvider>
+				</Persist.PersistGate>
+			</Redux.Provider>,
+			document.getElementById('root') as HTMLElement,
+		);
+	});

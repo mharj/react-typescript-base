@@ -2,32 +2,34 @@ import * as React from 'react';
 
 interface IState {
 	workerState: string|null;
-	updateFunction: null|() => void;
+	updateFunction: null|any;
 }
 
 interface IProps {
-
+	children: React.ReactNode;
 }
-
-class ServiceWorkerProvider extends React.Component<IProps,IState> {
-	constructor(props) {
+/**
+ * TODO: build callback function type
+ */
+export class ServiceWorkerProvider extends React.Component<IProps,IState> {
+	constructor(props: IProps) {
 		super(props);
 		this.state = {
 			updateFunction: null,
 			workerState: null,
 		};
-		this.reloadCallback = this.reloadCallback.bind(this);
+		this.onServiceStateChange = this.onServiceStateChange.bind(this);
 		this.runUpdate = this.runUpdate.bind(this);
 		this.getUpdateFunction = this.getUpdateFunction.bind(this);
 	}
 	public componentDidMount() {
 		import('./registerServiceWorker' /* webpackChunkName: "register-service-worker" */)
-			.then((registerServiceWorker) => registerServiceWorker.default(this.reloadCallback, this.getUpdateFunction));
+			.then((registerServiceWorker) => registerServiceWorker.default(this.onServiceStateChange, this.getUpdateFunction));
 	}
 	public render() {
 		return React.cloneElement(React.Children.only(this.props.children), {workerState: this.state.workerState, swCheckUpdate: this.runUpdate});
 	}
-	private reloadCallback(state: string) {
+	private onServiceStateChange(state: string) {
 		this.setState({
 			workerState: state,
 		});
@@ -43,4 +45,3 @@ class ServiceWorkerProvider extends React.Component<IProps,IState> {
 		}
 	}
 }
-export default ServiceWorkerProvider;
