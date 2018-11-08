@@ -35,7 +35,7 @@ class App extends React.Component<any, any> {
 		super(props);
 		this.state = {
 			dummy: null,
-		}
+		};
 		this.handleChangeLanguage = this.handleChangeLanguage.bind(this);
 	}
 
@@ -48,9 +48,15 @@ class App extends React.Component<any, any> {
 					<img src={logo} className="App-logo" alt="logo" />
 					<h1 className="App-title">Welcome to React</h1>
 				</header>
-				<button value="fi-FI" onClick={this.handleChangeLanguage}>{t('fin')}</button>
-				<button value="en-EN" onClick={this.handleChangeLanguage}>{t('eng')}</button>
-				<button value="sv-SV" onClick={this.handleChangeLanguage}>{t('sve')}</button>
+				<button value="fi-FI" onClick={this.handleChangeLanguage}>
+					{t('fin')}
+				</button>
+				<button value="en-EN" onClick={this.handleChangeLanguage}>
+					{t('eng')}
+				</button>
+				<button value="sv-SV" onClick={this.handleChangeLanguage}>
+					{t('sve')}
+				</button>
 				<br />
 				{this.props.isLoading ? 'Fetching API data ..' : ''}
 				<br />
@@ -97,7 +103,7 @@ class App extends React.Component<any, any> {
 		this.props.i18n.changeLanguage(target.value);
 		this.setState({
 			dummy: null,
-		})
+		});
 	}
 }
 const mapStateToProps = (state: IState) => {

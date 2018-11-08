@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Helmet} from 'react-helmet';
-import {withNamespaces} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 
-class Secret extends React.Component<any, any> {
+class Secret extends React.Component<WithNamespaces> {
 	public render() {
 		return (
 			<div>
