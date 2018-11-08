@@ -22,7 +22,9 @@ const composedEnhancers = compose(
 	applyMiddleware(thunk),
 	...enhancers,
 );
-
+/**
+ * @module createStore/default
+ */
 export default () => {
 	const store = createStore(
 		persistedReducer,

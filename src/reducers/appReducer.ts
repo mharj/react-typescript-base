@@ -1,6 +1,9 @@
 import {Reducer} from 'redux';
 import {GlobalTypes} from './index';
 
+/**
+ * Action types
+ */
 export enum Types {
 	LOADING = 'LOADING',
 	LOADING_DONE = 'LOADING_DONE',
@@ -11,6 +14,9 @@ export enum Types {
 	LOGOUT = 'LOGOUT',
 }
 
+/**
+ * State interface
+ */
 export interface IState {
 	isLoading: boolean,
 	isLoggedIn: boolean,
@@ -19,6 +25,9 @@ export interface IState {
 	error: Error | null,
 }
 
+/**
+ * Initial state
+ */
 export const initialState: IState = {
 	error: null,
 	etag: null,
@@ -27,6 +36,9 @@ export const initialState: IState = {
 	value: null,
 }
 
+/**
+ * Reducer
+ */
 export const reducer: Reducer<IState> = (state = initialState, action) => {
 	switch (action.type) {
 		case Types.LOADING:
