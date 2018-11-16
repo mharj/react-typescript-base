@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Helmet} from 'react-helmet';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import {connect, MapDispatchToPropsParam} from 'react-redux';
+import {connect} from 'react-redux';
 import {getHome, TGetHome} from '../actions/appActions';
 import {IToDo} from '../interfaces/todo';
 import {IReduxState, RootThunkDispatch} from '../reducers';
