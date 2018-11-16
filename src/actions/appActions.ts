@@ -1,82 +1,89 @@
 import fetch from 'cross-fetch';
-import {AnyAction, Dispatch} from 'redux';
-import {ThunkAction} from 'redux-thunk';
-import {GlobalTypes, IState, Types} from '../reducers';
-// https://github.com/reduxjs/redux-thunk/blob/master/test/typescript.ts
-interface IApiDAta {
-	hello: string;
-}
-
-interface IData {
-	etag: string | null;
-	json: IApiDAta | null;
-}
-
-export interface IActions {
-	getHome: (etag: string) => void;
-	doLogin: (username: string, password: string) => Promise<any>;
-	doLogout: () => Promise<any>;
-	doReset: () => void;
-}
-
-export const getHome = (etag: string) => (dispatch: Dispatch, getState: () => IState) => {
-	dispatch({type: Types.app.LOADING});
-	setTimeout(() => {
-		//  ajax delay 1sec
-		const headers = {};
-		if (etag) {
-			headers['if-none-match'] = etag;
-		}
-		fetch('/api/hello', {headers})
-			.then((response) => {
-				let etagValue: string | null = null;
-				if (response.status === 304) {
-					return Promise.resolve(null);
-				} else {
-					if (response.headers.has('ETag')) {
-						const respEtag = response.headers.get('ETag');
-						if (respEtag !== null) {
-							etagValue = respEtag;
-						}
-					}
-					return response.json().then((json) => {
-						return Promise.resolve({etag: etagValue, json});
-					});
-				}
-			})
-			.then((data: IData) => {
-				if (data) {
-					if (data.json && data.json.hello) {
-						dispatch({type: Types.app.LOADING_DONE, value: data.json.hello, etag: data.etag});
-					} else {
-						throw new Error('no value found!');
-					}
-				} else {
-					dispatch({type: Types.app.LOADING_NO_CHANGE});
-				}
-			})
-			.catch((error: Error) => {
-				dispatch({type: Types.app.LOADING_ERROR, error});
-			});
-	}, 1000);
+import {Action, Dispatch} from 'redux';
+import {IToDo} from '../interfaces/todo';
+import {IReduxState, ThunkResult, Types} from '../reducers';
+import {AppAction} from '../reducers/appReducer';
+// demo helper
+const delay = (duration: number) => {
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			resolve();
+		}, duration);
+	});
 };
 
-export const doLogin = (username: string, password: string) => (dispatch: Dispatch) => {
-	if (username === 'test' && password === 'password') {
-		return Promise.resolve(dispatch({type: Types.app.LOGIN}));
+// dispatch actions
+const setAppLoadingAction = (state: boolean): AppAction => {
+	if (state) {
+		return {type: Types.app.LOADING};
 	} else {
-		return Promise.reject(dispatch({type: Types.app.LOGIN_ERROR, error: new Error('account or password not match')}));
+		return {type: Types.app.LOADING_DONE};
 	}
 };
 
+const setValueAction = (todo: IToDo, etag: string | null): AppAction => {
+	return {type: Types.app.APP_SET_VALUE, todo, etag};
+};
+const setErrorAction = (error: string): AppAction => {
+	return {type: Types.app.APP_SET_ERROR, error};
+};
+
+const clearErrorAction = (): AppAction => {
+	return {type: Types.app.APP_CLEAR_ERROR};
+};
+const setLoginAction = (): AppAction => {
+	return {type: Types.app.LOGIN};
+};
+const setLogoutAction = (): AppAction => {
+	return {type: Types.app.LOGOUT};
+};
+
+// async function
+export type TGetHome = () => Promise<Action|void>;
+export const getHome = (): ThunkResult<Promise<Action|void>> => (dispatch: Dispatch, getState: () => IReduxState)  => {
+	const state = getState();
+	const headers = new Headers();
+	if (state.app.etag) {
+		headers.set('if-none-match', state.app.etag);
+	}
+	dispatch(setAppLoadingAction(true));
+	return delay(1000)
+		.then(() => fetch('https://jsonplaceholder.typicode.com/todos/1', {headers}))
+		.then(
+			(res): Promise<any> => {
+				dispatch(setAppLoadingAction(false));
+				const etag = res.headers.has('ETag') ? res.headers.get('ETag') : null;
+				if (res.status === 200) {
+					return res.json().then((todo: IToDo) => {
+						if (todo) {
+							return Promise.resolve(dispatch(setValueAction(todo, etag)));
+						} else {
+							throw new Error('no value found!');
+						}
+					});
+				}
+				if (res.status === 401) {
+					// handle auth errors for API
+					return Promise.resolve(dispatch(setLogoutAction()));
+				}
+				return Promise.resolve();
+			},
+		)
+		.catch((error: Error) => {
+			return Promise.reject(dispatch(setErrorAction(error.message)));
+		});
+};
+
+export type TDoLogin = (username: string, password: string) => Promise<Action>;
+export const doLogin = (username: string, password: string) => (dispatch: Dispatch) => {
+	dispatch(clearErrorAction());
+	if (username === 'test' && password === 'password') {
+		return Promise.resolve(dispatch(setLoginAction()));
+	} else {
+		return Promise.reject(dispatch(setErrorAction('account or password not match')));
+	}
+};
+export type TDoLogout = () => Promise<Action>;
 export const doLogout = () => (dispatch: Dispatch) => {
-	return Promise.resolve(dispatch({type: Types.app.LOGOUT}));
-};
-
-export const doReset = () => (dispatch: Dispatch) => {
-	return Promise.resolve(dispatch({type: GlobalTypes.RESET}));
-};
-
-export const test = (): ThunkAction<any, IState, void, AnyAction> => (dispatch, getState: () => IState) => {
-	dispatch({type: Types.app.LOGOUT});
+	return Promise.resolve(dispatch(setLogoutAction()));
 };

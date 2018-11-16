@@ -2,12 +2,12 @@ import * as React from 'react';
 import {withNamespaces} from 'react-i18next';
 import * as loadable from 'react-loadable';
 import {connect} from 'react-redux';
-import {HashRouter as Router, Link, Route} from 'react-router-dom';
+import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom';
 import './App.css';
 import ErrorBoundary from './components/ErrorBoundary';
 import PrivateRoute from './components/PrivateRoute';
 import logo from './logo.svg';
-import {IState} from './reducers';
+import {IReduxState} from './reducers';
 import ErrorView from './views/Error';
 
 const Loading = () => <div>Loading!...</div>;
@@ -40,29 +40,28 @@ class App extends React.Component<any, any> {
 	}
 
 	public render() {
-		console.log('render');
 		const {isLoggedIn, t} = this.props;
 		return (
-			<div className="App">
-				<header className="App-header">
-					<img src={logo} className="App-logo" alt="logo" />
-					<h1 className="App-title">Welcome to React</h1>
-				</header>
-				<button value="fi-FI" onClick={this.handleChangeLanguage}>
-					{t('fin')}
-				</button>
-				<button value="en-EN" onClick={this.handleChangeLanguage}>
-					{t('eng')}
-				</button>
-				<button value="sv-SV" onClick={this.handleChangeLanguage}>
-					{t('sve')}
-				</button>
-				<br />
-				{this.props.isLoading ? 'Fetching API data ..' : ''}
-				<br />
-				{this.props.error ? <h2 style={{color: 'red'}}>Error: {this.props.error.message}</h2> : null}
-				<br />
-				<Router>
+			<Router>
+				<div className="App">
+					<header className="App-header">
+						<img src={logo} className="App-logo" alt="logo" />
+						<h1 className="App-title">Welcome to React</h1>
+					</header>
+					<button value="fi-FI" onClick={this.handleChangeLanguage}>
+						{t('fin')}
+					</button>
+					<button value="en-EN" onClick={this.handleChangeLanguage}>
+						{t('eng')}
+					</button>
+					<button value="sv-SV" onClick={this.handleChangeLanguage}>
+						{t('sve')}
+					</button>
+					<br />
+					{this.props.isLoading ? 'Fetching API data ..' : ''}
+					<br />
+					{this.props.error ? <h2 style={{color: 'red'}}>Error: {this.props.error}</h2> : null}
+					<br />
 					<div>
 						<ErrorBoundary onError={ErrorView}>
 							<div>
@@ -80,33 +79,33 @@ class App extends React.Component<any, any> {
 								</Link>
 							</div>
 							<br />
-							<Route exact={true} path="/" component={Home} />
-							<Route exact={true} path="/login" component={Login} />
-							<PrivateRoute isValid={isLoggedIn} failPath="/login" exact={true} path="/secret" component={Secret} />
-							<Route exact={true} path="/broken" component={Broken} />
+							<Switch>
+								<Route exact={true} path="/" component={Home} />
+								<Route exact={true} path="/login" component={Login} />
+								<PrivateRoute isValid={isLoggedIn} failPath="/login" exact={true} path="/secret" component={Secret} />
+								<Route exact={true} path="/broken" component={Broken} />
+							</Switch>
 						</ErrorBoundary>
 					</div>
-				</Router>
-
-				<br />
-				<b>
-					Service Worker status: {this.props.workerState} <button onClick={this.props.swCheckUpdate}>Check updates</button>
-				</b>
-				<br />
-				{process.env.NODE_ENV !== 'production' ? <pre style={{textAlign: 'left'}}>{this.props.error && this.props.error.stack}</pre> : null}
-			</div>
+					<br />
+					<b>
+						Service Worker status: {this.props.workerState} <button onClick={this.props.swCheckUpdate}>Check updates</button>
+					</b>
+					<br />
+					{process.env.NODE_ENV !== 'production' ? <pre style={{textAlign: 'left'}}>{this.props.error && this.props.error.stack}</pre> : null}
+				</div>
+			</Router>
 		);
 	}
 	private handleChangeLanguage(event: React.SyntheticEvent<HTMLButtonElement>) {
 		const target = event.target as HTMLButtonElement;
-		console.log('change lang', target.value);
 		this.props.i18n.changeLanguage(target.value);
 		this.setState({
 			dummy: null,
 		});
 	}
 }
-const mapStateToProps = (state: IState) => {
+const mapStateToProps = (state: IReduxState) => {
 	return {
 		error: state.app.error,
 		isLoading: state.app.isLoading,

@@ -3,14 +3,19 @@ import {Helmet} from 'react-helmet';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
-import {withRouter, } from 'react-router-dom';
-import {actions, IActions} from '../actions';
-import {IState} from '../reducers';
+import {withRouter} from 'react-router-dom';
+import {doLogin, doLogout} from '../actions/appActions';
+import {IReduxState, RootThunkDispatch} from '../reducers';
 
-type Props = WithNamespaces & RouteComponentProps & IPropsState & IActions;
+interface IState {
+	password: string,
+	username: string,
+}
 
-class Login extends React.Component<Props, any> {
-	constructor(props: any) {
+type Props = WithNamespaces & RouteComponentProps & IPropsState & IActionDispatch;
+
+class Login extends React.Component<Props, IState> {
+	constructor(props: Props) {
 		super(props);
 		this.state = {
 			password: '',
@@ -65,9 +70,10 @@ class Login extends React.Component<Props, any> {
 	}
 	private onChange(e: React.FormEvent<HTMLInputElement>) {
 		const target = e.target as HTMLInputElement;
-		this.setState({
-			[target.name]: target.value,
-		});
+		switch (target.name) {
+			case 'username': return this.setState({username: target.value});
+			case 'password': return this.setState({password: target.value});
+		}
 	}
 	private onKeyUp(e: React.KeyboardEvent<HTMLInputElement>) {
 		if (e.keyCode === 13) {
@@ -79,11 +85,30 @@ class Login extends React.Component<Props, any> {
 		return false;
 	}
 }
+
+// redux state props
 interface IPropsState {
-	isLoggedIn: boolean,
+	isLoggedIn: boolean;
 }
-const mapStateToProps = (state: IState) => {
+
+const mapStateToProps = (state: IReduxState): IPropsState => {
 	return {isLoggedIn: state.app.isLoggedIn};
 };
 
-export default withRouter(connect<IPropsState, any, any>(mapStateToProps,actions)(withNamespaces()(Login)));
+// action props
+interface IActionDispatch {
+	doLogin: (username: string, password: string) => Promise<any>;
+	doLogout: () => Promise<any>;
+}
+
+const mapDispatchToProps = (dispatch: RootThunkDispatch): IActionDispatch => ({
+	doLogin: (username, password) => dispatch(doLogin(username, password)),
+	doLogout: () => dispatch(doLogout()),
+});
+
+export default withRouter(
+	connect<IPropsState, IActionDispatch>(
+		mapStateToProps,
+		mapDispatchToProps,
+	)(withNamespaces()(Login)),
+);

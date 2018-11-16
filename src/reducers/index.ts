@@ -1,4 +1,5 @@
-import {combineReducers} from 'redux';
+import {Action, combineReducers} from 'redux';
+import {ThunkAction,ThunkDispatch} from 'redux-thunk';
 import {initialState as appInitialState, IState as IAppState, reducer as appReducer, Types as AppTypes} from './appReducer';
 
 /**
@@ -7,11 +8,16 @@ import {initialState as appInitialState, IState as IAppState, reducer as appRedu
 export enum GlobalTypes {
 	RESET = 'RESET',
 }
-
+// Global actions
+interface IGlobalResetAction extends Action {
+	type: GlobalTypes.RESET,
+}
+// Merge actions
+export type IGlobalAction = IGlobalResetAction;
 /**
  * Helps to navigate redux state structure
  */
-export interface IState {
+export interface IReduxState {
 	app: IAppState;
 }
 
@@ -36,3 +42,7 @@ export const initialState = {
 export const rootReducer = combineReducers({
 	app: appReducer,
 });
+
+export type ThunkResult<R> = ThunkAction<R, IReduxState, undefined, Action>;
+
+export type RootThunkDispatch = ThunkDispatch<IReduxState, undefined, Action>;

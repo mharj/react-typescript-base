@@ -2,14 +2,14 @@ import * as React from 'react';
 import {Helmet} from 'react-helmet';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {connect} from 'react-redux';
-import {actions, IActions} from '../actions';
-import {IState} from '../reducers';
+import {doReset, TDoRest} from '../actions/globalActions';
+import {IReduxState, RootThunkDispatch} from '../reducers';
 
 interface IErrorViewProps {
 	error: Error;
 }
 
-type Props = WithNamespaces & IErrorViewProps & IActions;
+type Props = WithNamespaces & IErrorViewProps & IActionDispatch;
 
 class ErrorView extends React.Component<Props, any> {
 	public render() {
@@ -29,8 +29,19 @@ class ErrorView extends React.Component<Props, any> {
 	}
 }
 
-const mapStateToProps = (state: IState) => {
+// action props
+interface IActionDispatch {
+	doReset: TDoRest;
+}
+const mapDispatchToProps = (dispatch: RootThunkDispatch):IActionDispatch  => ({
+	doReset: () => dispatch(doReset()),
+});
+
+const mapStateToProps = (state: IReduxState) => {
 	return {};
 };
 
-export default connect<any>(mapStateToProps,actions)(withNamespaces()<Props>(ErrorView));
+export default connect<any, IActionDispatch>(
+	mapStateToProps,
+	mapDispatchToProps,
+)(withNamespaces()<Props>(ErrorView));

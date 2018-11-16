@@ -1,28 +1,61 @@
-import {Reducer} from 'redux';
-import {GlobalTypes} from './index';
+import {Action, Reducer} from 'redux';
+import {IToDo} from '../interfaces/todo';
+import {GlobalTypes, IGlobalAction} from './index';
 
 /**
  * Action types
  */
 export enum Types {
+	APP_SET_VALUE = 'APP_SET_VALUE',
+	APP_SET_ERROR = 'APP_SET_ERROR',
+	APP_CLEAR_ERROR = 'APP_CLEAR_ERROR',
 	LOADING = 'LOADING',
 	LOADING_DONE = 'LOADING_DONE',
-	LOADING_ERROR = 'LOADING_ERROR',
-	LOADING_NO_CHANGE = 'LOADING_NO_CHANGE',
 	LOGIN = 'LOGIN',
-	LOGIN_ERROR = 'LOGIN_ERROR',
 	LOGOUT = 'LOGOUT',
 }
+/**
+ * Action interfaces
+ */
+interface ISetValue extends Action {
+	type: Types.APP_SET_VALUE;
+	todo: IToDo;
+	etag: string | null;
+}
+
+interface ILoading extends Action {
+	type: Types.LOADING;
+}
+interface ILoadingDone extends Action {
+	type: Types.LOADING_DONE;
+}
+interface ISetError extends Action {
+	type: Types.APP_SET_ERROR;
+	error: string;
+}
+
+interface IClearError extends Action {
+	type: Types.APP_CLEAR_ERROR;
+}
+
+interface ILogin extends Action {
+	type: Types.LOGIN;
+}
+interface ILogout extends Action {
+	type: Types.LOGOUT;
+}
+
+export type AppAction = ISetValue | ILoading | ISetError | IClearError | ILoadingDone | ILogin | ILogout | IGlobalAction;
 
 /**
  * State interface
  */
 export interface IState {
-	isLoading: boolean,
-	isLoggedIn: boolean,
-	value: any,
-	etag: string | null,
-	error: Error | null,
+	error: string | null;
+	etag: string | null;
+	isLoading: boolean;
+	isLoggedIn: boolean;
+	todo: IToDo | null;
 }
 
 /**
@@ -33,14 +66,30 @@ export const initialState: IState = {
 	etag: null,
 	isLoading: false,
 	isLoggedIn: false,
-	value: null,
-}
+	todo: null,
+};
 
 /**
  * Reducer
  */
-export const reducer: Reducer<IState> = (state = initialState, action) => {
+export const reducer: Reducer<IState> = (state = initialState, action: AppAction) => {
 	switch (action.type) {
+		case Types.APP_SET_VALUE:
+			return {
+				...state,
+				etag: action.etag,
+				todo: action.todo,
+			};
+		case Types.APP_SET_ERROR:
+			return {
+				...state,
+				error: action.error,
+			};
+		case Types.APP_CLEAR_ERROR:
+			return {
+				...state,
+				error: null,
+			};
 		case Types.LOADING:
 			return {
 				...state,
@@ -50,35 +99,13 @@ export const reducer: Reducer<IState> = (state = initialState, action) => {
 		case Types.LOADING_DONE:
 			return {
 				...state,
-				etag: action.etag,
 				isLoading: false,
-				value: action.value,
-			};
-		case Types.LOADING_NO_CHANGE:
-			return {
-				...state,
-				etag: action.etag,
-				isLoading: false,
-			};
-		case Types.LOADING_ERROR:
-			return {
-				...state,
-				error: action.error,
-				etag: null,
-				isLoading: false,
-				value: null,
 			};
 		case Types.LOGIN:
 			return {
 				...state,
 				error: null,
 				isLoggedIn: true,
-			};
-		case Types.LOGIN_ERROR:
-			return {
-				...state,
-				error: action.error,
-				isLoggedIn: false,
 			};
 		case Types.LOGOUT:
 			return {

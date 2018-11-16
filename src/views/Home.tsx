@@ -1,18 +1,21 @@
 import * as React from 'react';
 import {Helmet} from 'react-helmet';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
-import {connect} from 'react-redux';
-import {actions, IActions} from '../actions';
-import {IState} from '../reducers';
+import {connect, MapDispatchToPropsParam} from 'react-redux';
+import {getHome, TGetHome} from '../actions/appActions';
+import {IToDo} from '../interfaces/todo';
+import {IReduxState, RootThunkDispatch} from '../reducers';
 
-type Props = WithNamespaces & IPropsState & IActions;
+type Props = WithNamespaces & IPropsState & IActionDispatch;
 
 class Home extends React.Component<Props, any> {
 	public componentDidMount() {
-		// this.props.getHome(this.props.etag);
+		this.props.getHome().then(() => {
+			console.log('async promise done');
+		});
 	}
 	public render() {
-		const {t} = this.props;
+		const {t, todo} = this.props;
 		return (
 			<div>
 				<Helmet>
@@ -21,10 +24,30 @@ class Home extends React.Component<Props, any> {
 				<div className="App-intro">
 					To get started, edit <code>src/App.js</code> and save to reload.
 					<br />
-					{this.props.value ? (
-						<div>
-							{t('hello')} {t(this.props.value)}
-						</div>
+					<h1>
+						{t('hello')} Todo {t('example')}
+					</h1>
+					{todo ? (
+						<table style={{marginLeft: 'auto', marginRight: 'auto', border: '1px solid black'}}>
+							<tbody>
+								<tr>
+									<th>{t('todo:id')}:</th>
+									<td>{todo.id}</td>
+								</tr>
+								<tr>
+									<th>{t('todo:user_id')}:</th>
+									<td>{todo.userId}</td>
+								</tr>
+								<tr>
+									<th>{t('todo:title')}:</th>
+									<td>{todo.title}</td>
+								</tr>
+								<tr>
+									<th>{t('todo:completed')}:</th>
+									<td>{todo.completed ? t('yes') : t('no')}</td>
+								</tr>
+							</tbody>
+						</table>
 					) : null}
 				</div>
 			</div>
@@ -32,16 +55,27 @@ class Home extends React.Component<Props, any> {
 	}
 }
 
+// redux state props
 interface IPropsState {
-	etag: string | null,
-	value: string | null,
+	todo: IToDo | null;
 }
 
-const mapStateToProps = (state: IState): IPropsState => {
+const mapStateToProps = (state: IReduxState): IPropsState => {
 	return {
-		etag: state.app.etag,
-		value: state.app.value,
+		todo: state.app.todo,
 	};
 };
 
-export default connect<IPropsState>(mapStateToProps,actions)(withNamespaces()<Props>(Home));
+// action props
+interface IActionDispatch {
+	getHome: TGetHome;
+}
+
+const mapDispatchToProps = (dispatch: RootThunkDispatch): IActionDispatch => ({
+	getHome: () => dispatch(getHome()),
+});
+
+export default connect<IPropsState, IActionDispatch>(
+	mapStateToProps,
+	mapDispatchToProps,
+)(withNamespaces()<Props>(Home));
