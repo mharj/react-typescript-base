@@ -1,6 +1,7 @@
 import fetch from 'cross-fetch';
 import {Action, Dispatch} from 'redux';
 import {IToDo} from '../interfaces/todo';
+import {RemapActionCreators} from '../lib/actionTools';
 import {IReduxState, ThunkResult, Types} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
 // demo helper
@@ -38,9 +39,8 @@ const setLogoutAction = (): AppAction => {
 	return {type: Types.app.LOGOUT};
 };
 
-// async function
-export type TGetHome = () => Promise<Action|void>;
-export const getHome = (): ThunkResult<Promise<Action|void>> => (dispatch: Dispatch, getState: () => IReduxState)  => {
+// async functions
+export const getHome = (): ThunkResult<Promise<Action>> => (dispatch: Dispatch, getState: () => IReduxState) => {
 	const state = getState();
 	const headers = new Headers();
 	if (state.app.etag) {
@@ -74,8 +74,7 @@ export const getHome = (): ThunkResult<Promise<Action|void>> => (dispatch: Dispa
 		});
 };
 
-export type TDoLogin = (username: string, password: string) => Promise<Action>;
-export const doLogin = (username: string, password: string) => (dispatch: Dispatch) => {
+export const doLogin = (username: string, password: string): ThunkResult<Promise<Action>> => (dispatch: Dispatch) => {
 	dispatch(clearErrorAction());
 	if (username === 'test' && password === 'password') {
 		return Promise.resolve(dispatch(setLoginAction()));
@@ -83,7 +82,15 @@ export const doLogin = (username: string, password: string) => (dispatch: Dispat
 		return Promise.reject(dispatch(setErrorAction('account or password not match')));
 	}
 };
-export type TDoLogout = () => Promise<Action>;
-export const doLogout = () => (dispatch: Dispatch) => {
+
+export const doLogout = (): ThunkResult<Promise<Action>> => (dispatch: Dispatch) => {
 	return Promise.resolve(dispatch(setLogoutAction()));
 };
+
+// build action mapper for redux
+const AppDispatchPropsMap = {
+	doLogin,
+	doLogout,
+	getHome,
+};
+export type IActionDispatch = RemapActionCreators<typeof AppDispatchPropsMap>;

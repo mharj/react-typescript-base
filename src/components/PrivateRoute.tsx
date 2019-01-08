@@ -1,14 +1,12 @@
 import * as React from 'react';
-import {Redirect, Route} from 'react-router-dom';
+import {Redirect, Route, RouteProps} from 'react-router-dom';
 
-interface IPrivateRoute {
-	component: any,
+type IPrivateRoute = RouteProps & {
 	isValid: boolean,
 	failPath: string,
-	exact: boolean,
-	path: string,
+	component: any,
 }
-// React.Component<any, any>
+
 const PrivateRoute = ({component: Component, ...routeProps}:IPrivateRoute) => (
 	<Route
 		{...routeProps}

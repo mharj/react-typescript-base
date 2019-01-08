@@ -4,12 +4,13 @@ import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {withRouter} from 'react-router-dom';
+import {IActionDispatch} from '../actions';
 import {doLogin, doLogout} from '../actions/appActions';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
 interface IState {
-	password: string,
-	username: string,
+	password: string;
+	username: string;
 }
 
 type Props = WithNamespaces & RouteComponentProps & IPropsState & IActionDispatch;
@@ -71,8 +72,10 @@ class Login extends React.Component<Props, IState> {
 	private onChange(e: React.FormEvent<HTMLInputElement>) {
 		const target = e.target as HTMLInputElement;
 		switch (target.name) {
-			case 'username': return this.setState({username: target.value});
-			case 'password': return this.setState({password: target.value});
+			case 'username':
+				return this.setState({username: target.value});
+			case 'password':
+				return this.setState({password: target.value});
 		}
 	}
 	private onKeyUp(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -95,19 +98,13 @@ const mapStateToProps = (state: IReduxState): IPropsState => {
 	return {isLoggedIn: state.app.isLoggedIn};
 };
 
-// action props
-interface IActionDispatch {
-	doLogin: (username: string, password: string) => Promise<any>;
-	doLogout: () => Promise<any>;
-}
-
-const mapDispatchToProps = (dispatch: RootThunkDispatch): IActionDispatch => ({
+const mapDispatchToProps = (dispatch: RootThunkDispatch): Partial<IActionDispatch> => ({
 	doLogin: (username, password) => dispatch(doLogin(username, password)),
 	doLogout: () => dispatch(doLogout()),
 });
 
 export default withRouter(
-	connect<IPropsState, IActionDispatch>(
+	connect<IPropsState>(
 		mapStateToProps,
 		mapDispatchToProps,
 	)(withNamespaces()(Login)),

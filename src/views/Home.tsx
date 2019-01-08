@@ -2,7 +2,8 @@ import * as React from 'react';
 import {Helmet} from 'react-helmet';
 import {withNamespaces, WithNamespaces} from 'react-i18next';
 import {connect} from 'react-redux';
-import {getHome, TGetHome} from '../actions/appActions';
+import {IActionDispatch} from '../actions';
+import {getHome} from '../actions/appActions';
 import {IToDo} from '../interfaces/todo';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
@@ -66,16 +67,11 @@ const mapStateToProps = (state: IReduxState): IPropsState => {
 	};
 };
 
-// action props
-interface IActionDispatch {
-	getHome: TGetHome;
-}
-
-const mapDispatchToProps = (dispatch: RootThunkDispatch): IActionDispatch => ({
+const mapDispatchToProps = (dispatch: RootThunkDispatch): Partial<IActionDispatch> => ({
 	getHome: () => dispatch(getHome()),
 });
 
-export default connect<IPropsState, IActionDispatch>(
+export default connect<IPropsState>(
 	mapStateToProps,
 	mapDispatchToProps,
 )(withNamespaces()<Props>(Home));
