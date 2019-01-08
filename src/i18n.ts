@@ -1,7 +1,7 @@
-import * as i18n from 'i18next';
+import i18next from 'i18next';
 import * as LanguageDetector from 'i18next-browser-languagedetector';
 
-i18n.use(LanguageDetector).init({
+i18next.use(LanguageDetector).init({
 	defaultNS: 'translation',
 	fallbackLng: 'en',
 	interpolation: {
@@ -88,4 +88,4 @@ i18n.use(LanguageDetector).init({
 		},
 	},
 });
-export default i18n;
+export default i18next;
