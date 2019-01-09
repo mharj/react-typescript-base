@@ -1,3 +1,4 @@
+import 'react-app-polyfill/ie9'; // tslint:disable-next-line
 import * as React from 'react';
 import './index.css';
 import {ServiceWorkerProvider} from './ServiceWorkerProvider';
