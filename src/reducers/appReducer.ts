@@ -1,5 +1,6 @@
 import {Action, Reducer} from 'redux';
 import {IToDo} from '../interfaces/todo';
+import {IEtagData} from '../lib/etagTools';
 import {GlobalTypes, IGlobalAction} from './index';
 
 /**
@@ -19,8 +20,7 @@ export enum Types {
  */
 interface ISetValue extends Action {
 	type: Types.APP_SET_VALUE;
-	todo: IToDo;
-	etag: string | null;
+	todo: IEtagData<IToDo>;
 }
 
 interface ILoading extends Action {
@@ -52,10 +52,9 @@ export type AppAction = ISetValue | ILoading | ISetError | IClearError | ILoadin
  */
 export interface IState {
 	error: string | null;
-	etag: string | null;
 	isLoading: boolean;
 	isLoggedIn: boolean;
-	todo: IToDo | null;
+	todo: IEtagData<IToDo> | null;
 }
 
 /**
@@ -63,7 +62,6 @@ export interface IState {
  */
 export const initialState: IState = {
 	error: null,
-	etag: null,
 	isLoading: false,
 	isLoggedIn: false,
 	todo: null,
@@ -77,7 +75,6 @@ export const reducer: Reducer<IState> = (state = initialState, action: AppAction
 		case Types.APP_SET_VALUE:
 			return {
 				...state,
-				etag: action.etag,
 				todo: action.todo,
 			};
 		case Types.APP_SET_ERROR:

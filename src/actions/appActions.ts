@@ -2,6 +2,7 @@ import fetch from 'cross-fetch';
 import {Action, Dispatch} from 'redux';
 import {IToDo} from '../interfaces/todo';
 import {RemapActionCreators} from '../lib/actionTools';
+import {getEtagHeader, IEtagData, wrapEtag} from '../lib/etagTools';
 import {IReduxState, ThunkResult, Types} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
 // demo helper
@@ -22,8 +23,8 @@ const setAppLoadingAction = (state: boolean): AppAction => {
 	}
 };
 
-const setValueAction = (todo: IToDo, etag: string | null): AppAction => {
-	return {type: Types.app.APP_SET_VALUE, todo, etag};
+const setValueAction = (todo: IEtagData<IToDo>): AppAction => {
+	return {type: Types.app.APP_SET_VALUE, todo};
 };
 const setErrorAction = (error: string): AppAction => {
 	return {type: Types.app.APP_SET_ERROR, error};
@@ -43,8 +44,8 @@ const setLogoutAction = (): AppAction => {
 export const getHome = (): ThunkResult<Promise<Action>> => (dispatch: Dispatch, getState: () => IReduxState) => {
 	const state = getState();
 	const headers = new Headers();
-	if (state.app.etag) {
-		headers.set('if-none-match', state.app.etag);
+	if (state.app.todo && state.app.todo.etag) {
+		headers.set('if-none-match', state.app.todo.etag);
 	}
 	dispatch(setAppLoadingAction(true));
 	return delay(1000)
@@ -52,11 +53,10 @@ export const getHome = (): ThunkResult<Promise<Action>> => (dispatch: Dispatch, 
 		.then(
 			(res): Promise<any> => {
 				dispatch(setAppLoadingAction(false));
-				const etag = res.headers.has('ETag') ? res.headers.get('ETag') : null;
 				if (res.status === 200) {
 					return res.json().then((todo: IToDo) => {
 						if (todo) {
-							return Promise.resolve(dispatch(setValueAction(todo, etag)));
+							return Promise.resolve(dispatch(setValueAction(wrapEtag<IToDo>(todo, getEtagHeader(res)))));
 						} else {
 							throw new Error('no value found!');
 						}

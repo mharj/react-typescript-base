@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import {IActionDispatch} from '../actions';
 import {getHome} from '../actions/appActions';
 import {IToDo} from '../interfaces/todo';
+import {unWrapEtag} from '../lib/etagTools';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
 type Props = WithNamespaces & IPropsState & IActionDispatch;
@@ -63,7 +64,7 @@ interface IPropsState {
 
 const mapStateToProps = (state: IReduxState): IPropsState => {
 	return {
-		todo: state.app.todo,
+		todo: unWrapEtag(state.app.todo),
 	};
 };
 
