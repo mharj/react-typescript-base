@@ -1,4 +1,3 @@
-import fetch from 'cross-fetch';
 import {Action, Dispatch} from 'redux';
 import {IToDo} from '../interfaces/todo';
 import {RemapActionCreators} from '../lib/actionTools';
