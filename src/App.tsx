@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {withNamespaces} from 'react-i18next';
+import {withNamespaces, WithNamespaces} from 'react-i18next';
 import * as loadable from 'react-loadable';
 import {connect} from 'react-redux';
 import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom';
@@ -8,6 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import PrivateRoute from './components/PrivateRoute';
 import logo from './logo.svg';
 import {IReduxState} from './reducers';
+import {IServiceWorkerProviderProps} from './ServiceWorkerProvider';
 import ErrorView from './views/Error';
 
 const Loading = () => <div>Loading!...</div>;
@@ -30,12 +31,11 @@ const Broken = loadable({
 	loading: Loading,
 });
 
+type Props = WithNamespaces & IPropsState & IServiceWorkerProviderProps;
+
 class App extends React.Component<any, any> {
-	constructor(props: any) {
+	constructor(props: Props) {
 		super(props);
-		this.state = {
-			dummy: null,
-		};
 		this.handleChangeLanguage = this.handleChangeLanguage.bind(this);
 	}
 
@@ -91,8 +91,6 @@ class App extends React.Component<any, any> {
 					<b>
 						Service Worker status: {this.props.workerState} <button onClick={this.props.swCheckUpdate}>Check updates</button>
 					</b>
-					<br />
-					{process.env.NODE_ENV !== 'production' ? <pre style={{textAlign: 'left'}}>{this.props.error && this.props.error.stack}</pre> : null}
 				</div>
 			</Router>
 		);
@@ -102,11 +100,19 @@ class App extends React.Component<any, any> {
 		this.props.i18n.changeLanguage(target.value);
 	}
 }
-const mapStateToProps = (state: IReduxState) => {
+
+// redux state props
+interface IPropsState {
+	error: string | null;
+	isLoading: boolean;
+	isLoggedIn: boolean;
+}
+
+const mapStateToProps = (state: IReduxState): IPropsState => {
 	return {
 		error: state.app.error,
 		isLoading: state.app.isLoading,
 		isLoggedIn: state.app.isLoggedIn,
 	};
 };
-export default connect(mapStateToProps)(withNamespaces()(App));
+export default connect<IPropsState>(mapStateToProps)(withNamespaces()(App));

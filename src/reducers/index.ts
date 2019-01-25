@@ -5,6 +5,8 @@ import {initialState as appInitialState, IState as IAppState, reducer as appRedu
 // this ties namespaces to be same
 type ReduxNameSpace = 'app';
 
+type NameSpaceMapper<C> = {[key in ReduxNameSpace]: C};
+
 export type ReduxState = object; // common type for all Redux States
 /**
  * This enum is meant for types which might affect all reducers
@@ -28,7 +30,7 @@ export interface IReduxState {
 /**
  * Combine all reducer action types
  */
-export const Types: {[key in ReduxNameSpace]: any} = {
+export const Types: NameSpaceMapper<any> = {
 	app: AppTypes,
 };
 
@@ -36,14 +38,14 @@ export const Types: {[key in ReduxNameSpace]: any} = {
  * Combine all initial states
  * @see {@link createStore/default}
  */
-export const initialState: {[key in ReduxNameSpace]: ReduxState} = {
+export const initialState:  NameSpaceMapper<ReduxState> = {
 	app: appInitialState,
 };
 
 /**
  * Combine all reducers with names
  */
-export const rootReducer = combineReducers<{[key in ReduxNameSpace]: ReduxState}>({
+export const rootReducer = combineReducers<NameSpaceMapper<ReduxState>>({
 	app: appReducer,
 });
 
