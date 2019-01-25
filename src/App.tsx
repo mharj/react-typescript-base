@@ -100,9 +100,6 @@ class App extends React.Component<any, any> {
 	private handleChangeLanguage(event: React.SyntheticEvent<HTMLButtonElement>) {
 		const target = event.target as HTMLButtonElement;
 		this.props.i18n.changeLanguage(target.value);
-		this.setState({
-			dummy: null,
-		});
 	}
 }
 const mapStateToProps = (state: IReduxState) => {

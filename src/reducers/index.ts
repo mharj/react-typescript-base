@@ -2,6 +2,10 @@ import {Action, combineReducers} from 'redux';
 import {ThunkAction,ThunkDispatch} from 'redux-thunk';
 import {initialState as appInitialState, IState as IAppState, reducer as appReducer, Types as AppTypes} from './appReducer';
 
+// this ties namespaces to be same
+type ReduxNameSpace = 'app';
+
+export type ReduxState = object; // common type for all Redux States
 /**
  * This enum is meant for types which might affect all reducers
  */
@@ -24,7 +28,7 @@ export interface IReduxState {
 /**
  * Combine all reducer action types
  */
-export const Types = {
+export const Types: {[key in ReduxNameSpace]: any} = {
 	app: AppTypes,
 };
 
@@ -32,14 +36,14 @@ export const Types = {
  * Combine all initial states
  * @see {@link createStore/default}
  */
-export const initialState = {
+export const initialState: {[key in ReduxNameSpace]: ReduxState} = {
 	app: appInitialState,
 };
 
 /**
  * Combine all reducers with names
  */
-export const rootReducer = combineReducers({
+export const rootReducer = combineReducers<{[key in ReduxNameSpace]: ReduxState}>({
 	app: appReducer,
 });
 
