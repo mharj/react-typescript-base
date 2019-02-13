@@ -19,6 +19,12 @@ const WorkerContext = React.createContext(initialContext);
 
 export const ServiceWorkerConsumer = WorkerContext.Consumer;
 
+export function withServiceWorker(WrappedComponent: typeof React.Component) {
+	return function Wrapper(props: any) {
+		return <ServiceWorkerConsumer>{(value) => <WrappedComponent {...props} {...value} />}</ServiceWorkerConsumer>;
+	};
+}
+
 export class ServiceWorkerProvider extends React.Component<IProps, IState> {
 	constructor(props: IProps) {
 		super(props);
@@ -36,13 +42,9 @@ export class ServiceWorkerProvider extends React.Component<IProps, IState> {
 		const contextValue: IState = {
 			serviceWorkerState: this.state.serviceWorkerState,
 			serviceWorkerUpdate: this.runUpdate,
-		}
-		return (
-			<WorkerContext.Provider value={contextValue}>
-				{this.props.children}
-			</WorkerContext.Provider>
-		);
-	} 
+		};
+		return <WorkerContext.Provider value={contextValue}>{this.props.children}</WorkerContext.Provider>;
+	}
 	private onServiceStateChange(state: WORKER_STATUS) {
 		this.setState({
 			serviceWorkerState: state,

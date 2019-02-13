@@ -8,7 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import PrivateRoute from './components/PrivateRoute';
 import logo from './logo.svg';
 import {IReduxState} from './reducers';
-import {ServiceWorkerConsumer} from './ServiceWorkerProvider';
+import {withServiceWorker} from './ServiceWorkerProvider';
 import ErrorView from './views/Error';
 
 const Loading = () => <div>Loading!...</div>;
@@ -89,13 +89,9 @@ class App extends React.Component<any, any> {
 						</ErrorBoundary>
 					</div>
 					<br />
-					<ServiceWorkerConsumer>
-						{({serviceWorkerState, serviceWorkerUpdate}) => (
-							<b>
-								Service Worker status: {serviceWorkerState} <button onClick={serviceWorkerUpdate}>Check updates</button>
-							</b>
-						)}
-					</ServiceWorkerConsumer>
+					<b>
+						Service Worker status: {this.props.serviceWorkerState} <button onClick={this.props.serviceWorkerUpdate}>Check updates</button>
+					</b>
 				</div>
 			</Router>
 		);
@@ -120,4 +116,4 @@ const mapStateToProps = (state: IReduxState): IPropsState => {
 		isLoggedIn: state.app.isLoggedIn,
 	};
 };
-export default connect<IPropsState>(mapStateToProps)(withNamespaces()(App));
+export default connect<IPropsState>(mapStateToProps)(withNamespaces()(withServiceWorker(App)));
