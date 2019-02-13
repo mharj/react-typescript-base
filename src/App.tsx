@@ -8,7 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import PrivateRoute from './components/PrivateRoute';
 import logo from './logo.svg';
 import {IReduxState} from './reducers';
-import {IServiceWorkerProviderProps} from './ServiceWorkerProvider';
+import {ServiceWorkerConsumer} from './ServiceWorkerProvider';
 import ErrorView from './views/Error';
 
 const Loading = () => <div>Loading!...</div>;
@@ -31,7 +31,7 @@ const Broken = loadable({
 	loading: Loading,
 });
 
-type Props = WithNamespaces & IPropsState & IServiceWorkerProviderProps;
+type Props = WithNamespaces & IPropsState;
 
 class App extends React.Component<any, any> {
 	constructor(props: Props) {
@@ -41,6 +41,7 @@ class App extends React.Component<any, any> {
 
 	public render() {
 		const {isLoggedIn, t} = this.props;
+
 		return (
 			<Router>
 				<div className="App">
@@ -88,9 +89,13 @@ class App extends React.Component<any, any> {
 						</ErrorBoundary>
 					</div>
 					<br />
-					<b>
-						Service Worker status: {this.props.workerState} <button onClick={this.props.swCheckUpdate}>Check updates</button>
-					</b>
+					<ServiceWorkerConsumer>
+						{({serviceWorkerState, serviceWorkerUpdate}) => (
+							<b>
+								Service Worker status: {serviceWorkerState} <button onClick={serviceWorkerUpdate}>Check updates</button>
+							</b>
+						)}
+					</ServiceWorkerConsumer>
 				</div>
 			</Router>
 		);

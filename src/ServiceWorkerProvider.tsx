@@ -2,25 +2,27 @@ import * as React from 'react';
 import {STATUS as WORKER_STATUS} from './registerServiceWorker';
 
 interface IState {
-	workerState: WORKER_STATUS | null;
-	updateFunction: null | any;
+	serviceWorkerState: WORKER_STATUS | null;
+	serviceWorkerUpdate: null | any;
 }
 
 interface IProps {
 	children: React.ReactNode;
 }
-export interface IServiceWorkerProviderProps {
-	workerState: WORKER_STATUS | null;
-	swCheckUpdate: () => void;
-}
+
+const initialContext: IState = {
+	serviceWorkerState: null,
+	serviceWorkerUpdate: null,
+};
+
+const WorkerContext = React.createContext(initialContext);
+
+export const ServiceWorkerConsumer = WorkerContext.Consumer;
 
 export class ServiceWorkerProvider extends React.Component<IProps, IState> {
 	constructor(props: IProps) {
 		super(props);
-		this.state = {
-			updateFunction: null,
-			workerState: null,
-		};
+		this.state = initialContext;
 		this.onServiceStateChange = this.onServiceStateChange.bind(this);
 		this.runUpdate = this.runUpdate.bind(this);
 		this.getUpdateFunction = this.getUpdateFunction.bind(this);
@@ -31,25 +33,29 @@ export class ServiceWorkerProvider extends React.Component<IProps, IState> {
 		);
 	}
 	public render() {
-		const childProps: IServiceWorkerProviderProps = {
-			swCheckUpdate: this.runUpdate,
-			workerState: this.state.workerState,
+		const contextValue: IState = {
+			serviceWorkerState: this.state.serviceWorkerState,
+			serviceWorkerUpdate: this.runUpdate,
 		}
-		return React.cloneElement(React.Children.only(this.props.children), childProps) as React.ReactElement<IServiceWorkerProviderProps>;
-	}
+		return (
+			<WorkerContext.Provider value={contextValue}>
+				{this.props.children}
+			</WorkerContext.Provider>
+		);
+	} 
 	private onServiceStateChange(state: WORKER_STATUS) {
 		this.setState({
-			workerState: state,
+			serviceWorkerState: state,
 		});
 	}
 	private getUpdateFunction(callback: () => void) {
 		this.setState({
-			updateFunction: callback,
+			serviceWorkerUpdate: callback,
 		});
 	}
 	private runUpdate() {
-		if (this.state.updateFunction) {
-			this.state.updateFunction();
+		if (this.state.serviceWorkerUpdate) {
+			this.state.serviceWorkerUpdate();
 		}
 	}
 }
