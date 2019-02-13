@@ -24,6 +24,7 @@ export function withServiceWorker(WrappedComponent: typeof React.Component) {
 		return <ServiceWorkerConsumer>{(value) => <WrappedComponent {...props} {...value} />}</ServiceWorkerConsumer>;
 	};
 }
+export type IWithServiceWorker = IState;
 
 export class ServiceWorkerProvider extends React.Component<IProps, IState> {
 	constructor(props: IProps) {

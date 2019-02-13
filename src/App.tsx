@@ -8,7 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import PrivateRoute from './components/PrivateRoute';
 import logo from './logo.svg';
 import {IReduxState} from './reducers';
-import {withServiceWorker} from './ServiceWorkerProvider';
+import {IWithServiceWorker, withServiceWorker, } from './ServiceWorkerProvider';
 import ErrorView from './views/Error';
 
 const Loading = () => <div>Loading!...</div>;
@@ -31,9 +31,9 @@ const Broken = loadable({
 	loading: Loading,
 });
 
-type Props = WithNamespaces & IPropsState;
+type Props = WithNamespaces & IPropsState & IWithServiceWorker;
 
-class App extends React.Component<any, any> {
+class App extends React.Component<Props, any> {
 	constructor(props: Props) {
 		super(props);
 		this.handleChangeLanguage = this.handleChangeLanguage.bind(this);
