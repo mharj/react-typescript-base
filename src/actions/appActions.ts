@@ -1,17 +1,10 @@
 import {Action, Dispatch} from 'redux';
+import {getFetchData} from '.';
 import {IToDo} from '../interfaces/todo';
 import {RemapActionCreators} from '../lib/actionTools';
 import {getEtagHeader, IEtagData, wrapEtag} from '../lib/etagTools';
 import {IReduxState, ThunkResult, Types} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
-// demo helper
-const delay = (duration: number) => {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve();
-		}, duration);
-	});
-};
 
 // dispatch actions
 const setAppLoadingAction = (state: boolean): AppAction => {
@@ -40,32 +33,21 @@ const setLogoutAction = (): AppAction => {
 };
 
 // async functions
-export const getHome = (): ThunkResult<Promise<Action>> => (dispatch: Dispatch, getState: () => IReduxState) => {
+export const getHome = (): ThunkResult<Promise<Action | void>> => (dispatch: Dispatch, getState: () => IReduxState) => {
 	const state = getState();
 	const headers = new Headers();
 	if (state.app.todo && state.app.todo.etag) {
 		headers.set('if-none-match', state.app.todo.etag);
 	}
 	dispatch(setAppLoadingAction(true));
-	return delay(1000)
-		.then(() => fetch('https://jsonplaceholder.typicode.com/todos/1', {headers}))
+	return fetch('https://jsonplaceholder.typicode.com/todos/1', {headers})
 		.then(
-			(res): Promise<any> => {
+			async (res): Promise<Action | void> => {
 				dispatch(setAppLoadingAction(false));
-				if (res.status === 200) {
-					return res.json().then((todo: IToDo) => {
-						if (todo) {
-							return Promise.resolve(dispatch(setValueAction(wrapEtag<IToDo>(todo, getEtagHeader(res)))));
-						} else {
-							throw new Error('no value found!');
-						}
-					});
+				const todo = await getFetchData<IToDo>(res, dispatch, setLogoutAction);
+				if (todo) {
+					return Promise.resolve(dispatch(setValueAction(wrapEtag<IToDo>(todo, getEtagHeader(res)))));
 				}
-				if (res.status === 401) {
-					// handle auth errors for API
-					return Promise.resolve(dispatch(setLogoutAction()));
-				}
-				return Promise.resolve();
 			},
 		)
 		.catch((error: Error) => {
