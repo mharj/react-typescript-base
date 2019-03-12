@@ -1,6 +1,6 @@
-import {Action, Dispatch} from 'redux';
+import {Action} from 'redux';
 import {RemapActionCreators} from '../lib/actionTools';
-import {GlobalTypes, IGlobalAction, ThunkResult} from '../reducers';
+import {GlobalTypes, IGlobalAction, RootThunkDispatch,ThunkResult, } from '../reducers';
 
 // dispatcher actions
 const doRestAction = (): IGlobalAction => {
@@ -8,7 +8,7 @@ const doRestAction = (): IGlobalAction => {
 };
 
 // async functions
-export const doReset = (): ThunkResult<Promise<Action>> => (dispatch: Dispatch) => {
+export const doReset = (): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
 	return Promise.resolve(dispatch(doRestAction()));
 };
 

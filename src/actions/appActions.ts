@@ -1,18 +1,15 @@
-import {Action, Dispatch} from 'redux';
-import {getFetchData} from '.';
+import {Action} from 'redux';
+import {handleJsonResponse} from '.';
 import {IToDo} from '../interfaces/todo';
 import {RemapActionCreators} from '../lib/actionTools';
+import {dFetch} from '../lib/dFetch';
 import {getEtagHeader, IEtagData, wrapEtag} from '../lib/etagTools';
-import {IReduxState, ThunkResult, Types} from '../reducers';
+import {IReduxState, RootThunkDispatch, ThunkResult, Types} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
 
 // dispatch actions
-const setAppLoadingAction = (state: boolean): AppAction => {
-	if (state) {
-		return {type: Types.app.LOADING};
-	} else {
-		return {type: Types.app.LOADING_DONE};
-	}
+export const setAppLoadingAction = (isLoading: boolean): AppAction => {
+	return {type: Types.app.APP_LOADING_STATE, isLoading};
 };
 
 const setValueAction = (todo: IEtagData<IToDo>): AppAction => {
@@ -33,29 +30,24 @@ const setLogoutAction = (): AppAction => {
 };
 
 // async functions
-export const getHome = (): ThunkResult<Promise<Action | void>> => (dispatch: Dispatch, getState: () => IReduxState) => {
+export const getHome = (): ThunkResult<Promise<Action | void>> => async (dispatch: RootThunkDispatch, getState: () => IReduxState) => {
 	const state = getState();
 	const headers = new Headers();
 	if (state.app.todo && state.app.todo.etag) {
 		headers.set('if-none-match', state.app.todo.etag);
 	}
-	dispatch(setAppLoadingAction(true));
-	return fetch('https://jsonplaceholder.typicode.com/todos/1', {headers})
-		.then(
-			async (res): Promise<Action | void> => {
-				dispatch(setAppLoadingAction(false));
-				const todo = await getFetchData<IToDo>(res, dispatch, setLogoutAction);
-				if (todo) {
-					return Promise.resolve(dispatch(setValueAction(wrapEtag<IToDo>(todo, getEtagHeader(res)))));
-				}
-			},
-		)
-		.catch((error: Error) => {
-			return Promise.reject(dispatch(setErrorAction(error.message)));
-		});
+	try {
+		const res = await dispatch(dFetch('https://jsonplaceholder.typicode.com/todos/1', {headers}));
+		const todo = await dispatch(handleJsonResponse<IToDo>(res, setLogoutAction));
+		if (todo) {
+			return Promise.resolve(dispatch(setValueAction(wrapEtag<IToDo>(todo, getEtagHeader(res)))));
+		}
+	} catch (err) {
+		return Promise.reject(dispatch(setErrorAction(err.message)));
+	}
 };
 
-export const doLogin = (username: string, password: string): ThunkResult<Promise<Action>> => (dispatch: Dispatch) => {
+export const doLogin = (username: string, password: string): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
 	dispatch(clearErrorAction());
 	if (username === 'test' && password === 'password') {
 		return Promise.resolve(dispatch(setLoginAction()));
@@ -64,7 +56,7 @@ export const doLogin = (username: string, password: string): ThunkResult<Promise
 	}
 };
 
-export const doLogout = (): ThunkResult<Promise<Action>> => (dispatch: Dispatch) => {
+export const doLogout = (): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
 	return Promise.resolve(dispatch(setLogoutAction()));
 };
 

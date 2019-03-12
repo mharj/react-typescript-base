@@ -30,7 +30,7 @@ export interface IReduxState {
 /**
  * Combine all reducer action types
  */
-export const Types: NameSpaceMapper<any> = {
+export const Types = {
 	app: AppTypes,
 };
 

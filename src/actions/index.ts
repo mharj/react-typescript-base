@@ -1,5 +1,6 @@
-import {Action, Dispatch} from 'redux';
+import {Action} from 'redux';
 import * as appActions from '../actions/appActions';
+import {RootThunkDispatch, ThunkResult} from '../reducers';
 import {IActionDispatch as IAppActionDispatch} from './appActions';
 import {IActionDispatch as IGlobalActionDispatch} from './globalActions';
 
@@ -7,14 +8,9 @@ export const actions = {
 	...appActions,
 };
 
-/**
- * Handle fetch responses
- * @param res
- * @param dispatch
- * @param unAuthorizedAction
- * @return payload if 200, else undefined if 304 and 401 user dispatch and unAuthorizedAction
- */
-export const getFetchData = async <T>(res: Response, dispatch?: Dispatch, unAuthorizedAction?: () => Action): Promise<T | undefined> => {
+export const handleJsonResponse = <T>(res: Response, unAuthorizedAction?: () => Action): ThunkResult<Promise<T | undefined>> => async (
+	dispatch: RootThunkDispatch,
+) => {
 	let payload: T | undefined;
 	try {
 		payload = (await res.json()) as T;

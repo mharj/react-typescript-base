@@ -7,11 +7,10 @@ import {GlobalTypes, IGlobalAction, ReduxState} from './index';
  * Action types
  */
 export enum Types {
+	APP_LOADING_STATE = 'APP_LOADING_STATE',
 	APP_SET_VALUE = 'APP_SET_VALUE',
 	APP_SET_ERROR = 'APP_SET_ERROR',
 	APP_CLEAR_ERROR = 'APP_CLEAR_ERROR',
-	LOADING = 'LOADING',
-	LOADING_DONE = 'LOADING_DONE',
 	LOGIN = 'LOGIN',
 	LOGOUT = 'LOGOUT',
 }
@@ -23,12 +22,6 @@ interface ISetValue extends Action {
 	todo: IEtagData<IToDo>;
 }
 
-interface ILoading extends Action {
-	type: Types.LOADING;
-}
-interface ILoadingDone extends Action {
-	type: Types.LOADING_DONE;
-}
 interface ISetError extends Action {
 	type: Types.APP_SET_ERROR;
 	error: string;
@@ -45,7 +38,12 @@ interface ILogout extends Action {
 	type: Types.LOGOUT;
 }
 
-export type AppAction = ISetValue | ILoading | ISetError | IClearError | ILoadingDone | ILogin | ILogout | IGlobalAction;
+interface IApplicationLoadingAction extends Action {
+	type: Types.APP_LOADING_STATE;
+	isLoading: boolean;
+}
+
+export type AppAction = IApplicationLoadingAction | ISetValue | ISetError | IClearError | ILogin | ILogout | IGlobalAction;
 
 /**
  * State interface
@@ -72,6 +70,11 @@ export const initialState: IState = {
  */
 export const reducer: Reducer<IState> = (state = initialState, action: AppAction) => {
 	switch (action.type) {
+		case Types.APP_LOADING_STATE:
+			return {
+				...state,
+				isLoading: action.isLoading,
+			};
 		case Types.APP_SET_VALUE:
 			return {
 				...state,
@@ -86,17 +89,6 @@ export const reducer: Reducer<IState> = (state = initialState, action: AppAction
 			return {
 				...state,
 				error: null,
-			};
-		case Types.LOADING:
-			return {
-				...state,
-				error: null,
-				isLoading: true,
-			};
-		case Types.LOADING_DONE:
-			return {
-				...state,
-				isLoading: false,
 			};
 		case Types.LOGIN:
 			return {
