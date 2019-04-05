@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {Helmet} from 'react-helmet';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {IActionDispatch} from '../actions';
 import {doReset} from '../actions/globalActions';
 import {IReduxState, RootThunkDispatch} from '../reducers';
@@ -10,7 +11,7 @@ interface IErrorViewProps {
 	error: Error;
 }
 
-type Props = WithNamespaces & IErrorViewProps & IActionDispatch;
+type Props = IPropsState & WithTranslation & IErrorViewProps & ActionList;
 
 class ErrorView extends React.Component<Props, any> {
 	public render() {
@@ -30,15 +31,22 @@ class ErrorView extends React.Component<Props, any> {
 	}
 }
 
-const mapDispatchToProps = (dispatch: RootThunkDispatch): Partial<IActionDispatch> => ({
-	doReset: () => dispatch(doReset()),
-});
-
 const mapStateToProps = (state: IReduxState) => {
 	return {};
 };
+type IPropsState = ReturnType<typeof mapStateToProps>;
 
-export default connect<any>(
+type ActionList = Pick<IActionDispatch, 'doReset'>;
+const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
+	bindActionCreators(
+		{
+			doReset,
+		},
+		dispatch,
+	);
+// type ActionList = ReturnType<typeof mapDispatchToProps>; // Waiting redux update!
+
+export default connect<IPropsState>(
 	mapStateToProps,
 	mapDispatchToProps,
-)(withNamespaces()<Props>(ErrorView));
+)(withTranslation()<Props>(ErrorView));

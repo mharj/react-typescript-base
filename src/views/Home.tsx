@@ -1,14 +1,14 @@
 import * as React from 'react';
 import {Helmet} from 'react-helmet';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {IActionDispatch} from '../actions';
 import {getHome} from '../actions/appActions';
-import {IToDo} from '../interfaces/todo';
 import {unWrapEtag} from '../lib/etagTools';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
-type Props = WithNamespaces & IPropsState & IActionDispatch;
+type Props = WithTranslation & IPropsState & ActionList;
 
 class Home extends React.Component<Props, any> {
 	public componentDidMount() {
@@ -57,22 +57,23 @@ class Home extends React.Component<Props, any> {
 	}
 }
 
-// redux state props
-interface IPropsState {
-	todo: IToDo | null;
-}
-
-const mapStateToProps = (state: IReduxState): IPropsState => {
+const mapStateToProps = (state: IReduxState) => {
 	return {
 		todo: unWrapEtag(state.app.todo),
 	};
 };
+type IPropsState = ReturnType<typeof mapStateToProps>;
 
-const mapDispatchToProps = (dispatch: RootThunkDispatch): Partial<IActionDispatch> => ({
-	getHome: () => dispatch(getHome()),
-});
-
+type ActionList = Pick<IActionDispatch, 'getHome'>;
+const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
+	bindActionCreators(
+		{
+			getHome,
+		},
+		dispatch,
+	);
+// type ActionList = ReturnType<typeof mapDispatchToProps>; // Waiting redux update!
 export default connect<IPropsState>(
 	mapStateToProps,
 	mapDispatchToProps,
-)(withNamespaces()<Props>(Home));
+)(withTranslation()(Home));

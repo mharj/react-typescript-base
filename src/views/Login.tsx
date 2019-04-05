@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {Helmet} from 'react-helmet';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {withRouter} from 'react-router-dom';
+import {bindActionCreators} from 'redux';
 import {IActionDispatch} from '../actions';
 import {doLogin, doLogout} from '../actions/appActions';
 import {IReduxState, RootThunkDispatch} from '../reducers';
@@ -13,7 +14,7 @@ interface IState {
 	username: string;
 }
 
-type Props = WithNamespaces & RouteComponentProps & IPropsState & IActionDispatch;
+type Props = WithTranslation & RouteComponentProps & IPropsState & ActionList;
 
 class Login extends React.Component<Props, IState> {
 	constructor(props: Props) {
@@ -90,22 +91,24 @@ class Login extends React.Component<Props, IState> {
 }
 
 // redux state props
-interface IPropsState {
-	isLoggedIn: boolean;
-}
-
-const mapStateToProps = (state: IReduxState): IPropsState => {
+const mapStateToProps = (state: IReduxState) => {
 	return {isLoggedIn: state.app.isLoggedIn};
 };
+type IPropsState = ReturnType<typeof mapStateToProps>;
 
-const mapDispatchToProps = (dispatch: RootThunkDispatch): Partial<IActionDispatch> => ({
-	doLogin: (username, password) => dispatch(doLogin(username, password)),
-	doLogout: () => dispatch(doLogout()),
-});
-
+type ActionList = Pick<IActionDispatch, 'doLogin' | 'doLogout'>;
+const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
+	bindActionCreators(
+		{
+			doLogin,
+			doLogout,
+		},
+		dispatch,
+	);
+// type ActionList = ReturnType<typeof mapDispatchToProps>; // Waiting redux update!
 export default withRouter(
 	connect<IPropsState>(
 		mapStateToProps,
 		mapDispatchToProps,
-	)(withNamespaces()(Login)),
+	)(withTranslation()(Login)),
 );

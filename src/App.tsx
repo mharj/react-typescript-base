@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {withNamespaces, WithNamespaces} from 'react-i18next';
+import {withTranslation, WithTranslation} from 'react-i18next';
 import * as loadable from 'react-loadable';
 import {connect} from 'react-redux';
 import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom';
@@ -31,7 +31,7 @@ const Broken = loadable({
 	loading: Loading,
 });
 
-type Props = WithNamespaces & IPropsState & IWithServiceWorker;
+type Props = WithTranslation & IPropsState & IWithServiceWorker;
 
 class App extends React.Component<Props, any> {
 	constructor(props: Props) {
@@ -116,4 +116,4 @@ const mapStateToProps = (state: IReduxState): IPropsState => {
 		isLoggedIn: state.app.isLoggedIn,
 	};
 };
-export default connect<IPropsState>(mapStateToProps)(withNamespaces()(withServiceWorker(App)));
+export default connect<IPropsState>(mapStateToProps)(withTranslation()(withServiceWorker(App)));
