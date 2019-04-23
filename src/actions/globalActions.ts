@@ -1,5 +1,4 @@
 import {Action} from 'redux';
-import {RemapActionCreators} from '../lib/actionTools';
 import {GlobalTypes, IGlobalAction, RootThunkDispatch,ThunkResult, } from '../reducers';
 
 // dispatcher actions
@@ -12,9 +11,3 @@ export const doReset = (): ThunkResult<Promise<Action>> => (dispatch: RootThunkD
 	return Promise.resolve(dispatch(doRestAction()));
 };
 
-// build action mapper for redux
-const GlogalDispatchPropsMap = {
-	doReset,
-};
-
-export type IActionDispatch = RemapActionCreators<typeof GlogalDispatchPropsMap>;

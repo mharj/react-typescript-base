@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
-import {IActionDispatch} from '../actions';
 import {doLogin, doLogout} from '../actions/appActions';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
@@ -96,7 +95,6 @@ const mapStateToProps = (state: IReduxState) => {
 };
 type IPropsState = ReturnType<typeof mapStateToProps>;
 
-type ActionList = Pick<IActionDispatch, 'doLogin' | 'doLogout'>;
 const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 	bindActionCreators(
 		{
@@ -105,7 +103,8 @@ const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 		},
 		dispatch,
 	);
-// type ActionList = ReturnType<typeof mapDispatchToProps>; // Waiting redux update!
+type ActionList = ReturnType<typeof mapDispatchToProps>;
+
 export default withRouter(
 	connect<IPropsState>(
 		mapStateToProps,

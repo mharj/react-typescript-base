@@ -1,7 +1,6 @@
 import {Action} from 'redux';
 import {handleJsonResponse} from '.';
 import {IToDo} from '../interfaces/todo';
-import {RemapActionCreators} from '../lib/actionTools';
 import {dFetch} from '../lib/dFetch';
 import {getEtagHeader, IEtagData, wrapEtag} from '../lib/etagTools';
 import {IReduxState, RootThunkDispatch, ThunkResult, Types} from '../reducers';
@@ -59,11 +58,3 @@ export const doLogin = (username: string, password: string): ThunkResult<Promise
 export const doLogout = (): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
 	return Promise.resolve(dispatch(setLogoutAction()));
 };
-
-// build action mapper for redux
-const AppDispatchPropsMap = {
-	doLogin,
-	doLogout,
-	getHome,
-};
-export type IActionDispatch = RemapActionCreators<typeof AppDispatchPropsMap>;

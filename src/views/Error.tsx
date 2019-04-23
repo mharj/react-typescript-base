@@ -3,7 +3,6 @@ import {Helmet} from 'react-helmet';
 import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {IActionDispatch} from '../actions';
 import {doReset} from '../actions/globalActions';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
@@ -36,7 +35,7 @@ const mapStateToProps = (state: IReduxState) => {
 };
 type IPropsState = ReturnType<typeof mapStateToProps>;
 
-type ActionList = Pick<IActionDispatch, 'doReset'>;
+
 const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 	bindActionCreators(
 		{
@@ -44,7 +43,7 @@ const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 		},
 		dispatch,
 	);
-// type ActionList = ReturnType<typeof mapDispatchToProps>; // Waiting redux update!
+type ActionList = ReturnType<typeof mapDispatchToProps>;
 
 export default connect<IPropsState>(
 	mapStateToProps,
