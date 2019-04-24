@@ -1,7 +1,7 @@
 import {Action, Reducer} from 'redux';
 import {IToDo} from '../interfaces/todo';
 import {IEtagData} from '../lib/etagTools';
-import {GlobalTypes, IGlobalAction, ReduxState} from './index';
+import {GlobalTypes, IGlobalAction} from './index';
 
 /**
  * Action types
@@ -48,7 +48,7 @@ export type AppAction = IApplicationLoadingAction | ISetValue | ISetError | ICle
 /**
  * State interface
  */
-export interface IState extends ReduxState {
+export interface IState {
 	error: string | null;
 	isLoading: boolean;
 	isLoggedIn: boolean;

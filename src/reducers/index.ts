@@ -1,13 +1,7 @@
 import {Action, combineReducers} from 'redux';
-import {ThunkAction,ThunkDispatch} from 'redux-thunk';
-import {initialState as appInitialState, IState as IAppState, reducer as appReducer, Types as AppTypes} from './appReducer';
+import {ThunkAction, ThunkDispatch} from 'redux-thunk';
+import * as app from './appReducer';
 
-// this ties namespaces to be same
-type ReduxNameSpace = 'app';
-
-type NameSpaceMapper<C> = {[key in ReduxNameSpace]: C};
-
-export type ReduxState = object; // common type for all Redux States
 /**
  * This enum is meant for types which might affect all reducers
  */
@@ -16,37 +10,39 @@ export enum GlobalTypes {
 }
 // Global actions
 interface IGlobalResetAction extends Action {
-	type: GlobalTypes.RESET,
+	type: GlobalTypes.RESET;
 }
+
 // Merge actions
 export type IGlobalAction = IGlobalResetAction;
+
 /**
  * Helps to navigate redux state structure
  */
 export interface IReduxState {
-	app: IAppState;
+	app: app.IState;
 }
 
 /**
  * Combine all reducer action types
  */
 export const Types = {
-	app: AppTypes,
+	app: app.Types,
 };
 
 /**
  * Combine all initial states
  * @see {@link createStore/default}
  */
-export const initialState:  NameSpaceMapper<ReduxState> = {
-	app: appInitialState,
+export const initialState: IReduxState = {
+	app: app.initialState,
 };
 
 /**
  * Combine all reducers with names
  */
-export const rootReducer = combineReducers<NameSpaceMapper<ReduxState>>({
-	app: appReducer,
+export const rootReducer = combineReducers<IReduxState>({
+	app: app.reducer,
 });
 
 export type ThunkResult<R> = ThunkAction<R, IReduxState, undefined, Action>;
