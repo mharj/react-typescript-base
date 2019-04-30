@@ -9,7 +9,7 @@ import {IReduxState, RootThunkDispatch} from '../reducers';
 
 type Props = WithTranslation & IPropsState & ActionList;
 
-class Home extends React.Component<Props, any> {
+class Home extends React.Component<Props> {
 	public componentDidMount() {
 		this.props.getHome().then(() => {
 			console.log('async promise done');
@@ -72,7 +72,7 @@ const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 	);
 type ActionList = ReturnType<typeof mapDispatchToProps>;
 
-export default connect<IPropsState>(
+export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
 )(withTranslation()(Home));

@@ -106,7 +106,7 @@ const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 type ActionList = ReturnType<typeof mapDispatchToProps>;
 
 export default withRouter(
-	connect<IPropsState>(
+	connect(
 		mapStateToProps,
 		mapDispatchToProps,
 	)(withTranslation()(Login)),

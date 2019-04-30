@@ -4,7 +4,7 @@ import {Redirect, Route, RouteProps} from 'react-router-dom';
 type IPrivateRoute = RouteProps & {
 	isValid: boolean,
 	failPath: string,
-	component: any,
+	component: React.ElementType,
 }
 
 const PrivateRoute = ({component: Component, ...routeProps}:IPrivateRoute) => (

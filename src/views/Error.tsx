@@ -4,15 +4,12 @@ import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {doReset} from '../actions/globalActions';
+import {IErrorProps} from '../components/ErrorBoundary';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
-interface IErrorViewProps {
-	error: Error;
-}
+type Props = IPropsState & WithTranslation & ActionList;
 
-type Props = IPropsState & WithTranslation & IErrorViewProps & ActionList;
-
-class ErrorView extends React.Component<Props, any> {
+class ErrorView extends React.Component<Props> {
 	public render() {
 		const {t} = this.props;
 		return (
@@ -22,7 +19,7 @@ class ErrorView extends React.Component<Props, any> {
 				</Helmet>
 				<div className="App-intro">
 					<h1 style={{color: 'red'}}>{t('fatal_error')}</h1>
-					<h2>{this.props.error.message}</h2>
+					<h2>{this.props.error ? this.props.error.message : null}</h2>
 					<button onClick={this.props.doReset}>Reset</button>
 				</div>
 			</div>
@@ -30,11 +27,12 @@ class ErrorView extends React.Component<Props, any> {
 	}
 }
 
-const mapStateToProps = (state: IReduxState) => {
-	return {};
+const mapStateToProps = (state: IReduxState, ownprops: IErrorProps) => {
+	return {
+		error: ownprops.error
+	};
 };
 type IPropsState = ReturnType<typeof mapStateToProps>;
-
 
 const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 	bindActionCreators(
@@ -45,7 +43,7 @@ const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 	);
 type ActionList = ReturnType<typeof mapDispatchToProps>;
 
-export default connect<IPropsState>(
+export default connect(
 	mapStateToProps,
 	mapDispatchToProps,
-)(withTranslation()<Props>(ErrorView));
+)(withTranslation()(ErrorView));

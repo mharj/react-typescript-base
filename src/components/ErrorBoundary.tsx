@@ -1,12 +1,22 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import {withRouter} from 'react-router';
+import {RouteComponentProps, withRouter} from 'react-router';
 
-class ErrorBoundary extends React.Component<any, any> {
-	public static propTypes = {
-		onError: PropTypes.func.isRequired,
-	}
-	public static getDerivedStateFromProps(props: any, state: any) {
+export interface IErrorProps {
+	error: undefined | Error;
+}
+
+type Props = RouteComponentProps & {
+	onError: React.ElementType<IErrorProps>
+};
+
+interface IState {
+	error: Error | undefined;
+	hasError: boolean;
+	location: any;
+}
+
+class ErrorBoundary extends React.Component<Props, IState> {
+	public static getDerivedStateFromProps(props: Props, state: IState) {
 		if (props.history.location !== state.location) {
 			return {
 				error: null,
@@ -17,10 +27,11 @@ class ErrorBoundary extends React.Component<any, any> {
 			return null;
 		}
 	}
-	constructor(props: any) {
+
+	constructor(props: Props) {
 		super(props);
 		this.state = {
-			error: null,
+			error: undefined,
 			hasError: false,
 			location: props.history.location,
 		};
@@ -36,7 +47,7 @@ class ErrorBoundary extends React.Component<any, any> {
 	public render() {
 		const ErrorView = this.props.onError;
 		if (this.state.hasError) {
-			return (<ErrorView error={this.state.error} />);
+			return <ErrorView error={this.state.error} />;
 		}
 		return this.props.children;
 	}

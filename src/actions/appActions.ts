@@ -30,6 +30,7 @@ const setLogoutAction = (): AppAction => {
 
 // async functions
 export const getHome = (): ThunkResult<Promise<Action | void>> => async (dispatch: RootThunkDispatch, getState: () => IReduxState) => {
+	dispatch(clearErrorAction());
 	const state = getState();
 	const headers = new Headers();
 	if (state.app.todo && state.app.todo.etag) {

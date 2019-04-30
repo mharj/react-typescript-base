@@ -33,7 +33,7 @@ const Broken = loadable({
 
 type Props = WithTranslation & IPropsState & IWithServiceWorker;
 
-class App extends React.Component<Props, any> {
+class App extends React.Component<Props> {
 	constructor(props: Props) {
 		super(props);
 		this.handleChangeLanguage = this.handleChangeLanguage.bind(this);
@@ -116,4 +116,4 @@ const mapStateToProps = (state: IReduxState): IPropsState => {
 		isLoggedIn: state.app.isLoggedIn,
 	};
 };
-export default connect<IPropsState>(mapStateToProps)(withTranslation()(withServiceWorker(App)));
+export default connect(mapStateToProps)(withTranslation()(withServiceWorker(App)));
