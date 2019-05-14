@@ -3,7 +3,7 @@ import {Helmet} from 'react-helmet';
 import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {getHome} from '../actions/appActions';
+import {getHome} from '../actions/demoActions';
 import {unWrapEtag} from '../lib/etagTools';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
@@ -58,7 +58,7 @@ class Home extends React.Component<Props> {
 
 const mapStateToProps = (state: IReduxState) => {
 	return {
-		todo: unWrapEtag(state.app.todo),
+		todo: unWrapEtag(state.demo.todo),
 	};
 };
 type IPropsState = ReturnType<typeof mapStateToProps>;

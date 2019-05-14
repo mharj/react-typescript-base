@@ -49,25 +49,21 @@ class Login extends React.Component<Props, IState> {
 			</div>
 		);
 	}
-	private handleLogin() {
-		this.props
-			.doLogin(this.state.username, this.state.password)
-			.then(() => {
-				this.props.history.push('/');
-			})
-			.catch(() => {
-				// ignore
-			});
+	private async handleLogin() {
+		try {
+			await this.props.doLogin(this.state.username, this.state.password);
+			this.props.history.push('/');
+		} catch (err) {
+			// ignore
+		}
 	}
-	private handleLogout() {
-		this.props
-			.doLogout()
-			.then(() => {
-				this.props.history.push('/');
-			})
-			.catch(() => {
-				// ignore
-			});
+	private async handleLogout() {
+		try {
+			await this.props.doLogout();
+			this.props.history.push('/');
+		} catch (err) {
+			// ignore
+		}
 	}
 	private onChange(e: React.FormEvent<HTMLInputElement>) {
 		const target = e.target as HTMLInputElement;

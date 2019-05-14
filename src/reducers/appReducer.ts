@@ -1,68 +1,50 @@
 import {Action, Reducer} from 'redux';
-import {IToDo} from '../interfaces/todo';
-import {IEtagData} from '../lib/etagTools';
 import {GlobalTypes, IGlobalAction} from './index';
 
 /**
- * Action types
+ * Redux action type keys
  */
 export enum Types {
-	APP_LOADING_STATE = 'APP_LOADING_STATE',
-	APP_SET_VALUE = 'APP_SET_VALUE',
-	APP_SET_ERROR = 'APP_SET_ERROR',
-	APP_CLEAR_ERROR = 'APP_CLEAR_ERROR',
-	LOGIN = 'LOGIN',
-	LOGOUT = 'LOGOUT',
+	APP_ERROR = 'APP_ERROR',
+	APP_LOADING = 'APP_LOADING_STATE',
+	APP_LOGIN = 'APP_LOGIN',
 }
 /**
  * Action interfaces
  */
-interface ISetValue extends Action {
-	type: Types.APP_SET_VALUE;
-	todo: IEtagData<IToDo>;
+interface IErrorAction extends Action {
+	type: Types.APP_ERROR;
+	error: string | undefined;
 }
 
-interface ISetError extends Action {
-	type: Types.APP_SET_ERROR;
-	error: string;
-}
-
-interface IClearError extends Action {
-	type: Types.APP_CLEAR_ERROR;
-}
-
-interface ILogin extends Action {
-	type: Types.LOGIN;
-}
-interface ILogout extends Action {
-	type: Types.LOGOUT;
+interface ILoginAction extends Action {
+	type: Types.APP_LOGIN;
+	isLoggedIn: boolean;
 }
 
 interface IApplicationLoadingAction extends Action {
-	type: Types.APP_LOADING_STATE;
+	type: Types.APP_LOADING;
 	isLoading: boolean;
 }
 
-export type AppAction = IApplicationLoadingAction | ISetValue | ISetError | IClearError | ILogin | ILogout | IGlobalAction;
+export type AppAction = IApplicationLoadingAction | IErrorAction | ILoginAction | IGlobalAction;
 
 /**
- * State interface
+ * Redux state interface
  */
 export interface IState {
-	error: string | null;
+	error: string | undefined;
 	isLoading: boolean;
 	isLoggedIn: boolean;
-	todo: IEtagData<IToDo> | null;
 }
 
 /**
- * Initial state
+ * Initial redux state
  */
 export const initialState: IState = {
-	error: null,
+	error: undefined,
 	isLoading: false,
 	isLoggedIn: false,
-	todo: null,
 };
 
 /**
@@ -70,37 +52,20 @@ export const initialState: IState = {
  */
 export const reducer: Reducer<IState> = (state = initialState, action: AppAction) => {
 	switch (action.type) {
-		case Types.APP_LOADING_STATE:
+		case Types.APP_LOADING:
 			return {
 				...state,
 				isLoading: action.isLoading,
 			};
-		case Types.APP_SET_VALUE:
-			return {
-				...state,
-				todo: action.todo,
-			};
-		case Types.APP_SET_ERROR:
+		case Types.APP_ERROR:
 			return {
 				...state,
 				error: action.error,
 			};
-		case Types.APP_CLEAR_ERROR:
+		case Types.APP_LOGIN:
 			return {
 				...state,
-				error: null,
-			};
-		case Types.LOGIN:
-			return {
-				...state,
-				error: null,
-				isLoggedIn: true,
-			};
-		case Types.LOGOUT:
-			return {
-				...state,
-				error: null,
-				isLoggedIn: false,
+				isLoggedIn: action.isLoggedIn,
 			};
 		case GlobalTypes.RESET:
 			return initialState;

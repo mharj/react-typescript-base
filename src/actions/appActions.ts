@@ -1,61 +1,33 @@
 import {Action} from 'redux';
-import {handleJsonResponse} from '.';
-import {IToDo} from '../interfaces/todo';
-import {dFetch} from '../lib/dFetch';
-import {getEtagHeader, IEtagData, wrapEtag} from '../lib/etagTools';
-import {IReduxState, RootThunkDispatch, ThunkResult, Types} from '../reducers';
+import {RootThunkDispatch, ThunkResult, Types} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
 
 // dispatch actions
-export const setAppLoadingAction = (isLoading: boolean): AppAction => {
-	return {type: Types.app.APP_LOADING_STATE, isLoading};
+export const appLoading = (isLoading: boolean): AppAction => {
+	return {type: Types.app.APP_LOADING, isLoading};
 };
 
-const setValueAction = (todo: IEtagData<IToDo>): AppAction => {
-	return {type: Types.app.APP_SET_VALUE, todo};
-};
-const setErrorAction = (error: string): AppAction => {
-	return {type: Types.app.APP_SET_ERROR, error};
+export const appError = (error: string | undefined): AppAction => {
+	return {type: Types.app.APP_ERROR, error};
 };
 
-const clearErrorAction = (): AppAction => {
-	return {type: Types.app.APP_CLEAR_ERROR};
-};
-const setLoginAction = (): AppAction => {
-	return {type: Types.app.LOGIN};
-};
-const setLogoutAction = (): AppAction => {
-	return {type: Types.app.LOGOUT};
+export const appLogin = (isLoggedIn: boolean): AppAction => {
+	return {type: Types.app.APP_LOGIN, isLoggedIn};
 };
 
-// async functions
-export const getHome = (): ThunkResult<Promise<Action | void>> => async (dispatch: RootThunkDispatch, getState: () => IReduxState) => {
-	dispatch(clearErrorAction());
-	const state = getState();
-	const headers = new Headers();
-	if (state.app.todo && state.app.todo.etag) {
-		headers.set('if-none-match', state.app.todo.etag);
-	}
-	try {
-		const res = await dispatch(dFetch('https://jsonplaceholder.typicode.com/todos/1', {headers}));
-		const todo = await dispatch(handleJsonResponse<IToDo>(res, setLogoutAction));
-		if (todo) {
-			return Promise.resolve(dispatch(setValueAction(wrapEtag<IToDo>(todo, getEtagHeader(res)))));
-		}
-	} catch (err) {
-		return Promise.reject(dispatch(setErrorAction(err.message)));
-	}
+export const appLogout = (): AppAction => {
+	return {type: Types.app.APP_LOGIN, isLoggedIn: false};
 };
 
 export const doLogin = (username: string, password: string): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
-	dispatch(clearErrorAction());
+	dispatch(appError(undefined));
 	if (username === 'test' && password === 'password') {
-		return Promise.resolve(dispatch(setLoginAction()));
+		return Promise.resolve(dispatch(appLogin(true)));
 	} else {
-		return Promise.reject(dispatch(setErrorAction('account or password not match')));
+		return Promise.reject(dispatch(appError('account or password not match')));
 	}
 };
 
 export const doLogout = (): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
-	return Promise.resolve(dispatch(setLogoutAction()));
+	return Promise.resolve(dispatch(appLogout()));
 };

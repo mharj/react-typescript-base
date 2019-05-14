@@ -1,5 +1,5 @@
 import {v4 as uuid} from 'uuid';
-import {setAppLoadingAction} from '../actions/appActions';
+import {appLoading} from '../actions/appActions';
 import {IReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
 
 const loadingUuidList: string[] = [];
@@ -44,17 +44,17 @@ const isLoading = (): boolean => {
 export const dFetch = (input: RequestInfo, options?: RequestInit | undefined): ThunkResult<Promise<Response>> => async (dispatch: RootThunkDispatch,getState: () => IReduxState) => {
 	const id = uuid();
 	if (addUuid(id)) {
-		dispatch(setAppLoadingAction(isLoading()));
+		dispatch(appLoading(isLoading()));
 	}
 	try {
 		const res = await fetch(input, options);
 		if (dropUuid(id)) {
-			dispatch(setAppLoadingAction(isLoading()));
+			dispatch(appLoading(isLoading()));
 		}
 		return Promise.resolve(res);
 	} catch (err) {
 		if (dropUuid(id)) {
-			dispatch(setAppLoadingAction(isLoading()));
+			dispatch(appLoading(isLoading()));
 		}
 		throw err;
 	}

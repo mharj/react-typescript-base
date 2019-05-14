@@ -7,7 +7,7 @@ type IPrivateRoute = RouteProps & {
 	component: React.ElementType,
 }
 
-const PrivateRoute = ({component: Component, ...routeProps}:IPrivateRoute) => (
+const PrivateRoute: React.FunctionComponent<IPrivateRoute> = ({component: Component, ...routeProps}) => (
 	<Route
 		{...routeProps}
 		render={(props) => {

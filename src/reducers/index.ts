@@ -1,6 +1,7 @@
 import {Action, combineReducers} from 'redux';
 import {ThunkAction, ThunkDispatch} from 'redux-thunk';
 import * as app from './appReducer';
+import * as demo from './demoReducer';
 
 /**
  * This enum is meant for types which might affect all reducers
@@ -13,7 +14,7 @@ interface IGlobalResetAction extends Action {
 	type: GlobalTypes.RESET;
 }
 
-// Merge actions
+// Merge global actions
 export type IGlobalAction = IGlobalResetAction;
 
 /**
@@ -21,6 +22,7 @@ export type IGlobalAction = IGlobalResetAction;
  */
 export interface IReduxState {
 	app: app.IState;
+	demo: demo.IState;
 }
 
 /**
@@ -28,6 +30,7 @@ export interface IReduxState {
  */
 export const Types = {
 	app: app.Types,
+	demo: demo.Types,
 };
 
 /**
@@ -36,6 +39,7 @@ export const Types = {
  */
 export const initialState: IReduxState = {
 	app: app.initialState,
+	demo: demo.initialState,
 };
 
 /**
@@ -43,6 +47,7 @@ export const initialState: IReduxState = {
  */
 export const rootReducer = combineReducers<IReduxState>({
 	app: app.reducer,
+	demo: demo.reducer,
 });
 
 export type ThunkResult<R> = ThunkAction<R, IReduxState, undefined, Action>;

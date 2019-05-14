@@ -103,17 +103,13 @@ class App extends React.Component<Props> {
 }
 
 // redux state props
-interface IPropsState {
-	error: string | null;
-	isLoading: boolean;
-	isLoggedIn: boolean;
-}
-
-const mapStateToProps = (state: IReduxState): IPropsState => {
+const mapStateToProps = (state: IReduxState) => {
 	return {
 		error: state.app.error,
 		isLoading: state.app.isLoading,
 		isLoggedIn: state.app.isLoggedIn,
 	};
 };
+type IPropsState = ReturnType<typeof mapStateToProps>;
+
 export default connect(mapStateToProps)(withTranslation()(withServiceWorker(App)));
