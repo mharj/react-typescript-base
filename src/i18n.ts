@@ -10,6 +10,9 @@ i18next.use(LanguageDetector).init({
 	},
 	keySeparator: false, // we use content as keys
 	ns: ['translation'],
+	parseMissingKeyHandler: (key) => {
+		return process.env.NODE_ENV === 'development' ? '#' + key + '#' : key;
+	},
 	react: {
 		wait: true,
 	},
