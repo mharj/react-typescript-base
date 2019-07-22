@@ -1,32 +1,34 @@
 import * as React from 'react';
 import {STATUS as WORKER_STATUS} from './registerServiceWorker';
 
-interface IState {
-	serviceWorkerState: WORKER_STATUS | null;
-	serviceWorkerUpdate: null | any;
+export interface IWithServiceWorker {
+	serviceWorkerState: WORKER_STATUS | undefined;
+	serviceWorkerUpdate: (() => void) | undefined;
 }
 
 interface IProps {
 	children: React.ReactNode;
 }
 
-const initialContext: IState = {
-	serviceWorkerState: null,
-	serviceWorkerUpdate: null,
+const initialContext: IWithServiceWorker = {
+	serviceWorkerState: undefined,
+	serviceWorkerUpdate: undefined,
 };
 
-const WorkerContext = React.createContext(initialContext);
+const WorkerContext = React.createContext<IWithServiceWorker>(initialContext);
 
 export const ServiceWorkerConsumer = WorkerContext.Consumer;
+const Provider = WorkerContext.Provider;
 
-export function withServiceWorker(WrappedComponent: typeof React.Component) {
-	return function Wrapper(props: any) {
+export function withServiceWorker<P extends IWithServiceWorker>(
+	WrappedComponent: React.ComponentClass<P> | React.StatelessComponent<P>,
+): React.FunctionComponent<Omit<P, keyof IWithServiceWorker>> {
+	return function Wrapper(props: P) {
 		return <ServiceWorkerConsumer>{(value) => <WrappedComponent {...props} {...value} />}</ServiceWorkerConsumer>;
 	};
 }
-export type IWithServiceWorker = IState;
 
-export class ServiceWorkerProvider extends React.Component<IProps, IState> {
+export class ServiceWorkerProvider extends React.Component<IProps, IWithServiceWorker> {
 	constructor(props: IProps) {
 		super(props);
 		this.state = initialContext;
@@ -40,11 +42,11 @@ export class ServiceWorkerProvider extends React.Component<IProps, IState> {
 		);
 	}
 	public render() {
-		const contextValue: IState = {
+		const contextValue: IWithServiceWorker = {
 			serviceWorkerState: this.state.serviceWorkerState,
 			serviceWorkerUpdate: this.runUpdate,
 		};
-		return <WorkerContext.Provider value={contextValue}>{this.props.children}</WorkerContext.Provider>;
+		return <Provider value={contextValue}>{this.props.children}</Provider>;
 	}
 	private onServiceStateChange(state: WORKER_STATUS) {
 		this.setState({

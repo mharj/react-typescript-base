@@ -7,11 +7,13 @@ import './App.css';
 import ErrorBoundary from './components/ErrorBoundary';
 import PrivateRoute from './components/PrivateRoute';
 import logo from './logo.svg';
+import {IWithNotification, withNotification} from './NotificationProvider';
 import {IReduxState} from './reducers';
-import {IWithServiceWorker, withServiceWorker, } from './ServiceWorkerProvider';
+import {IWithServiceWorker, withServiceWorker} from './ServiceWorkerProvider';
 import ErrorView from './views/Error';
 
 const Loading = () => <div>Loading!...</div>;
+
 
 // views code split
 const Home = loadable({
@@ -31,17 +33,17 @@ const Broken = loadable({
 	loading: Loading,
 });
 
-type Props = WithTranslation & IPropsState & IWithServiceWorker;
+type Props = WithTranslation & IPropsState & IWithServiceWorker & IWithNotification;
 
 class App extends React.Component<Props> {
-	constructor(props: Props) {
+	constructor(props: Props) {		
 		super(props);
 		this.handleChangeLanguage = this.handleChangeLanguage.bind(this);
+		this.handleNotificationRequest = this.handleNotificationRequest.bind(this);
 	}
 
 	public render() {
-		const {isLoggedIn, t} = this.props;
-
+		const {notificationStatus, isLoggedIn, t} = this.props;
 		return (
 			<Router>
 				<div className="App">
@@ -58,6 +60,7 @@ class App extends React.Component<Props> {
 					<button value="sv-SV" onClick={this.handleChangeLanguage}>
 						{t('sve')}
 					</button>
+					{notificationStatus === 'default' ? <button onClick={this.handleNotificationRequest}>{t('notification_request')}</button> : null}
 					<br />
 					{this.props.isLoading ? 'Fetching API data ..' : ''}
 					<br />
@@ -100,6 +103,13 @@ class App extends React.Component<Props> {
 		const target = event.target as HTMLButtonElement;
 		this.props.i18n.changeLanguage(target.value);
 	}
+	private async handleNotificationRequest() {
+		try {
+			await this.props.requestNotification();
+		} catch (err) {
+			// ignore
+		}
+	}
 }
 
 // redux state props
@@ -112,4 +122,4 @@ const mapStateToProps = (state: IReduxState) => {
 };
 type IPropsState = ReturnType<typeof mapStateToProps>;
 
-export default connect(mapStateToProps)(withTranslation()(withServiceWorker(App)));
+export default connect(mapStateToProps)(withTranslation()(withServiceWorker(withNotification(App))));
