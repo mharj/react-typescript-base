@@ -1,8 +1,9 @@
 import * as React from 'react';
 import {withTranslation, WithTranslation} from 'react-i18next';
-import * as loadable from 'react-loadable';
+import loadable from 'react-loadable';
 import {connect} from 'react-redux';
 import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom';
+import {compose} from 'redux';
 import './App.css';
 import ErrorBoundary from './components/ErrorBoundary';
 import PrivateRoute from './components/PrivateRoute';
@@ -13,7 +14,6 @@ import {IWithServiceWorker, withServiceWorker} from './ServiceWorkerProvider';
 import ErrorView from './views/Error';
 
 const Loading = () => <div>Loading!...</div>;
-
 
 // views code split
 const Home = loadable({
@@ -36,7 +36,7 @@ const Broken = loadable({
 type Props = WithTranslation & IPropsState & IWithServiceWorker & IWithNotification;
 
 class App extends React.Component<Props> {
-	constructor(props: Props) {		
+	constructor(props: Props) {
 		super(props);
 		this.handleChangeLanguage = this.handleChangeLanguage.bind(this);
 		this.handleNotificationRequest = this.handleNotificationRequest.bind(this);
@@ -122,4 +122,9 @@ const mapStateToProps = (state: IReduxState) => {
 };
 type IPropsState = ReturnType<typeof mapStateToProps>;
 
-export default connect(mapStateToProps)(withTranslation()(withServiceWorker(withNotification(App))));
+export default compose(
+	connect(mapStateToProps),
+	withTranslation(),
+	withServiceWorker,
+	withNotification,
+)(App);

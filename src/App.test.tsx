@@ -1,6 +1,6 @@
-import {configure, /* mount */} from 'enzyme';
-import * as Adapter from 'enzyme-adapter-react-16';
-import i18next from 'i18next';
+import {configure /* mount */} from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import * as i18next from 'i18next';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {I18nextProvider} from 'react-i18next';
