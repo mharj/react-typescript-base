@@ -1,23 +1,21 @@
 import {Action} from 'redux';
-import {RootThunkDispatch, ThunkResult, Types} from '../reducers';
+import {RootThunkDispatch, ThunkResult} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
 
 // dispatch actions
 export const appLoading = (isLoading: boolean): AppAction => {
-	return {type: Types.app.APP_LOADING, isLoading};
+	return {type: 'APP_LOADING_STATE', isLoading};
 };
 
 export const appError = (error: string | undefined): AppAction => {
-	return {type: Types.app.APP_ERROR, error};
+	return {type: 'APP_ERROR', error};
 };
 
 export const appLogin = (isLoggedIn: boolean): AppAction => {
-	return {type: Types.app.APP_LOGIN, isLoggedIn};
+	return {type: 'APP_LOGIN', isLoggedIn};
 };
 
-export const appLogout = (): AppAction => {
-	return {type: Types.app.APP_LOGIN, isLoggedIn: false};
-};
+export const appLogout: () => AppAction = appLogin.bind(undefined, false);
 
 export const doLogin = (username: string, password: string): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
 	dispatch(appError(undefined));

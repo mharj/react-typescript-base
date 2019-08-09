@@ -6,12 +6,10 @@ import * as demo from './demoReducer';
 /**
  * This enum is meant for types which might affect all reducers
  */
-export enum GlobalTypes {
-	RESET = 'RESET',
-}
+export type GlobalTypes = 'RESET';
 // Global actions
-interface IGlobalResetAction extends Action {
-	type: GlobalTypes.RESET;
+interface IGlobalResetAction extends Action<GlobalTypes> {
+	type: 'RESET';
 }
 
 // Merge global actions
@@ -24,14 +22,6 @@ export interface IReduxState {
 	app: app.IState;
 	demo: demo.IState;
 }
-
-/**
- * Combine all reducer action types
- */
-export const Types = {
-	app: app.Types,
-	demo: demo.Types,
-};
 
 /**
  * Combine all initial states

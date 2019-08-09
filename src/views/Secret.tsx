@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React, {Component} from 'react';
 import {Helmet} from 'react-helmet';
 import {withTranslation, WithTranslation} from 'react-i18next';
 
-class Secret extends React.Component<WithTranslation> {
+class Secret extends Component<WithTranslation> {
 	public render() {
 		return (
 			<div>

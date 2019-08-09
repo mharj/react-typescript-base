@@ -1,9 +1,8 @@
-import * as React from 'react';
+import React, {Component, FormEvent} from 'react';
 import {withTranslation, WithTranslation} from 'react-i18next';
-import loadable from 'react-loadable';
+import Loadable from 'react-loadable';
 import {connect} from 'react-redux';
 import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom';
-import {compose} from 'redux';
 import './App.css';
 import ErrorBoundary from './components/ErrorBoundary';
 import PrivateRoute from './components/PrivateRoute';
@@ -16,26 +15,26 @@ import ErrorView from './views/Error';
 const Loading = () => <div>Loading!...</div>;
 
 // views code split
-const Home = loadable({
+const Home = Loadable({
 	loader: () => import('./views/Home' /* webpackChunkName: "home-view" */),
 	loading: Loading,
 });
-const Login = loadable({
+const Login = Loadable({
 	loader: () => import('./views/Login' /* webpackChunkName: "login-view" */),
 	loading: Loading,
 });
-const Secret = loadable({
+const Secret = Loadable({
 	loader: () => import('./views/Secret' /* webpackChunkName: "secret-view" */),
 	loading: Loading,
 });
-const Broken = loadable({
+const Broken = Loadable({
 	loader: () => import('./views/Broken' /* webpackChunkName: "broken-view" */),
 	loading: Loading,
 });
 
 type Props = WithTranslation & IPropsState & IWithServiceWorker & IWithNotification;
 
-class App extends React.Component<Props> {
+class App extends Component<Props> {
 	constructor(props: Props) {
 		super(props);
 		this.handleChangeLanguage = this.handleChangeLanguage.bind(this);
@@ -99,8 +98,8 @@ class App extends React.Component<Props> {
 			</Router>
 		);
 	}
-	private handleChangeLanguage(event: React.SyntheticEvent<HTMLButtonElement>) {
-		const target = event.target as HTMLButtonElement;
+	private handleChangeLanguage(event: FormEvent<HTMLButtonElement>) {
+		const target = event.currentTarget;
 		this.props.i18n.changeLanguage(target.value);
 	}
 	private async handleNotificationRequest() {
@@ -122,9 +121,4 @@ const mapStateToProps = (state: IReduxState) => {
 };
 type IPropsState = ReturnType<typeof mapStateToProps>;
 
-export default compose(
-	connect(mapStateToProps),
-	withTranslation(),
-	withServiceWorker,
-	withNotification,
-)(App);
+export default connect(mapStateToProps)(withTranslation()(withServiceWorker(withNotification(App))));

@@ -1,7 +1,5 @@
 import 'react-app-polyfill/ie9'; // tslint:disable-next-line
-import * as React from 'react';
-import {Suspense} from 'react';
-import './i18n';
+import React, {Suspense} from 'react';
 import './index.css';
 import {NotificationProvider} from './NotificationProvider';
 import {ServiceWorkerProvider} from './ServiceWorkerProvider';
@@ -13,6 +11,7 @@ Promise.all([
 	import('redux-persist/integration/react' /* webpackChunkName: "persist", webpackPreload: true */),
 	import('./App' /* webpackChunkName: "app", webpackPreload: true */),
 	import('cross-fetch/polyfill' /* webpackChunkName: "fetch", webpackPreload: true */),
+	import('./i18n' /* webpackChunkName: "i18n", webpackPreload: true */),
 ]).then((loaded) => {
 	const [configureStore, ReactDOM, Redux, Persist, App] = loaded;
 	const {store, persistor} = configureStore.default();

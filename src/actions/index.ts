@@ -5,10 +5,15 @@ export const handleJsonResponse = <T>(res: Response, unAuthorizedAction?: () => 
 	dispatch: RootThunkDispatch,
 ) => {
 	let payload: T | undefined;
-	try {
-		payload = (await res.json()) as T;
-	} catch (err) {
-		// ignore
+	if (res.ok === true && res.headers.get('Content-Length') !== '0') {
+		if (res.headers.get('Content-Length') === null) {
+			console.warn('fetch response headers missing Content-Length, check server or CORS settings');
+		}
+		try {
+			payload = (await res.json()) as T;
+		} catch (err) {
+			// ignore
+		}
 	}
 	switch (res.status) {
 		case 200:

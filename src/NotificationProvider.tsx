@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {Component, ComponentClass, createContext, FunctionComponent, ReactNode, StatelessComponent} from 'react';
 
 export interface IWithNotification {
 	notificationStatus: string | undefined;
@@ -6,7 +6,7 @@ export interface IWithNotification {
 }
 
 interface IProps {
-	children: React.ReactNode;
+	children: ReactNode;
 }
 
 const requestNotification = async (): Promise<void> => {
@@ -27,20 +27,20 @@ const initialContext: IWithNotification = {
 	requestNotification,
 };
 
-const NotificationContext = React.createContext<IWithNotification>(initialContext);
+const NotificationContext = createContext<IWithNotification>(initialContext);
 
 export const NotificationConsumer = NotificationContext.Consumer;
 const Provider = NotificationContext.Provider;
 
 export function withNotification<P extends IWithNotification>(
-	WrappedComponent: React.ComponentClass<P> | React.StatelessComponent<P>,
-): React.FunctionComponent<Omit<P, keyof IWithNotification>> {
+	WrappedComponent: ComponentClass<P> | StatelessComponent<P>,
+): FunctionComponent<Omit<P, keyof IWithNotification>> {
 	return function Wrapper(props: P) {
 		return <NotificationConsumer>{(value) => <WrappedComponent {...props} {...value} />}</NotificationConsumer>;
 	};
 }
 
-export class NotificationProvider extends React.Component<IProps, IWithNotification> {
+export class NotificationProvider extends Component<IProps, IWithNotification> {
 	constructor(props: IProps) {
 		super(props);
 		this.state = initialContext;

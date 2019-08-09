@@ -1,19 +1,17 @@
 import {Action, Reducer} from 'redux';
 import {IEtagObject} from '../lib/etagTools';
-import {GlobalTypes, IGlobalAction} from './index';
+import {IGlobalAction} from './index';
 
 /**
  * Redux action type keys
  */
-export enum Types {
-	DEMO_VALUE = 'DEMO_VALUE',
-}
+export type Types = 'DEMO_VALUE';
 
 /**
  * Action interfaces
  */
-interface ISetValue extends Action {
-	type: Types.DEMO_VALUE;
+interface ISetValue extends Action<Types> {
+	type: 'DEMO_VALUE';
 	todo: IEtagObject<IToDo>;
 }
 export type DemoAction = ISetValue | IGlobalAction;
@@ -34,23 +32,23 @@ export const initialState: IState = {
 
 // TODO interface
 export interface IToDo {
-	userId:number,
-	id: number,
-	title: string,
-	completed: boolean,
+	userId: number;
+	id: number;
+	title: string;
+	completed: boolean;
 }
 
 /**
  * Reducer
  */
-export const reducer: Reducer<IState> = (state = initialState, action: DemoAction) => {
+export const reducer: Reducer<IState, DemoAction> = (state = initialState, action): IState => {
 	switch (action.type) {
-		case Types.DEMO_VALUE:
+		case 'DEMO_VALUE':
 			return {
 				...state,
 				todo: action.todo,
 			};
-		case GlobalTypes.RESET:
+		case 'RESET':
 			return initialState;
 		default:
 			return state;

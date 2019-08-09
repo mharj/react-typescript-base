@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {Component} from 'react';
 import {Helmet} from 'react-helmet';
 import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
@@ -9,7 +9,7 @@ import {IReduxState, RootThunkDispatch} from '../reducers';
 
 type Props = WithTranslation & IPropsState & ActionList;
 
-class Home extends React.Component<Props> {
+class Home extends Component<Props> {
 	public componentDidMount() {
 		this.props.getHome().then(() => {
 			console.log('async promise done');
@@ -56,11 +56,9 @@ class Home extends React.Component<Props> {
 	}
 }
 
-const mapStateToProps = (state: IReduxState) => {
-	return {
-		todo: unWrapEtag(state.demo.todo),
-	};
-};
+const mapStateToProps = (state: IReduxState) => ({
+	todo: unWrapEtag(state.demo.todo),
+});
 type IPropsState = ReturnType<typeof mapStateToProps>;
 
 const mapDispatchToProps = (dispatch: RootThunkDispatch) =>

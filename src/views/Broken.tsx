@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React, {Component} from 'react';
 
-class Broken extends React.Component {
+class Broken extends Component {
 	public componentDidMount() {
 		throw new Error('Broken: something got broken');
 	}

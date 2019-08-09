@@ -2,13 +2,13 @@ import {Action} from 'redux';
 import {handleJsonResponse} from '.';
 import {dFetch} from '../lib/dFetch';
 import {getEtagHeader, IEtagObject, isEtagObject, wrapEtag} from '../lib/etagTools';
-import {IReduxState, RootThunkDispatch, ThunkResult, Types} from '../reducers';
+import {IReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
 import {DemoAction, IToDo} from '../reducers/demoReducer';
 import {appError, appLogout} from './appActions';
 
 // dispatch actions
 const setValueAction = (todo: IEtagObject<IToDo>): DemoAction => {
-	return {type: Types.demo.DEMO_VALUE, todo};
+	return {type: 'DEMO_VALUE', todo};
 };
 
 // async functions

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {Component, FormEvent, KeyboardEvent} from 'react';
 import {Helmet} from 'react-helmet';
 import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
@@ -8,20 +8,18 @@ import {bindActionCreators} from 'redux';
 import {doLogin, doLogout} from '../actions/appActions';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
-interface IState {
-	password: string;
-	username: string;
-}
-
 type Props = WithTranslation & RouteComponentProps & IPropsState & ActionList;
 
-class Login extends React.Component<Props, IState> {
+const initialState = {
+	password: '',
+	username: '',
+};
+type State = typeof initialState;
+
+class Login extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
-		this.state = {
-			password: '',
-			username: '',
-		};
+		this.state = initialState;
 		this.handleLogin = this.handleLogin.bind(this);
 		this.handleLogout = this.handleLogout.bind(this);
 		this.onChange = this.onChange.bind(this);
@@ -65,8 +63,8 @@ class Login extends React.Component<Props, IState> {
 			// ignore
 		}
 	}
-	private onChange(e: React.FormEvent<HTMLInputElement>) {
-		const target = e.target as HTMLInputElement;
+	private onChange(e: FormEvent<HTMLInputElement>) {
+		const target = e.currentTarget;
 		switch (target.name) {
 			case 'username':
 				return this.setState({username: target.value});
@@ -74,7 +72,7 @@ class Login extends React.Component<Props, IState> {
 				return this.setState({password: target.value});
 		}
 	}
-	private onKeyUp(e: React.KeyboardEvent<HTMLInputElement>) {
+	private onKeyUp(e: KeyboardEvent<HTMLInputElement>) {
 		if (e.keyCode === 13) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -86,9 +84,9 @@ class Login extends React.Component<Props, IState> {
 }
 
 // redux state props
-const mapStateToProps = (state: IReduxState) => {
-	return {isLoggedIn: state.app.isLoggedIn};
-};
+const mapStateToProps = (state: IReduxState) => ({
+	isLoggedIn: state.app.isLoggedIn,
+});
 type IPropsState = ReturnType<typeof mapStateToProps>;
 
 const mapDispatchToProps = (dispatch: RootThunkDispatch) =>

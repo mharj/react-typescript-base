@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {Component} from 'react';
 import {Helmet} from 'react-helmet';
 import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
@@ -8,8 +8,9 @@ import {IErrorProps} from '../components/ErrorBoundary';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
 type Props = IPropsState & WithTranslation & ActionList;
+type ErrorViewProps = IErrorProps;
 
-class ErrorView extends React.Component<Props> {
+class ErrorView extends Component<Props> {
 	public render() {
 		const {t} = this.props;
 		return (
@@ -27,11 +28,9 @@ class ErrorView extends React.Component<Props> {
 	}
 }
 
-const mapStateToProps = (state: IReduxState, ownprops: IErrorProps) => {
-	return {
-		error: ownprops.error
-	};
-};
+const mapStateToProps = (state: IReduxState, ownProps: ErrorViewProps) => ({
+	error: ownProps.error,
+});
 type IPropsState = ReturnType<typeof mapStateToProps>;
 
 const mapDispatchToProps = (dispatch: RootThunkDispatch) =>

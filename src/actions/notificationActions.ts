@@ -2,12 +2,11 @@ import {Action} from 'redux';
 import {PUBLIC_VAPID_KEY} from '../env';
 // import {dFetch} from '../lib/dFetch';
 import {IReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
-import { appError } from './appActions';
-
+import {appError} from './appActions';
 
 const sendSubscription = (subscription: PushSubscription): ThunkResult<Promise<Action>> => async (dispatch: RootThunkDispatch, getState: () => IReduxState) => {
-    console.log('push API sendSubscription');
-    throw new Error('Push notification client register URL is not configured!')
+	console.log('push API sendSubscription');
+	throw new Error('Push notification client register URL is not configured!');
 	/* return dispatch(
 		dFetch('/api/notifications/subscribe', { // TODO: change to API server to register push clients
 			body: JSON.stringify(subscription),

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {Component, ComponentClass, createContext, FunctionComponent, ReactNode, StatelessComponent} from 'react';
 import {STATUS as WORKER_STATUS} from './registerServiceWorker';
 
 export interface IWithServiceWorker {
@@ -7,7 +7,7 @@ export interface IWithServiceWorker {
 }
 
 interface IProps {
-	children: React.ReactNode;
+	children: ReactNode;
 }
 
 const initialContext: IWithServiceWorker = {
@@ -15,20 +15,20 @@ const initialContext: IWithServiceWorker = {
 	serviceWorkerUpdate: undefined,
 };
 
-const WorkerContext = React.createContext<IWithServiceWorker>(initialContext);
+const WorkerContext = createContext<IWithServiceWorker>(initialContext);
 
 export const ServiceWorkerConsumer = WorkerContext.Consumer;
 const Provider = WorkerContext.Provider;
 
 export function withServiceWorker<P extends IWithServiceWorker>(
-	WrappedComponent: React.ComponentClass<P> | React.StatelessComponent<P>,
-): React.FunctionComponent<Omit<P, keyof IWithServiceWorker>> {
+	WrappedComponent: ComponentClass<P> | StatelessComponent<P>,
+): FunctionComponent<Omit<P, keyof IWithServiceWorker>> {
 	return function Wrapper(props: P) {
 		return <ServiceWorkerConsumer>{(value) => <WrappedComponent {...props} {...value} />}</ServiceWorkerConsumer>;
 	};
 }
 
-export class ServiceWorkerProvider extends React.Component<IProps, IWithServiceWorker> {
+export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker> {
 	constructor(props: IProps) {
 		super(props);
 		this.state = initialContext;
