@@ -3,7 +3,7 @@ import {IGlobalAction, RootThunkDispatch, ThunkResult} from '../reducers';
 
 // dispatcher actions
 const doRestAction = (): IGlobalAction => {
-	return {type: 'RESET'};
+	return {type: 'global/RESET'};
 };
 
 // async functions

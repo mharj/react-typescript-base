@@ -8,7 +8,7 @@ import {appError, appLogout} from './appActions';
 
 // dispatch actions
 const setValueAction = (todo: IEtagObject<IToDo>): DemoAction => {
-	return {type: 'DEMO_VALUE', todo};
+	return {type: 'demo/VALUE', todo};
 };
 
 // async functions

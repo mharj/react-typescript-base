@@ -5,16 +5,16 @@ import {IGlobalAction} from './index';
 /**
  * Redux action type keys
  */
-export type Types = 'DEMO_VALUE';
+export type Types = 'demo/VALUE';
 
 /**
  * Action interfaces
  */
 interface ISetValue extends Action<Types> {
-	type: 'DEMO_VALUE';
+	type: 'demo/VALUE';
 	todo: IEtagObject<IToDo>;
 }
-export type DemoAction = ISetValue | IGlobalAction;
+export type DemoAction = ISetValue;
 
 /**
  * Redux state interface
@@ -41,14 +41,14 @@ export interface IToDo {
 /**
  * Reducer
  */
-export const reducer: Reducer<IState, DemoAction> = (state = initialState, action): IState => {
+export const reducer: Reducer<IState, DemoAction | IGlobalAction> = (state = initialState, action): IState => {
 	switch (action.type) {
-		case 'DEMO_VALUE':
+		case 'demo/VALUE':
 			return {
 				...state,
 				todo: action.todo,
 			};
-		case 'RESET':
+		case 'global/RESET':
 			return initialState;
 		default:
 			return state;

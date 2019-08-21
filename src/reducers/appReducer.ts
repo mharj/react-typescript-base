@@ -4,27 +4,27 @@ import {IGlobalAction} from './index';
 /**
  * Redux action type keys
  */
-export type Types = 'APP_ERROR' | 'APP_LOADING_STATE' | 'APP_LOGIN';
+export type Types = 'app/ERROR' | 'app/LOADING' | 'app/LOGIN';
 
 /**
  * Action interfaces
  */
 interface IErrorAction extends Action<Types> {
-	type: 'APP_ERROR';
+	type: 'app/ERROR';
 	error: string | undefined;
 }
 
 interface ILoginAction extends Action<Types> {
-	type: 'APP_LOGIN';
+	type: 'app/LOGIN';
 	isLoggedIn: boolean;
 }
 
 interface IApplicationLoadingAction extends Action<Types> {
-	type: 'APP_LOADING_STATE';
+	type: 'app/LOADING';
 	isLoading: boolean;
 }
 
-export type AppAction = IApplicationLoadingAction | IErrorAction | ILoginAction | IGlobalAction;
+export type AppAction = IApplicationLoadingAction | IErrorAction | ILoginAction;
 
 /**
  * Redux state interface
@@ -47,24 +47,24 @@ export const initialState: IState = {
 /**
  * Reducer
  */
-export const reducer: Reducer<IState, AppAction> = (state = initialState, action): IState => {
+export const reducer: Reducer<IState, AppAction | IGlobalAction> = (state = initialState, action): IState => {
 	switch (action.type) {
-		case 'APP_LOADING_STATE':
+		case 'app/LOADING':
 			return {
 				...state,
 				isLoading: action.isLoading,
 			};
-		case 'APP_ERROR':
+		case 'app/ERROR':
 			return {
 				...state,
 				error: action.error,
 			};
-		case 'APP_LOGIN':
+		case 'app/LOGIN':
 			return {
 				...state,
 				isLoggedIn: action.isLoggedIn,
 			};
-		case 'RESET':
+		case 'global/RESET':
 			return initialState;
 		default:
 			return state;

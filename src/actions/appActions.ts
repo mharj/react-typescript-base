@@ -4,15 +4,15 @@ import {AppAction} from '../reducers/appReducer';
 
 // dispatch actions
 export const appLoading = (isLoading: boolean): AppAction => {
-	return {type: 'APP_LOADING_STATE', isLoading};
+	return {type: 'app/LOADING', isLoading};
 };
 
 export const appError = (error: string | undefined): AppAction => {
-	return {type: 'APP_ERROR', error};
+	return {type: 'app/ERROR', error};
 };
 
 export const appLogin = (isLoggedIn: boolean): AppAction => {
-	return {type: 'APP_LOGIN', isLoggedIn};
+	return {type: 'app/LOGIN', isLoggedIn};
 };
 
 export const appLogout: () => AppAction = appLogin.bind(undefined, false);

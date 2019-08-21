@@ -6,10 +6,10 @@ import * as demo from './demoReducer';
 /**
  * This enum is meant for types which might affect all reducers
  */
-export type GlobalTypes = 'RESET';
+export type GlobalTypes = 'global/RESET';
 // Global actions
 interface IGlobalResetAction extends Action<GlobalTypes> {
-	type: 'RESET';
+	type: 'global/RESET';
 }
 
 // Merge global actions
