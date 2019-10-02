@@ -1,4 +1,4 @@
-import React, {Component, FormEvent, KeyboardEvent} from 'react';
+import React, {ChangeEvent, Component, KeyboardEvent} from 'react';
 import {Helmet} from 'react-helmet';
 import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
@@ -63,7 +63,7 @@ class Login extends Component<Props, State> {
 			// ignore
 		}
 	}
-	private onChange(e: FormEvent<HTMLInputElement>) {
+	private onChange(e: ChangeEvent<HTMLInputElement>) {
 		const target = e.currentTarget;
 		switch (target.name) {
 			case 'username':
