@@ -22,6 +22,7 @@ export const doLogin = (username: string, password: string): ThunkResult<Promise
 	if (username === 'test' && password === 'password') {
 		return Promise.resolve(dispatch(appLogin(true)));
 	} else {
+		dispatch(appLogin(false));
 		return Promise.reject(dispatch(appError('account or password not match')));
 	}
 };

@@ -1,4 +1,5 @@
-import 'react-app-polyfill/ie9'; // tslint:disable-next-line
+import 'react-app-polyfill/ie9';
+import 'react-app-polyfill/stable'; // tslint:disable-next-line
 import React, {Suspense} from 'react';
 import './index.css';
 import {NotificationProvider} from './NotificationProvider';

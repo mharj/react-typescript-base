@@ -5,6 +5,7 @@
     "module": "esnext",
     "target": "es5",
     "lib": [
+      "es6",
       "dom",
       "dom.iterable",
       "esnext"
@@ -32,6 +33,7 @@
     "acceptance-tests",
     "webpack",
     "jest",
+    "test",
     "src/setupTests.ts",
     "public/*.js"
   ]
