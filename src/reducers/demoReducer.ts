@@ -1,5 +1,5 @@
 import {Action, Reducer} from 'redux';
-import {IEtagObject} from '../lib/etagTools';
+import {IEtagObject, wrapEtag} from '../lib/etagTools';
 import {IGlobalAction} from './index';
 
 /**
@@ -20,14 +20,14 @@ export type DemoAction = ISetValue;
  * Redux state interface
  */
 export interface IState {
-	todo: IEtagObject<IToDo> | undefined;
+	todo: IEtagObject<IToDo | undefined>;
 }
 
 /**
  * Initial redux state
  */
 export const initialState: IState = {
-	todo: undefined,
+	todo: wrapEtag(undefined, null),
 };
 
 // TODO interface

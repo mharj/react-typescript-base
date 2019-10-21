@@ -22,3 +22,6 @@ yarn-error.log*
 
 # ignore src css as scss is used
 src/*.css
+
+# nyc output
+.nyc_output

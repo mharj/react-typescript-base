@@ -1,4 +1,3 @@
-import {Action} from 'redux';
 import {handleJsonResponse} from '.';
 import {dFetch} from '../lib/dFetch';
 import {getEtagHeader, IEtagObject, isEtagObject, wrapEtag} from '../lib/etagTools';
@@ -12,7 +11,7 @@ const setValueAction = (todo: IEtagObject<IToDo>): DemoAction => {
 };
 
 // async functions
-export const getHome = (): ThunkResult<Promise<Action | void>> => async (dispatch: RootThunkDispatch, getState: () => IReduxState) => {
+export const getHome = (): ThunkResult<Promise<void>> => async (dispatch: RootThunkDispatch, getState: () => IReduxState) => {
 	dispatch(appError(undefined));
 	const {
 		demo: {todo},
@@ -25,9 +24,11 @@ export const getHome = (): ThunkResult<Promise<Action | void>> => async (dispatc
 		const res = await dispatch(dFetch('https://jsonplaceholder.typicode.com/todos/1', {headers}));
 		const todoData = await dispatch(handleJsonResponse<IToDo>(res, appLogout));
 		if (todoData) {
-			return Promise.resolve(dispatch(setValueAction(wrapEtag<IToDo>(todoData, getEtagHeader(res)))));
+			dispatch(setValueAction(wrapEtag<IToDo>(todoData, getEtagHeader(res))));
 		}
+		return Promise.resolve();
 	} catch (err) {
-		return Promise.reject(dispatch(appError(err.message)));
+		dispatch(appError(err.message));
+		return Promise.reject(err);
 	}
 };

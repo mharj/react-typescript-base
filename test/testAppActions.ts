@@ -4,40 +4,19 @@ import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import 'cross-fetch/polyfill';
 import 'mocha';
-import {applyMiddleware, createStore, Dispatch} from 'redux';
-import {persistReducer, Storage} from 'redux-persist';
-import thunk from 'redux-thunk';
+import {Dispatch} from 'redux';
 import * as app from '../src/actions/appActions';
 import * as global from '../src/actions/globalActions';
-import {initialState, rootReducer} from '../src/reducers';
+import {createTestStore} from '../src/configureTestStore';
 
 chai.use(chaiAsPromised);
 
 chai.use(chaiSubset);
 
-let mockStorage: any = {};
-const storage: Storage = {
-	getItem(key: string, ...args: any[]) {
-		return mockStorage[key];
-	},
-	setItem(key: string, value: any, ...args: any[]) {
-		mockStorage[key] = value;
-	},
-	removeItem(key: string, ...args: any[]) {
-		delete mockStorage[key];
-	},
-};
-const persistConfig = {
-	key: 'sahara_login',
-	storage,
-};
-const persistedReducer = persistReducer(persistConfig, rootReducer);
 let dispatch: Dispatch<any>;
 let getState: () => any;
-
 const rebuildStorage = () => {
-	mockStorage = {};
-	const store = createStore(persistedReducer, initialState, applyMiddleware(thunk));
+	const store = createTestStore();
 	dispatch = store.dispatch;
 	getState = store.getState;
 };

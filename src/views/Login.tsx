@@ -38,16 +38,27 @@ class Login extends Component<Props, State> {
 					</div>
 				) : (
 					<div>
-						Username: <input name="username" type="text" onChange={this.onChange} value={this.state.username} /> <br />
-						Password: <input name="password" type="password" onKeyUp={this.onKeyUp} onChange={this.onChange} value={this.state.password} />
-						<br />
-						<button onClick={this.handleLogin}>{t('login')}</button>
+						<form>
+							Username: <input name="username" type="text" autoComplete="username" onChange={this.onChange} value={this.state.username} /> <br />
+							Password:{' '}
+							<input
+								name="password"
+								type="password"
+								autoComplete="current-password"
+								onKeyUp={this.onKeyUp}
+								onChange={this.onChange}
+								value={this.state.password}
+							/>{' '}
+							<br />
+							<button onClick={this.handleLogin}>{t('login')}</button>
+						</form>
 					</div>
 				)}
 			</div>
 		);
 	}
-	private async handleLogin() {
+	private async handleLogin(event: React.FormEvent<HTMLButtonElement> | KeyboardEvent<HTMLInputElement>) {
+		event.preventDefault();
 		try {
 			await this.props.doLogin(this.state.username, this.state.password);
 			this.props.history.push('/');
@@ -55,7 +66,7 @@ class Login extends Component<Props, State> {
 			// ignore
 		}
 	}
-	private async handleLogout() {
+	private async handleLogout(event: React.FormEvent<HTMLButtonElement>) {
 		try {
 			await this.props.doLogout();
 			this.props.history.push('/');
@@ -63,21 +74,21 @@ class Login extends Component<Props, State> {
 			// ignore
 		}
 	}
-	private onChange(e: ChangeEvent<HTMLInputElement>) {
-		const target = e.currentTarget;
+	private onChange(event: ChangeEvent<HTMLInputElement>) {
+		const target = event.currentTarget;
 		switch (target.name) {
 			case 'username':
-				return this.setState({username: target.value});
+				return this.setState({username: target.value.trim()});
 			case 'password':
-				return this.setState({password: target.value});
+				return this.setState({password: target.value.trim()});
 		}
 	}
-	private onKeyUp(e: KeyboardEvent<HTMLInputElement>) {
-		if (e.keyCode === 13) {
-			e.preventDefault();
-			e.stopPropagation();
-			e.nativeEvent.stopImmediatePropagation();
-			this.handleLogin();
+	private onKeyUp(event: KeyboardEvent<HTMLInputElement>) {
+		if (event.keyCode === 13) {
+			event.preventDefault();
+			event.stopPropagation();
+			event.nativeEvent.stopImmediatePropagation();
+			this.handleLogin(event);
 		}
 		return false;
 	}
