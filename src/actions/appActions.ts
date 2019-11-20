@@ -1,4 +1,6 @@
 import {Action} from 'redux';
+import {getStore} from '../configureStore';
+import {HttpClient} from '../lib/httpClient';
 import {RootThunkDispatch, ThunkResult} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
 
@@ -30,3 +32,11 @@ export const doLogin = (username: string, password: string): ThunkResult<Promise
 export const doLogout = (): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
 	return Promise.resolve(dispatch(appLogout()));
 };
+
+// this hooks global loading state updates from HttpClient
+const store = getStore();
+const client = HttpClient.getInstance();
+client.onLoading((isLoading) => {
+	store.dispatch(appLoading(isLoading));
+});
+export const httpFetch = client.fetch;
