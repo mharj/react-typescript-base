@@ -1,3 +1,4 @@
+import { TypedUseSelectorHook,useSelector as useReduxSelector } from 'react-redux';
 import {Action, combineReducers} from 'redux';
 import {ThunkAction, ThunkDispatch} from 'redux-thunk';
 import * as app from './appReducer';
@@ -39,6 +40,15 @@ export const rootReducer = combineReducers<IReduxState>({
 	app: app.reducer,
 	demo: demo.reducer,
 });
+
+/**
+ * mapStateToProps "hook"
+ * @example
+ * const data = useSelector((state) => ({
+ *   qwe: state.demo.todo,
+ * }));
+ */
+export const useSelector: TypedUseSelectorHook<IReduxState> = useReduxSelector
 
 export type ThunkResult<R> = ThunkAction<R, IReduxState, undefined, Action>;
 
