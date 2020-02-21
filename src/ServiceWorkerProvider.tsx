@@ -38,7 +38,10 @@ export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker>
 	}
 	public componentDidMount() {
 		import('./registerServiceWorker' /* webpackChunkName: "register-service-worker" */).then((registerServiceWorker) =>
-			registerServiceWorker.default(this.onServiceStateChange, this.getUpdateFunction),
+			registerServiceWorker.register({
+				checkUpdate: this.getUpdateFunction,
+				onStatusUpdate: this.onServiceStateChange,
+			}),
 		);
 	}
 	public render() {
