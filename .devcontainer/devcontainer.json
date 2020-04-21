@@ -11,7 +11,7 @@
         "esbenp.prettier-vscode",
         "mutantdino.resourcemonitor"
     ],
-    "postCreateCommand": "npm install && npm rebuild node-sass",
+    "postCreateCommand": "npm --unsafe-perm install",
     "forwardPorts": [
         3000
     ],
