@@ -1,0 +1,18 @@
+{
+    "name": "react-typescript-base",
+    "dockerFile": "Dockerfile",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+        "dbaeumer.vscode-eslint",
+        "ms-vscode.vscode-typescript-tslint-plugin",
+        "hbenl.vscode-mocha-test-adapter",
+        "esbenp.prettier-vscode",
+        "mutantdino.resourcemonitor"
+    ],
+    "postCreateCommand": "npm install && npm rebuild node-sass",
+    "forwardPorts": [
+        3000
+    ],
+}
