@@ -15,4 +15,5 @@
     "forwardPorts": [
         3000
     ],
+    "containerUser": "node"
 }

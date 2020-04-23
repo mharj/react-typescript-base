@@ -23,4 +23,4 @@ ARG USER_GID=$USER_UID
 #    && rm -rf /var/lib/apt/lists/*
 # ENV DEBIAN_FRONTEND=dialog
 
-# USER $USER_UID
+USER $USER_UID
