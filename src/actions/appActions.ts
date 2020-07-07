@@ -1,6 +1,6 @@
+import {HttpClient} from 'mharj-http-client';
 import {Action} from 'redux';
 import {getStore} from '../configureStore';
-import {HttpClient} from '../lib/httpClient';
 import {RootThunkDispatch, ThunkResult} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
 
