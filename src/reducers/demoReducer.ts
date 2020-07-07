@@ -1,5 +1,5 @@
+import {IEtagObject, wrapEtag} from 'mharj-etag-tools';
 import {Action, Reducer} from 'redux';
-import {IEtagObject, wrapEtag} from '../lib/etagTools';
 import {IGlobalAction} from './index';
 
 /**

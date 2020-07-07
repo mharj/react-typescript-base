@@ -1,5 +1,5 @@
+import {getEtagHeader, haveETag, IEtagObject, wrapEtag} from 'mharj-etag-tools';
 import {handleJsonResponse} from '.';
-import {getEtagHeader, IEtagObject, isEtagObject, wrapEtag} from '../lib/etagTools';
 import {IReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
 import {DemoAction, IToDo} from '../reducers/demoReducer';
 import {appError, appLogout, httpFetch} from './appActions';
@@ -16,7 +16,7 @@ export const getHome = (): ThunkResult<Promise<void>> => async (dispatch: RootTh
 		demo: {todo},
 	} = getState();
 	const headers = new Headers();
-	if (isEtagObject(todo) && todo.etag) {
+	if (haveETag(todo) && todo.etag) {
 		headers.set('if-none-match', todo.etag);
 	}
 	try {

@@ -61,6 +61,7 @@
 		"enzyme-adapter-react-16": "^1.15.2",
 		"i18next": "^19.4.3",
 		"i18next-browser-languagedetector": "^4.1.1",
+		"mharj-etag-tools": "0.0.1",
 		"mharj-http-client": "0.0.1",
 		"mocha": "^7.1.1",
 		"node-sass-chokidar": "^1.4.0",

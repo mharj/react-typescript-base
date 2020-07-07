@@ -1,10 +1,10 @@
+import {unWrapEtag} from 'mharj-etag-tools';
 import React, {Component} from 'react';
 import {Helmet} from 'react-helmet';
 import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {getHome} from '../actions/demoActions';
-import {unWrapEtag} from '../lib/etagTools';
 import {IReduxState, RootThunkDispatch} from '../reducers';
 
 type Props = WithTranslation & IPropsState & ActionList;
@@ -70,7 +70,4 @@ const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 	);
 type ActionList = ReturnType<typeof mapDispatchToProps>;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)(withTranslation()(Home));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Home));
