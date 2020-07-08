@@ -1,4 +1,4 @@
-import {getEtagHeader, haveETag, IEtagObject, wrapEtag} from 'mharj-etag-tools';
+import {getEtagHeader, haveETag, IEtagObject, wrapEtag, getETag} from 'mharj-etag-tools';
 import {handleJsonResponse} from '.';
 import {IReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
 import {DemoAction, IToDo} from '../reducers/demoReducer';
@@ -16,8 +16,8 @@ export const getHome = (): ThunkResult<Promise<void>> => async (dispatch: RootTh
 		demo: {todo},
 	} = getState();
 	const headers = new Headers();
-	if (haveETag(todo) && todo.etag) {
-		headers.set('if-none-match', todo.etag);
+	if (haveETag(todo)) {
+		headers.set('if-none-match', getETag(todo));
 	}
 	try {
 		const res = await httpFetch('https://jsonplaceholder.typicode.com/todos/1', {headers});
