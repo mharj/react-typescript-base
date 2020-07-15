@@ -1,6 +1,5 @@
-import React, {Component, FormEvent} from 'react';
+import React, {Component, FormEvent, Suspense} from 'react';
 import {withTranslation, WithTranslation} from 'react-i18next';
-import Loadable from 'react-loadable';
 import {connect} from 'react-redux';
 import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom';
 import './App.css';
@@ -12,25 +11,36 @@ import {IReduxState} from './reducers';
 import {IWithServiceWorker, withServiceWorker} from './ServiceWorkerProvider';
 import ErrorView from './views/Error';
 
-const Loading = () => <div>Loading!...</div>;
-
 // views code split
-const Home = Loadable({
-	loader: () => import('./views/Home' /* webpackChunkName: "home-view" */),
-	loading: Loading,
-});
-const Login = Loadable({
-	loader: () => import('./views/Login' /* webpackChunkName: "login-view" */),
-	loading: Loading,
-});
-const Secret = Loadable({
-	loader: () => import('./views/Secret' /* webpackChunkName: "secret-view" */),
-	loading: Loading,
-});
-const Broken = Loadable({
-	loader: () => import('./views/Broken' /* webpackChunkName: "broken-view" */),
-	loading: Loading,
-});
+const Loading = () => <div>Loading!...</div>;
+const HomeView = React.lazy(() => import('./views/Home' /* webpackChunkName: "home-view" */));
+const LoginView = React.lazy(() => import('./views/Login' /* webpackChunkName: "login-view" */));
+const SecretView = React.lazy(() => import('./views/Secret' /* webpackChunkName: "secret-view" */));
+const BrokenView = React.lazy(() => import('./views/Broken' /* webpackChunkName: "broken-view" */));
+
+const Home = () => (
+	<Suspense fallback={<Loading />}>
+		<HomeView />
+	</Suspense>
+);
+
+const Login = () => (
+	<Suspense fallback={<Loading />}>
+		<LoginView />
+	</Suspense>
+);
+
+const Secret = () => (
+	<Suspense fallback={<Loading />}>
+		<SecretView />
+	</Suspense>
+);
+
+const Broken = () => (
+	<Suspense fallback={<Loading />}>
+		<BrokenView />
+	</Suspense>
+);
 
 type Props = WithTranslation & IPropsState & IWithServiceWorker & IWithNotification;
 
