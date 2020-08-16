@@ -3,13 +3,11 @@ import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
 import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom';
 import './App.css';
-import ErrorBoundary from './components/ErrorBoundary';
 import PrivateRoute from './components/PrivateRoute';
 import logo from './logo.svg';
 import {IWithNotification, withNotification} from './NotificationProvider';
 import {IReduxState} from './reducers';
 import {IWithServiceWorker, withServiceWorker} from './ServiceWorkerProvider';
-import ErrorView from './views/Error';
 
 // views code split
 const Loading = () => <div>Loading!...</div>;
@@ -17,6 +15,14 @@ const HomeView = React.lazy(() => import('./views/Home' /* webpackChunkName: "ho
 const LoginView = React.lazy(() => import('./views/Login' /* webpackChunkName: "login-view" */));
 const SecretView = React.lazy(() => import('./views/Secret' /* webpackChunkName: "secret-view" */));
 const BrokenView = React.lazy(() => import('./views/Broken' /* webpackChunkName: "broken-view" */));
+const ErrorView = React.lazy(() => import('./views/Error'));
+const ErrorBoundaryComponent = React.lazy(() => import('./components/ErrorBoundary'));
+
+const ErrorBoundary = (props: any) => (
+	<Suspense fallback={<Loading />}>
+		<ErrorBoundaryComponent {...props} />
+	</Suspense>
+);
 
 const Home = () => (
 	<Suspense fallback={<Loading />}>
@@ -97,6 +103,7 @@ class App extends Component<Props> {
 								<Route exact={true} path="/login" component={Login} />
 								<PrivateRoute isValid={isLoggedIn} failPath="/login" exact={true} path="/secret" component={Secret} />
 								<Route exact={true} path="/broken" component={Broken} />
+								<Route exact={true} path="/_error" component={ErrorView} />
 							</Switch>
 						</ErrorBoundary>
 					</div>

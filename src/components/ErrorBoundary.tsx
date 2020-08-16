@@ -5,7 +5,7 @@ export interface IErrorProps {
 	error: undefined | Error;
 }
 
-type Props = RouteComponentProps & {
+export type Props = RouteComponentProps & {
 	onError: ElementType<IErrorProps>;
 };
 

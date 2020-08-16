@@ -13,6 +13,8 @@ Promise.all([
 	import('./App' /* webpackChunkName: "app", webpackPreload: true */),
 	import('cross-fetch/polyfill' /* webpackChunkName: "fetch", webpackPreload: true */),
 	import('./i18n' /* webpackChunkName: "i18n", webpackPreload: true */),
+	import('./views/Error' /* webpackChunkName: "error-view", webpackPreload: true */),
+	import('./components/ErrorBoundary' /* webpackChunkName: "error-boundary-component", webpackPreload: true */),
 ]).then((loaded) => {
 	const [configureStore, ReactDOM, Redux, Persist, App] = loaded;
 	const {store, persistor} = configureStore.default();
