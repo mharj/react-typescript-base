@@ -45,7 +45,7 @@ export function register(config?: IConfig) {
 				// Add some additional logging to localhost, pointing developers to the
 				// service worker/PWA documentation.
 				navigator.serviceWorker.ready.then(() => {
-					console.log('This web app is being served cache-first by a service ' + 'worker. To learn more, visit https://goo.gl/SC7cgQ');
+					console.log('This web app is being served cache-first by a service worker. To learn more, visit https://goo.gl/SC7cgQ');
 				});
 				if (config?.onStatusUpdate) {
 					config.onStatusUpdate('LOCALHOST');

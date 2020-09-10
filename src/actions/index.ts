@@ -25,6 +25,7 @@ export const handleJsonResponse = <T>(res: Response, unAuthorizedAction?: () => 
 				dispatch(unAuthorizedAction());
 				return Promise.resolve(undefined);
 			}
+			return Promise.reject(new Error('http error: ' + res.status));
 		}
 		default:
 			return Promise.reject(new Error('http error: ' + res.status));

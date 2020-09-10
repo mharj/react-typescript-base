@@ -1,4 +1,4 @@
-import React, {Component, ComponentClass, createContext, FunctionComponent, ReactNode, StatelessComponent} from 'react';
+import React, {Component, createContext, FunctionComponent, ReactNode} from 'react';
 import {STATUS as WORKER_STATUS} from './registerServiceWorker';
 
 export interface IWithServiceWorker {
@@ -21,10 +21,10 @@ export const ServiceWorkerConsumer = WorkerContext.Consumer;
 const Provider = WorkerContext.Provider;
 
 export function withServiceWorker<P extends IWithServiceWorker>(
-	WrappedComponent: ComponentClass<P> | StatelessComponent<P>,
+	WrappedComponent: React.ComponentType<P>,
 ): FunctionComponent<Omit<P, keyof IWithServiceWorker>> {
-	return function Wrapper(props: P) {
-		return <ServiceWorkerConsumer>{(value) => <WrappedComponent {...props} {...value} />}</ServiceWorkerConsumer>;
+	return function Wrapper(props) {
+		return <ServiceWorkerConsumer>{(value) => <WrappedComponent {...(props as P)} {...value} />}</ServiceWorkerConsumer>;
 	};
 }
 

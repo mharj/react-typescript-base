@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'development' && '__REDUX_DEVTOOLS_EXTENSION__' in 
 const composedEnhancers = compose(
 	applyMiddleware(thunk),
 	...enhancers,
-);
+) as any;
 
 let store: ReturnType<typeof initStore> | undefined;
 const initStore = () => {

@@ -35,8 +35,8 @@ const Provider = NotificationContext.Provider;
 export function withNotification<P extends IWithNotification>(
 	WrappedComponent: ComponentClass<P> | StatelessComponent<P>,
 ): FunctionComponent<Omit<P, keyof IWithNotification>> {
-	return function Wrapper(props: P) {
-		return <NotificationConsumer>{(value) => <WrappedComponent {...props} {...value} />}</NotificationConsumer>;
+	return function Wrapper(props) {
+		return <NotificationConsumer>{(value) => <WrappedComponent {...(props as P)} {...value} />}</NotificationConsumer>;
 	};
 }
 
