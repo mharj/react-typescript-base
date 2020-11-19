@@ -33,10 +33,7 @@ const initPersist = (currentStore: ReturnType<typeof initStore>) => {
 	return persistStore(currentStore);
 };
 
-/**
- * @module createStore/default
- */
-export default () => {
+function setupStore() {
 	if (!store) {
 		store = initStore();
 	}
@@ -44,7 +41,12 @@ export default () => {
 		persistor = initPersist(store);
 	}
 	return {store, persistor};
-};
+}
+
+/**
+ * @module createStore/default
+ */
+export default setupStore;
 
 export const getStore = () => {
 	if (!store) {
