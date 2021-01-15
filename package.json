@@ -1,121 +1,132 @@
 {
-	"name": "react-typescript-base",
-	"version": "1.0.0",
-	"description": "Basic Typescript React base project (I18N, Helmet, HashRouter, redux, persist, loadable)",
-	"private": true,
-	"homepage": ".",
-	"scripts": {
-		"build-css": "node-sass-chokidar src/ -o src/ --recursive",
-		"watch-css": "node-sass-chokidar src/ -o src/ --watch --recursive",
-		"start-js": "react-scripts --inspect start && cra-append-sw --mode dev ./public/custom-sw.js",
-		"build-js": "react-scripts build && cra-append-sw --skip-compile ./public/custom-sw.js",
-		"lint": "tslint \"src/**/*.ts?(x)\"",
-		"start": "npm-run-all -p watch-css start-js",
-		"build": "npm-run-all build-css build-js",
-		"test": "cross-env TS_NODE_PROJECT=tsconfig.test.json TS_NODE_FILES=true nyc mocha",
-		"eject": "react-scripts eject"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/mharj/react-typescript-base.git"
-	},
-	"author": "",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/mharj/react-typescript-base/issues"
-	},
-	"nyc": {
-		"extension": [
-			".ts"
-		],
-		"include": [
-			"src"
-		],
-		"reporter": [
-			"text"
-		],
-		"all": true
-	},
-	"mocha": {
-		"recursive": true,
-		"exit": true,
-		"require": [
-			"ts-node/register",
-			"source-map-support/register"
-		],
-		"extension": [
-			"ts",
-			"js"
-		],
-		"reporters": [
-			"spec"
-		]
-	},
-	"devDependencies": {
-		"@types/chai": "^4.2.14",
-		"@types/chai-as-promised": "^7.1.3",
-		"@types/chai-subset": "^1.3.3",
-		"@types/mocha": "^8.2.0",
-		"@types/node": "^14.14.8",
-		"@types/react": "^16.9.56",
-		"@types/react-dom": "^16.9.9",
-		"@types/react-helmet": "^6.1.0",
-		"@types/react-redux": "^7.1.11",
-		"@types/react-router-dom": "^5.1.6",
-		"@types/redux-mock-store": "^1.0.2",
-		"@types/uuid": "^8.3.0",
-		"chai": "^4.2.0",
-		"chai-as-promised": "^7.1.1",
-		"chai-subset": "^1.6.0",
-		"cra-append-sw": "^2.7.0",
-		"cross-env": "^7.0.3",
-		"cross-fetch": "^3.0.6",
-		"i18next": "^19.8.4",
-		"i18next-browser-languagedetector": "^6.0.1",
-		"mharj-etag-tools": "^0.0.3",
-		"mharj-http-client": "^0.0.1",
-		"mocha": "^8.2.1",
-		"node-sass-chokidar": "^1.5.0",
-		"nyc": "^15.1.0",
-		"prop-types": "^15.7.2",
-		"react": "^17.0.1",
-		"react-app-polyfill": "^2.0.0",
-		"react-dom": "^17.0.1",
-		"react-helmet": "^6.1.0",
-		"react-i18next": "^11.7.3",
-		"react-redux": "^7.2.2",
-		"react-router": "^5.2.0",
-		"react-router-dom": "^5.2.0",
-		"redux": "^4.0.5",
-		"redux-mock-store": "^1.5.4",
-		"redux-persist": "^6.0.0",
-		"redux-thunk": "^2.3.0",
-		"source-map-support": "^0.5.19",
-		"ts-node": "^9.0.0",
-		"tslint": "^6.1.3",
-		"tslint-config-prettier": "^1.18.0",
-		"tslint-react": "^5.0.0",
-		"typescript": "^4.0.5",
-		"uuid": "^8.3.2"
-	},
-	"dependencies": {
-		"npm-run-all": "^4.1.5",
-		"react-scripts": "^4.0.0",
-		"webpack": "4.44.2"
-	},
-	"eslintConfig": {
-		"extends": "react-app"
-	},
-	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
-		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
-		]
-	}
+    "name": "react-typescript-base",
+    "version": "1.0.0",
+    "description": "Basic Typescript React base project (I18N, Helmet, HashRouter, redux, persist, loadable)",
+    "private": true,
+    "homepage": ".",
+    "scripts": {
+        "build-css": "node-sass-chokidar src/ -o src/ --recursive",
+        "watch-css": "node-sass-chokidar src/ -o src/ --watch --recursive",
+        "start-js": "react-scripts --inspect start",
+        "build-js": "react-scripts build",
+        "lint": "tslint \"src/**/*.ts?(x)\"",
+        "start": "npm-run-all -p watch-css start-js",
+        "build": "npm-run-all build-css build-js",
+        "test": "cross-env TS_NODE_PROJECT=tsconfig.test.json TS_NODE_FILES=true nyc mocha",
+        "eject": "react-scripts eject"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mharj/react-typescript-base.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/mharj/react-typescript-base/issues"
+    },
+    "nyc": {
+        "extension": [
+            ".ts"
+        ],
+        "include": [
+            "src"
+        ],
+        "reporter": [
+            "text"
+        ],
+        "all": true
+    },
+    "mocha": {
+        "recursive": true,
+        "exit": true,
+        "require": [
+            "ts-node/register",
+            "source-map-support/register"
+        ],
+        "extension": [
+            "ts",
+            "js"
+        ],
+        "reporters": [
+            "spec"
+        ]
+    },
+    "devDependencies": {
+        "@types/chai": "^4.2.14",
+        "@types/chai-as-promised": "^7.1.3",
+        "@types/chai-subset": "^1.3.3",
+        "@types/mocha": "^8.2.0",
+        "@types/node": "^14.14.21",
+        "@types/react": "^17.0.0",
+        "@types/react-dom": "^17.0.0",
+        "@types/react-helmet": "^6.1.0",
+        "@types/react-redux": "^7.1.15",
+        "@types/react-router-dom": "^5.1.7",
+        "@types/redux-mock-store": "^1.0.2",
+        "@types/uuid": "^8.3.0",
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
+        "chai-subset": "^1.6.0",
+        "cross-env": "^7.0.3",
+        "cross-fetch": "^3.0.6",
+        "i18next": "^19.8.4",
+        "i18next-browser-languagedetector": "^6.0.1",
+        "mharj-etag-tools": "^0.0.3",
+        "mharj-http-client": "^0.0.1",
+        "mocha": "^8.2.1",
+        "node-sass-chokidar": "^1.5.0",
+        "nyc": "^15.1.0",
+        "prop-types": "^15.7.2",
+        "react": "^17.0.1",
+        "react-app-polyfill": "^2.0.0",
+        "react-dom": "^17.0.1",
+        "react-helmet": "^6.1.0",
+        "react-i18next": "^11.8.5",
+        "react-redux": "^7.2.2",
+        "react-router": "^5.2.0",
+        "react-router-dom": "^5.2.0",
+        "redux": "^4.0.5",
+        "redux-mock-store": "^1.5.4",
+        "redux-persist": "^6.0.0",
+        "redux-thunk": "^2.3.0",
+        "source-map-support": "^0.5.19",
+        "ts-node": "^9.1.1",
+        "tslint": "^6.1.3",
+        "tslint-config-prettier": "^1.18.0",
+        "tslint-react": "^5.0.0",
+        "typescript": "^4.1.3",
+        "uuid": "^8.3.2",
+        "web-vitals": "^1.1.0",
+        "workbox-background-sync": "^5.1.4",
+        "workbox-broadcast-update": "^5.1.4",
+        "workbox-cacheable-response": "^5.1.4",
+        "workbox-core": "^5.1.4",
+        "workbox-expiration": "^5.1.4",
+        "workbox-google-analytics": "^5.1.4",
+        "workbox-navigation-preload": "^5.1.4",
+        "workbox-precaching": "^5.1.4",
+        "workbox-range-requests": "^5.1.4",
+        "workbox-routing": "^5.1.4",
+        "workbox-strategies": "^5.1.4",
+        "workbox-streams": "^5.1.4"
+    },
+    "dependencies": {
+        "npm-run-all": "^4.1.5",
+        "react-scripts": "^4.0.1"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
 }

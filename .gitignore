@@ -25,3 +25,6 @@ src/*.css
 
 # nyc output
 .nyc_output
+
+# eslint cache
+.eslintcache

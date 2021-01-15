@@ -1,5 +1,5 @@
 import React, {Component, createContext, FunctionComponent, ReactNode} from 'react';
-import {STATUS as WORKER_STATUS} from './registerServiceWorker';
+import {STATUS as WORKER_STATUS} from './serviceWorkerRegistration';
 
 export interface IWithServiceWorker {
 	serviceWorkerState: WORKER_STATUS | undefined;
@@ -37,7 +37,7 @@ export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker>
 		this.getUpdateFunction = this.getUpdateFunction.bind(this);
 	}
 	public componentDidMount() {
-		import('./registerServiceWorker' /* webpackChunkName: "register-service-worker" */).then((registerServiceWorker) =>
+		import('./serviceWorkerRegistration' /* webpackChunkName: "register-service-worker" */).then((registerServiceWorker) =>
 			registerServiceWorker.register({
 				checkUpdate: this.getUpdateFunction,
 				onStatusUpdate: this.onServiceStateChange,
