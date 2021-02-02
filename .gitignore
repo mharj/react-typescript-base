@@ -28,3 +28,6 @@ src/*.css
 
 # eslint cache
 .eslintcache
+
+# vscode debug.logs
+debug.log
