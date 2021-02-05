@@ -1,9 +1,12 @@
 import 'react-app-polyfill/ie9';
 import 'react-app-polyfill/stable'; // tslint:disable-next-line
+import {register, listen} from './serviceWorkerRegistration';
 import React, {Suspense} from 'react';
 import './index.css';
 import {NotificationProvider} from './NotificationProvider';
 import {ServiceWorkerProvider} from './ServiceWorkerProvider';
+
+register();
 
 Promise.all([
 	import('./configureStore' /* webpackChunkName: "configurestore", webpackPreload: true */),
@@ -21,17 +24,17 @@ Promise.all([
 	const {store, persistor} = configureStore.default();
 	const App = AppModule.default;
 	ReactDOM.render(
-		<Redux.Provider store={store}>
-			<Persist.PersistGate loading={null} persistor={persistor}>
-				<Suspense fallback={<div>Loading</div>}>
-					<ServiceWorkerProvider>
+		<ServiceWorkerProvider listener={listen}>
+			<Redux.Provider store={store}>
+				<Persist.PersistGate loading={null} persistor={persistor}>
+					<Suspense fallback={<div>Loading</div>}>
 						<NotificationProvider>
 							<App />
 						</NotificationProvider>
-					</ServiceWorkerProvider>
-				</Suspense>
-			</Persist.PersistGate>
-		</Redux.Provider>,
+					</Suspense>
+				</Persist.PersistGate>
+			</Redux.Provider>
+		</ServiceWorkerProvider>,
 		document.getElementById('root'),
 	);
 	// If you want to start measuring performance in your app, pass a function

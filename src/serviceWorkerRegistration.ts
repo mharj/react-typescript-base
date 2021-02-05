@@ -12,12 +12,6 @@
 
 export type STATUS = 'NO_WORKER' | 'DEVELOPMENT' | 'LOCALHOST' | 'CONTENT_LOADED' | 'CONTENT_NEW' | 'CONTENT_OFFLINE';
 
-interface IConfig {
-	onSuccess?: (registration: ServiceWorkerRegistration) => void;
-	onUpdate?: (registration: ServiceWorkerRegistration) => void;
-	onStatusUpdate?: (status: STATUS) => void;
-	checkUpdate?: (callback: () => void) => void;
-};
 const isLocalhost = Boolean(
 	window.location.hostname === 'localhost' ||
 		// [::1] is the IPv6 localhost address.
@@ -26,8 +20,38 @@ const isLocalhost = Boolean(
 		window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/),
 );
 
-export function register(config?: IConfig) {
-	if ('serviceWorker' in navigator) {
+type Config = {
+	onSuccess?: (registration: ServiceWorkerRegistration) => void;
+	onUpdate?: (registration: ServiceWorkerRegistration) => void;
+};
+
+// listen setup
+interface Listen {
+	onStatusUpdate?: (status: STATUS) => void;
+	checkUpdate?: (callback: () => void) => void;
+}
+
+let onStatusUpdate: ((status: STATUS) => void) | undefined;
+let checkUpdate: ((callback: () => void) => void) | undefined;
+export function listen(config: Listen) {
+	onStatusUpdate = config.onStatusUpdate;
+	checkUpdate = config.checkUpdate;
+	// listen goes later than register, notify UI with last status
+	if (onStatusUpdate && lastStatus) {
+		onStatusUpdate(lastStatus);
+	}
+}
+
+let lastStatus: STATUS | undefined;
+function statusUdate(status: STATUS) {
+	lastStatus = status;
+	if (onStatusUpdate) {
+		onStatusUpdate(lastStatus);
+	}
+}
+// end listen setup
+export function register(config?: Config) {
+	if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
 		// The URL constructor is available in all browsers that support SW.
 		const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
 		if (publicUrl.origin !== window.location.origin) {
@@ -47,24 +71,19 @@ export function register(config?: IConfig) {
 				// Add some additional logging to localhost, pointing developers to the
 				// service worker/PWA documentation.
 				navigator.serviceWorker.ready.then(() => {
-					console.log('This web app is being served cache-first by a service worker. To learn more, visit https://cra.link/PWA');
+					console.log('This web app is being served cache-first by a service ' + 'worker. To learn more, visit https://cra.link/PWA');
 				});
-				if (config && config.onStatusUpdate) {
-					config.onStatusUpdate('LOCALHOST');
-				}
 			} else {
 				// Is not localhost. Just register service worker
 				registerValidSW(swUrl, config);
 			}
 		});
 	} else {
-		if (config && config.onStatusUpdate) {
-			config.onStatusUpdate('serviceWorker' in navigator ? 'DEVELOPMENT' : 'NO_WORKER');
-		}
+		statusUdate('serviceWorker' in navigator ? 'DEVELOPMENT' : 'NO_WORKER');
 	}
 }
 
-function registerValidSW(swUrl: string, config?: IConfig) {
+function registerValidSW(swUrl: string, config?: Config) {
 	navigator.serviceWorker
 		.register(swUrl)
 		.then((registration) => {
@@ -79,10 +98,9 @@ function registerValidSW(swUrl: string, config?: IConfig) {
 							// At this point, the updated precached content has been fetched,
 							// but the previous service worker will still serve the older
 							// content until all client tabs are closed.
-							console.log('New content is available and will be used when all tabs for this page are closed. See https://cra.link/PWA.');
-							if (config && config.onStatusUpdate) {
-								config.onStatusUpdate('CONTENT_NEW');
-							}
+							console.log('New content is available and will be used when all ' + 'tabs for this page are closed. See https://cra.link/PWA.');
+
+							statusUdate('CONTENT_NEW');
 
 							// Execute callback
 							if (config && config.onUpdate) {
@@ -93,9 +111,9 @@ function registerValidSW(swUrl: string, config?: IConfig) {
 							// It's the perfect time to display a
 							// "Content is cached for offline use." message.
 							console.log('Content is cached for offline use.');
-							if (config && config.onStatusUpdate) {
-								config.onStatusUpdate('CONTENT_LOADED');
-							}
+
+							statusUdate('CONTENT_LOADED');
+
 							// Execute callback
 							if (config && config.onSuccess) {
 								config.onSuccess(registration);
@@ -105,9 +123,9 @@ function registerValidSW(swUrl: string, config?: IConfig) {
 				};
 			};
 			// register update check callback
-			if (config && config.checkUpdate && registration.update) {
+			if (checkUpdate && registration.update) {
 				// attach update function
-				config.checkUpdate(() => {
+				checkUpdate(() => {
 					console.log('running serviceWorker update');
 					registration.update();
 				});
@@ -118,7 +136,7 @@ function registerValidSW(swUrl: string, config?: IConfig) {
 		});
 }
 
-function checkValidServiceWorker(swUrl: string, config?: IConfig) {
+function checkValidServiceWorker(swUrl: string, config?: Config) {
 	// Check if the service worker can be found. If it can't reload the page.
 	fetch(swUrl, {
 		headers: {'Service-Worker': 'script'},
@@ -139,9 +157,7 @@ function checkValidServiceWorker(swUrl: string, config?: IConfig) {
 			}
 		})
 		.catch(() => {
-			if (config && config.onStatusUpdate) {
-				config.onStatusUpdate('CONTENT_OFFLINE');
-			}
+			statusUdate('CONTENT_OFFLINE');
 			console.log('No internet connection found. App is running in offline mode.');
 		});
 }

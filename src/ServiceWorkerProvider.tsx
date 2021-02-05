@@ -1,5 +1,6 @@
 import React, {Component, createContext, FunctionComponent, ReactNode} from 'react';
 import {STATUS as WORKER_STATUS} from './serviceWorkerRegistration';
+import {listen} from './serviceWorkerRegistration';
 
 export interface IWithServiceWorker {
 	serviceWorkerState: WORKER_STATUS | undefined;
@@ -8,6 +9,7 @@ export interface IWithServiceWorker {
 
 interface IProps {
 	children: ReactNode;
+	listener: typeof listen;
 }
 
 const initialContext: IWithServiceWorker = {
@@ -37,12 +39,10 @@ export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker>
 		this.getUpdateFunction = this.getUpdateFunction.bind(this);
 	}
 	public componentDidMount() {
-		import('./serviceWorkerRegistration' /* webpackChunkName: "register-service-worker" */).then((registerServiceWorker) =>
-			registerServiceWorker.register({
-				checkUpdate: this.getUpdateFunction,
-				onStatusUpdate: this.onServiceStateChange,
-			}),
-		);
+		this.props.listener({
+			checkUpdate: this.getUpdateFunction,
+			onStatusUpdate: this.onServiceStateChange,
+		});
 	}
 	public render() {
 		const contextValue: IWithServiceWorker = {
