@@ -10,7 +10,7 @@
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://cra.link/PWA
 
-export type STATUS = 'NO_WORKER' | 'DEVELOPMENT' | 'LOCALHOST' | 'CONTENT_LOADED' | 'CONTENT_NEW' | 'CONTENT_OFFLINE';
+export type STATUS = ServiceWorkerState | 'offline' | 'loaded' | 'no_worker' | 'development';
 
 const isLocalhost = Boolean(
 	window.location.hostname === 'localhost' ||
@@ -29,13 +29,16 @@ type Config = {
 interface Listen {
 	onStatusUpdate?: (status: STATUS) => void;
 	checkUpdate?: (callback: () => void) => void;
+	skipWait?: (callback: () => void) => void;
 }
 
 let onStatusUpdate: ((status: STATUS) => void) | undefined;
 let checkUpdate: ((callback: () => void) => void) | undefined;
+let skipWait: ((callback: () => void) => void) | undefined;
 export function listen(config: Listen) {
 	onStatusUpdate = config.onStatusUpdate;
 	checkUpdate = config.checkUpdate;
+	skipWait = config.skipWait;
 	// listen goes later than register, notify UI with last status
 	if (onStatusUpdate && lastStatus) {
 		onStatusUpdate(lastStatus);
@@ -79,7 +82,7 @@ export function register(config?: Config) {
 			}
 		});
 	} else {
-		statusUdate('serviceWorker' in navigator ? 'DEVELOPMENT' : 'NO_WORKER');
+		statusUdate('serviceWorker' in navigator ? 'development' : 'no_worker');
 	}
 }
 
@@ -98,27 +101,30 @@ function registerValidSW(swUrl: string, config?: Config) {
 							// At this point, the updated precached content has been fetched,
 							// but the previous service worker will still serve the older
 							// content until all client tabs are closed.
-							console.log('New content is available and will be used when all ' + 'tabs for this page are closed. See https://cra.link/PWA.');
-
-							statusUdate('CONTENT_NEW');
-
+							console.log('New content is available and will be used when all tabs for this page are closed. See https://cra.link/PWA.');
+							statusUdate(installingWorker.state);
 							// Execute callback
 							if (config && config.onUpdate) {
 								config.onUpdate(registration);
 							}
+							// automatically skipWait and start activate
+							// console.log('skipWaiting');
+							// registration.waiting?.postMessage({type: 'SKIP_WAITING'});
 						} else {
 							// At this point, everything has been precached.
 							// It's the perfect time to display a
 							// "Content is cached for offline use." message.
 							console.log('Content is cached for offline use.');
 
-							statusUdate('CONTENT_LOADED');
+							statusUdate('loaded');
 
 							// Execute callback
 							if (config && config.onSuccess) {
 								config.onSuccess(registration);
 							}
 						}
+					} else {
+						statusUdate(installingWorker.state);
 					}
 				};
 			};
@@ -126,8 +132,19 @@ function registerValidSW(swUrl: string, config?: Config) {
 			if (checkUpdate && registration.update) {
 				// attach update function
 				checkUpdate(() => {
+					// update status
+					const installingWorker = registration.installing;
+					if (installingWorker) {
+						statusUdate(installingWorker.state);
+					}
 					console.log('running serviceWorker update');
 					registration.update();
+				});
+			}
+			if (skipWait) {
+				skipWait(() => {
+					console.log('skip wait');
+					registration.waiting?.postMessage({type: 'SKIP_WAITING'});
 				});
 			}
 		})
@@ -157,7 +174,7 @@ function checkValidServiceWorker(swUrl: string, config?: Config) {
 			}
 		})
 		.catch(() => {
-			statusUdate('CONTENT_OFFLINE');
+			statusUdate('offline');
 			console.log('No internet connection found. App is running in offline mode.');
 		});
 }

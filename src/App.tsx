@@ -110,6 +110,12 @@ class App extends Component<Props> {
 					<br />
 					<b>
 						Service Worker status: {this.props.serviceWorkerState} <button onClick={this.props.serviceWorkerUpdate}>Check updates</button>
+						<button onClick={this.props.serviceWorkerSkipWait} disabled={this.props.serviceWorkerState !== 'installed'}>
+							Install new version
+						</button>
+						<button onClick={() => window.location.reload()} disabled={this.props.serviceWorkerState !== 'activated'}>
+							Reload to activate new version
+						</button>
 					</b>
 				</div>
 			</Router>
