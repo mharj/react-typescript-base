@@ -1,9 +1,12 @@
 import {Action} from 'redux';
 import {RootThunkDispatch, ThunkResult} from '../reducers';
 
-export const handleJsonResponse = <T>(res: Response, unAuthorizedAction?: () => Action): ThunkResult<Promise<T | undefined>> => async (
+export const handleJsonResponse = <T>(res: Response | undefined, unAuthorizedAction?: () => Action): ThunkResult<Promise<T | undefined>> => async (
 	dispatch: RootThunkDispatch,
 ) => {
+	if (!res) {
+		return undefined;
+	}
 	let payload: T | undefined;
 	if (res.ok === true && res.headers.get('Content-Length') !== '0') {
 		if (res.headers.get('Content-Length') === null) {

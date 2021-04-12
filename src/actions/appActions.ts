@@ -1,21 +1,19 @@
-import {HttpClient} from 'mharj-http-client';
 import {Action} from 'redux';
-import {getStore} from '../configureStore';
 import {RootThunkDispatch, ThunkResult} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
 
 // dispatch actions
-export const appLoading = (isLoading: boolean): AppAction => {
-	return {type: 'app/LOADING', isLoading};
-};
+export function appLoading(isLoading: boolean): AppAction {
+	return { type: 'app/LOADING', isLoading };
+}
 
-export const appError = (error: string | undefined): AppAction => {
-	return {type: 'app/ERROR', error};
-};
+export function appError(error: string | undefined): AppAction {
+	return { type: 'app/ERROR', error };
+}
 
-export const appLogin = (isLoggedIn: boolean): AppAction => {
-	return {type: 'app/LOGIN', isLoggedIn};
-};
+export function appLogin(isLoggedIn: boolean): AppAction {
+	return { type: 'app/LOGIN', isLoggedIn };
+}
 
 export const appLogout: () => AppAction = appLogin.bind(undefined, false);
 
@@ -33,10 +31,4 @@ export const doLogout = (): ThunkResult<Promise<Action>> => (dispatch: RootThunk
 	return Promise.resolve(dispatch(appLogout()));
 };
 
-// this hooks global loading state updates from HttpClient
-const store = getStore();
-const client = HttpClient.getInstance();
-client.onLoading((isLoading) => {
-	store.dispatch(appLoading(isLoading));
-});
-export const httpFetch = client.fetch;
+

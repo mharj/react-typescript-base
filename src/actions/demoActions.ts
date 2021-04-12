@@ -1,31 +1,43 @@
-import {getEtagHeader, haveETag, IEtagObject, wrapEtag, getETag} from 'mharj-etag-tools';
 import {handleJsonResponse} from '.';
+import {cacheMatch, cacheStore, isOnline} from '../lib/commonCache';
+import {httpFetch} from '../lib/httpInstance';
 import {IReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
 import {DemoAction, IToDo} from '../reducers/demoReducer';
-import {appError, appLogout, httpFetch} from './appActions';
+import {appError, appLogout} from './appActions';
 
 // dispatch actions
-const setValueAction = (todo: IEtagObject<IToDo>): DemoAction => {
-	return {type: 'demo/VALUE', todo};
-};
+function setValueAction(todo: IToDo | undefined): DemoAction {
+	return {
+		type: 'demo/VALUE',
+		todo,
+	};
+}
 
-// async functions
+// thunk async functions
 export const getHome = (): ThunkResult<Promise<void>> => async (dispatch: RootThunkDispatch, getState: () => IReduxState) => {
 	dispatch(appError(undefined));
-	const {
-		demo: {todo},
-	} = getState();
-	const headers = new Headers();
-	if (haveETag(todo)) {
-		headers.set('if-none-match', getETag(todo));
-	}
 	try {
-		const res = await httpFetch('https://jsonplaceholder.typicode.com/todos/1', {headers});
-		const todoData = await dispatch(handleJsonResponse<IToDo>(res, appLogout));
-		if (todoData) {
-			dispatch(setValueAction(wrapEtag<IToDo>(todoData, getEtagHeader(res))));
+		const headers = new Headers();
+		const req = new Request('https://jsonplaceholder.typicode.com/todos/1', {headers});
+		let res = await cacheMatch(req, {ifNoneMatch: true}); // check cached response (and update if-none-match to req if have etag)
+		const cacheData = await dispatch(handleJsonResponse<IToDo>(res));
+		if (isOnline()) {
+			res = await httpFetch(req);
+			await cacheStore(req, res);
+			const data = await dispatch(handleJsonResponse<IToDo>(res, appLogout));
+			if (data) {
+				// we have new data
+				dispatch(setValueAction(data));
+			} else if (cacheData) {
+				// cached data still valid
+				dispatch(setValueAction(cacheData));
+			}
+		} else {
+			if (cacheData) {
+				// we are offline, use latest data from cache
+				dispatch(setValueAction(cacheData));
+			}
 		}
-		return Promise.resolve();
 	} catch (err) {
 		dispatch(appError(err.message));
 		return Promise.reject(err);

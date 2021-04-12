@@ -1,5 +1,4 @@
-import {unWrapEtag} from 'mharj-etag-tools';
-import React, {Component} from 'react';
+import React from 'react';
 import {Helmet} from 'react-helmet';
 import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
@@ -9,7 +8,7 @@ import {IReduxState, RootThunkDispatch} from '../reducers';
 
 type Props = WithTranslation & IPropsState & ActionList;
 
-class Home extends Component<Props> {
+class Home extends React.Component<Props> {
 	public componentDidMount() {
 		this.props.getHome().then(() => {
 			console.log('async promise done');
@@ -57,7 +56,7 @@ class Home extends Component<Props> {
 }
 
 const mapStateToProps = (state: IReduxState) => ({
-	todo: unWrapEtag(state.demo.todo),
+	todo: state.demo.todo,
 });
 type IPropsState = ReturnType<typeof mapStateToProps>;
 

@@ -18,7 +18,7 @@ i18next
 			return process.env.NODE_ENV === 'development' ? '#' + key + '#' : key;
 		},
 		react: {
-			wait: true,
+			useSuspense: false,
 		},
 		resources: {
 			en: {

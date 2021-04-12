@@ -1,4 +1,3 @@
-import {IEtagObject, wrapEtag} from 'mharj-etag-tools';
 import {Action, Reducer} from 'redux';
 import {IGlobalAction} from './index';
 
@@ -12,7 +11,7 @@ export type Types = 'demo/VALUE';
  */
 interface ISetValue extends Action<Types> {
 	type: 'demo/VALUE';
-	todo: IEtagObject<IToDo>;
+	todo: IToDo | undefined;
 }
 export type DemoAction = ISetValue;
 
@@ -20,14 +19,14 @@ export type DemoAction = ISetValue;
  * Redux state interface
  */
 export interface IState {
-	todo: IEtagObject<IToDo | undefined>;
+	todo: IToDo | undefined;
 }
 
 /**
  * Initial redux state
  */
 export const initialState: IState = {
-	todo: wrapEtag(undefined, null),
+	todo: undefined,
 };
 
 // TODO interface

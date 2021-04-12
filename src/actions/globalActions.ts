@@ -2,9 +2,9 @@ import {Action} from 'redux';
 import {IGlobalAction, RootThunkDispatch, ThunkResult} from '../reducers';
 
 // dispatcher actions
-const doRestAction = (): IGlobalAction => {
-	return {type: 'global/RESET'};
-};
+function doRestAction(): IGlobalAction {
+	return { type: 'global/RESET' };
+}
 
 // async functions
 /**
