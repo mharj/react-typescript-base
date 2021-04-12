@@ -1,6 +1,7 @@
 # react-typescript-base
 
 Basic Typescript React base project (I18N, Helmet, HashRouter, redux, persist, loadable)
+Have request cache support for API offline usage for data fetching
 
 ## Enable notifications
 
@@ -18,3 +19,5 @@ https://github.com/browserslist/browserslist-example
 [check index.tsx file](./src/index.tsx#1)
 
 ## includes standard browser fetch API and polyfill for non-supported platforms.
+
+## basic cache examples for offline API requests
