@@ -98,13 +98,15 @@ class App extends Component<Props> {
 								</Link>
 							</div>
 							<br />
-							<Switch>
-								<Route exact={true} path="/" component={Home} />
-								<Route exact={true} path="/login" component={Login} />
-								<PrivateRoute isValid={isLoggedIn} failPath="/login" exact={true} path="/secret" component={Secret} />
-								<Route exact={true} path="/broken" component={Broken} />
-								<Route exact={true} path="/_error" component={ErrorView} />
-							</Switch>
+							<Suspense fallback={<Loading />}>
+								<Switch>
+									<Route exact={true} path="/" component={Home} />
+									<Route exact={true} path="/login" component={Login} />
+									<PrivateRoute isValid={isLoggedIn} failPath="/login" exact={true} path="/secret" component={Secret} />
+									<Route exact={true} path="/broken" component={Broken} />
+									<Route exact={true} path="/_error" component={ErrorView} />
+								</Switch>
+							</Suspense>
 						</ErrorBoundary>
 					</div>
 					<br />
