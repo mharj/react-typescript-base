@@ -1,4 +1,4 @@
-import { TypedUseSelectorHook,useSelector as useReduxSelector } from 'react-redux';
+import {TypedUseSelectorHook, useSelector as useReduxSelector} from 'react-redux';
 import {Action, combineReducers} from 'redux';
 import {ThunkAction, ThunkDispatch} from 'redux-thunk';
 import * as app from './appReducer';
@@ -17,18 +17,10 @@ interface IGlobalResetAction extends Action<GlobalTypes> {
 export type IGlobalAction = IGlobalResetAction;
 
 /**
- * Helps to navigate redux state structure
- */
-export interface IReduxState {
-	app: app.IState;
-	demo: demo.IState;
-}
-
-/**
  * Combine all initial states
  * @see {@link createStore/default}
  */
-export const initialState: IReduxState = {
+export const initialState: ReduxState = {
 	app: app.initialState,
 	demo: demo.initialState,
 };
@@ -36,7 +28,7 @@ export const initialState: IReduxState = {
 /**
  * Combine all reducers with names
  */
-export const rootReducer = combineReducers<IReduxState>({
+export const rootReducer = combineReducers({
 	app: app.reducer,
 	demo: demo.reducer,
 });
@@ -48,8 +40,10 @@ export const rootReducer = combineReducers<IReduxState>({
  *   qwe: state.demo.todo,
  * }));
  */
-export const useSelector: TypedUseSelectorHook<IReduxState> = useReduxSelector
+export const useSelector: TypedUseSelectorHook<ReduxState> = useReduxSelector;
 
-export type ThunkResult<R> = ThunkAction<R, IReduxState, undefined, Action>;
+export type ReduxState = ReturnType<typeof rootReducer>;
 
-export type RootThunkDispatch = ThunkDispatch<IReduxState, undefined, Action>;
+export type ThunkResult<R> = ThunkAction<R, ReduxState, undefined, Action>;
+
+export type RootThunkDispatch = ThunkDispatch<ReduxState, undefined, Action>;

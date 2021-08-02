@@ -4,7 +4,7 @@ import {withTranslation, WithTranslation} from 'react-i18next';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {getHome} from '../actions/demoActions';
-import {IReduxState, RootThunkDispatch} from '../reducers';
+import {ReduxState, RootThunkDispatch} from '../reducers';
 
 type Props = WithTranslation & IPropsState & ActionList;
 
@@ -55,7 +55,7 @@ class Home extends React.Component<Props> {
 	}
 }
 
-const mapStateToProps = (state: IReduxState) => ({
+const mapStateToProps = (state: ReduxState) => ({
 	todo: state.demo.todo,
 });
 type IPropsState = ReturnType<typeof mapStateToProps>;

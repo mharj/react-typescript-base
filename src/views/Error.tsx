@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {doReset} from '../actions/globalActions';
 import {IErrorProps} from '../components/ErrorBoundary';
-import {IReduxState, RootThunkDispatch} from '../reducers';
+import {ReduxState, RootThunkDispatch} from '../reducers';
 
 type Props = IPropsState & WithTranslation & ActionList;
 type ErrorViewProps = IErrorProps;
@@ -28,7 +28,7 @@ class ErrorView extends Component<Props> {
 	}
 }
 
-const mapStateToProps = (state: IReduxState, ownProps: ErrorViewProps) => ({
+const mapStateToProps = (state: ReduxState, ownProps: ErrorViewProps) => ({
 	error: ownProps.error,
 });
 type IPropsState = ReturnType<typeof mapStateToProps>;

@@ -6,7 +6,7 @@ import {RouteComponentProps} from 'react-router';
 import {withRouter} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {doLogin, doLogout} from '../actions/appActions';
-import {IReduxState, RootThunkDispatch} from '../reducers';
+import {ReduxState, RootThunkDispatch} from '../reducers';
 
 type Props = WithTranslation & RouteComponentProps & IPropsState & ActionList;
 
@@ -95,7 +95,7 @@ class Login extends Component<Props, State> {
 }
 
 // redux state props
-const mapStateToProps = (state: IReduxState) => ({
+const mapStateToProps = (state: ReduxState) => ({
 	isLoggedIn: state.app.isLoggedIn,
 });
 type IPropsState = ReturnType<typeof mapStateToProps>;

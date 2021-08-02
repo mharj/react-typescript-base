@@ -1,9 +1,9 @@
 import {Action} from 'redux';
 import {PUBLIC_VAPID_KEY} from '../env';
-import {IReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
+import {ReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
 import {appError /* httpFetch */} from './appActions';
 
-const sendSubscription = (subscription: PushSubscription): ThunkResult<Promise<Action>> => async (dispatch: RootThunkDispatch, getState: () => IReduxState) => {
+const sendSubscription = (subscription: PushSubscription): ThunkResult<Promise<Action>> => async (dispatch: RootThunkDispatch, getState: () => ReduxState) => {
 	console.log('push API sendSubscription');
 	throw new Error('Push notification client register URL is not configured!');
 	/* return httpFetch('/api/notifications/subscribe', {
@@ -16,7 +16,7 @@ const sendSubscription = (subscription: PushSubscription): ThunkResult<Promise<A
 	});*/
 };
 
-export const doNotificationSubscribe = (): ThunkResult<Promise<Action | void>> => async (dispatch: RootThunkDispatch, getState: () => IReduxState) => {
+export const doNotificationSubscribe = (): ThunkResult<Promise<Action | void>> => async (dispatch: RootThunkDispatch, getState: () => ReduxState) => {
 	console.log('push API doNotificationSubscribe');
 	if ('serviceWorker' in navigator && Notification.permission === 'granted') {
 		try {
