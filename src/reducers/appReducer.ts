@@ -1,10 +1,11 @@
 import {Action, Reducer} from 'redux';
-import {IGlobalAction} from './index';
+import Joi from 'joi';
+import {SharedAction} from './shared';
 
 /**
  * Redux action type keys
  */
-export type Types = 'app/ERROR' | 'app/LOADING' | 'app/LOGIN';
+type Types = 'app/ERROR' | 'app/LOADING' | 'app/LOGIN';
 
 /**
  * Action interfaces
@@ -29,25 +30,37 @@ export type AppAction = IApplicationLoadingAction | IErrorAction | ILoginAction;
 /**
  * Redux state interface
  */
-export interface IState {
+interface StateStore {
 	error: string | undefined;
 	isLoading: boolean;
 	isLoggedIn: boolean;
+	dateDemo: Date;
 }
 
 /**
  * Initial redux state
  */
-export const initialState: IState = {
+export const initialState: StateStore = {
 	error: undefined,
 	isLoading: false,
 	isLoggedIn: false,
+	dateDemo: new Date(),
 };
+
+/**
+ * State persist validator
+ */
+export const validator = Joi.object<StateStore, true>({
+	error: Joi.string().optional(),
+	isLoading: Joi.boolean().required(),
+	isLoggedIn: Joi.boolean().required(),
+	dateDemo: Joi.object().required(),
+});
 
 /**
  * Reducer
  */
-export const reducer: Reducer<IState, AppAction | IGlobalAction> = (state = initialState, action): IState => {
+export const reducer: Reducer<StateStore, AppAction | SharedAction> = (state = initialState, action): StateStore => {
 	switch (action.type) {
 		case 'app/LOADING':
 			return {
@@ -64,7 +77,7 @@ export const reducer: Reducer<IState, AppAction | IGlobalAction> = (state = init
 				...state,
 				isLoggedIn: action.isLoggedIn,
 			};
-		case 'global/RESET':
+		case 'redux/RESET':
 			return initialState;
 		default:
 			return state;

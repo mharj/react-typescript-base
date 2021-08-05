@@ -1,15 +1,8 @@
-import {Action} from 'redux';
-import {IGlobalAction, RootThunkDispatch, ThunkResult} from '../reducers';
+import {SharedAction} from '../reducers/shared';
 
 // dispatcher actions
-function doRestAction(): IGlobalAction {
-	return { type: 'global/RESET' };
-}
+export const doReset = (): SharedAction => ({
+	type: 'redux/RESET',
+});
 
 // async functions
-/**
- * reset redux to initial state
- */
-export const doReset = (): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
-	return Promise.resolve(dispatch(doRestAction()));
-};

@@ -1,12 +1,15 @@
 import {applyMiddleware, compose, createStore, StoreEnhancer} from 'redux';
 import {persistReducer, persistStore} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import {PersistConfig} from 'redux-persist/lib/types';
 import thunk from 'redux-thunk';
-import {initialState, rootReducer} from './reducers';
+import jsonTransform from './persist/jsonTransform';
+import {initialState, ReduxState, rootReducer, stateValidator} from './reducers';
 
-const persistConfig = {
+const persistConfig: PersistConfig<ReduxState, ReduxState, ReduxState, ReduxState> = {
 	key: 'root',
 	storage,
+	transforms: [stateValidator, jsonTransform({logger: process.env.NODE_ENV === 'development' ? console : undefined})],
 };
 
 const enhancers: StoreEnhancer[] = [];
@@ -18,13 +21,10 @@ if (process.env.NODE_ENV === 'development' && '__REDUX_DEVTOOLS_EXTENSION__' in 
 		enhancers.push(devToolsExtension());
 	}
 }
-const composedEnhancers = compose(
-	applyMiddleware(thunk),
-	...enhancers,
-) as any;
+const composedEnhancers = compose(applyMiddleware(thunk), ...enhancers) as any;
 
 let store: ReturnType<typeof initStore> | undefined;
-const initStore = () => {
+export const initStore = () => {
 	return createStore(persistedReducer, initialState, composedEnhancers);
 };
 

@@ -1,7 +1,8 @@
 # react-typescript-base
 
-Basic Typescript React base project (I18N, Helmet, HashRouter, redux, persist, loadable)
+Basic Typescript React base project (I18N, Helmet, HashRouter, redux, persist, React.lazy)
 Have request cache support for API offline usage for data fetching
+Persist store "transform" function to validate with JOI if handle redux store datamodel changes (development will log to console if store or loading fails on validate)
 
 ## Enable notifications
 

@@ -1,10 +1,11 @@
 import {Action, Reducer} from 'redux';
-import {IGlobalAction} from './index';
+import Joi from 'joi';
+import {SharedAction} from './shared';
 
 /**
  * Redux action type keys
  */
-export type Types = 'demo/VALUE';
+type Types = 'demo/VALUE';
 
 /**
  * Action interfaces
@@ -18,16 +19,28 @@ export type DemoAction = ISetValue;
 /**
  * Redux state interface
  */
-export interface IState {
+interface StateStore {
 	todo: IToDo | undefined;
 }
 
 /**
  * Initial redux state
  */
-export const initialState: IState = {
+export const initialState: StateStore = {
 	todo: undefined,
 };
+
+/**
+ * State persist validator
+ */
+export const validator = Joi.object<StateStore, true>({
+	todo: Joi.object<IToDo>({
+		userId: Joi.number().required(),
+		id: Joi.number().required(),
+		title: Joi.string().required(),
+		completed: Joi.boolean().required(),
+	}).optional(),
+});
 
 // TODO interface
 export interface IToDo {
@@ -40,14 +53,14 @@ export interface IToDo {
 /**
  * Reducer
  */
-export const reducer: Reducer<IState, DemoAction | IGlobalAction> = (state = initialState, action): IState => {
+export const reducer: Reducer<StateStore, DemoAction | SharedAction> = (state = initialState, action): StateStore => {
 	switch (action.type) {
 		case 'demo/VALUE':
 			return {
 				...state,
 				todo: action.todo,
 			};
-		case 'global/RESET':
+		case 'redux/RESET':
 			return initialState;
 		default:
 			return state;

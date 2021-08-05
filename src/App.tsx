@@ -6,7 +6,7 @@ import './App.css';
 import PrivateRoute from './components/PrivateRoute';
 import logo from './logo.svg';
 import {IWithNotification, withNotification} from './NotificationProvider';
-import {IReduxState} from './reducers';
+import {ReduxState} from './reducers';
 import {IWithServiceWorker, withServiceWorker} from './ServiceWorkerProvider';
 
 // views code split
@@ -137,7 +137,7 @@ class App extends Component<Props> {
 }
 
 // redux state props
-const mapStateToProps = (state: IReduxState) => {
+const mapStateToProps = (state: ReduxState) => {
 	return {
 		error: state.app.error,
 		isLoading: state.app.isLoading,
