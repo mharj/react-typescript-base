@@ -1,5 +1,5 @@
 import {Action, Reducer} from 'redux';
-import {IGlobalAction} from './index';
+import {GlobalAction} from './common';
 
 /**
  * Redux action type keys
@@ -18,7 +18,7 @@ export type DemoAction = ISetValue;
 /**
  * Redux state interface
  */
-export interface IState {
+interface IState {
 	todo: IToDo | undefined;
 }
 
@@ -40,7 +40,7 @@ export interface IToDo {
 /**
  * Reducer
  */
-export const reducer: Reducer<IState, DemoAction | IGlobalAction> = (state = initialState, action): IState => {
+export const reducer: Reducer<IState, DemoAction | GlobalAction> = (state = initialState, action): IState => {
 	switch (action.type) {
 		case 'demo/VALUE':
 			return {

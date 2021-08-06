@@ -1,5 +1,5 @@
 import {Action, Reducer} from 'redux';
-import {IGlobalAction} from './index';
+import {GlobalAction} from './common';
 
 /**
  * Redux action type keys
@@ -29,7 +29,7 @@ export type AppAction = IApplicationLoadingAction | IErrorAction | ILoginAction;
 /**
  * Redux state interface
  */
-export interface IState {
+interface IState {
 	error: string | undefined;
 	isLoading: boolean;
 	isLoggedIn: boolean;
@@ -47,7 +47,7 @@ export const initialState: IState = {
 /**
  * Reducer
  */
-export const reducer: Reducer<IState, AppAction | IGlobalAction> = (state = initialState, action): IState => {
+export const reducer: Reducer<IState, AppAction | GlobalAction> = (state = initialState, action): IState => {
 	switch (action.type) {
 		case 'app/LOADING':
 			return {

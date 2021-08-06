@@ -1,20 +1,8 @@
-import {TypedUseSelectorHook, useSelector as useReduxSelector} from 'react-redux';
+import {TypedUseSelectorHook, useDispatch, useSelector as useReduxSelector} from 'react-redux';
 import {Action, combineReducers} from 'redux';
 import {ThunkAction, ThunkDispatch} from 'redux-thunk';
 import * as app from './appReducer';
 import * as demo from './demoReducer';
-
-/**
- * This enum is meant for types which might affect all reducers
- */
-export type GlobalTypes = 'global/RESET';
-// Global actions
-interface IGlobalResetAction extends Action<GlobalTypes> {
-	type: 'global/RESET';
-}
-
-// Merge global actions
-export type IGlobalAction = IGlobalResetAction;
 
 /**
  * Combine all initial states
@@ -34,13 +22,21 @@ export const rootReducer = combineReducers({
 });
 
 /**
- * mapStateToProps "hook"
+ * mapStateToProps hook
  * @example
  * const data = useSelector((state) => ({
  *   qwe: state.demo.todo,
  * }));
  */
 export const useSelector: TypedUseSelectorHook<ReduxState> = useReduxSelector;
+
+/**
+ * useThunkDispatch hook
+ * @example
+ * const dispatch = useThunkDispatch();
+ * dispatch(someThunkAction());
+ */
+export const useThunkDispatch = () => useDispatch<RootThunkDispatch>();
 
 export type ReduxState = ReturnType<typeof rootReducer>;
 
