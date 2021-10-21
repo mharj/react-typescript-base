@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {Action} from 'redux';
 import {PUBLIC_VAPID_KEY} from '../env';
 import {ReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
@@ -15,7 +16,7 @@ const sendSubscription =
 			'Content-Type': 'application/json',
 		},
 		method: 'POST',
-	});*/
+	}); */
 	};
 
 export const doNotificationSubscribe = (): ThunkResult<Promise<Action | void>> => async (dispatch: RootThunkDispatch, getState: () => ReduxState) => {

@@ -27,9 +27,9 @@ describe('test demo actions', () => {
 		});
 		it('should do getHome', async () => {
 			// initial state
-			expect(getState()).to.containSubset({demo: {todo: {data: undefined, etag: null}}});
+			expect(getState()).to.containSubset({demo: {todo: undefined}});
 			await dispatch(demo.getHome());
-			expect(getState()).to.containSubset({demo: {todo: {data: {userId: 1, id: 1, title: 'delectus aut autem', completed: false}}}});
+			expect(getState()).to.containSubset({demo: {todo: {userId: 1, id: 1, title: 'delectus aut autem', completed: false}}});
 		});
 	});
 });

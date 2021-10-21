@@ -1,1 +1,1 @@
-declare module 'cross-fetch/polyfill'
+declare module 'cross-fetch/polyfill';
