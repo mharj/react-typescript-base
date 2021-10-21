@@ -46,7 +46,7 @@ export const cacheStore = async (req: Request, res: Response, cacheName = 'defau
 	}
 };
 
-export const cleanCache = async (basePath: string, matchUrl: string[], cacheName = 'default') => {
+export const cleanCache = async (basePath: string, matchUrl: string[], cacheName = 'default'): Promise<void> => {
 	if (typeof window !== 'undefined' && window.caches) {
 		const cache = await window.caches.open(cacheName);
 		const notFound = (await cache.keys()).filter((res) => res.url.startsWith(basePath) && matchUrl.indexOf(res.url) === -1);
@@ -62,7 +62,7 @@ export const deleteCache = async (cacheName = 'default'): Promise<void> => {
 	}
 };
 
-export const isOnline = () => {
+export const isOnline = (): boolean => {
 	if (typeof window !== 'undefined' && window.navigator) {
 		return window.navigator.onLine;
 	}

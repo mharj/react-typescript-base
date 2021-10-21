@@ -25,6 +25,7 @@ class Login extends Component<Props, State> {
 		this.onChange = this.onChange.bind(this);
 		this.onKeyUp = this.onKeyUp.bind(this);
 	}
+
 	public render() {
 		const {isLoggedIn, t} = this.props;
 		return (
@@ -57,6 +58,7 @@ class Login extends Component<Props, State> {
 			</div>
 		);
 	}
+
 	private async handleLogin(event: React.FormEvent<HTMLButtonElement> | KeyboardEvent<HTMLInputElement>) {
 		event.preventDefault();
 		try {
@@ -66,7 +68,8 @@ class Login extends Component<Props, State> {
 			// ignore
 		}
 	}
-	private async handleLogout(event: React.FormEvent<HTMLButtonElement>) {
+
+	private async handleLogout() {
 		try {
 			await this.props.doLogout();
 			this.props.history.push('/');
@@ -74,6 +77,7 @@ class Login extends Component<Props, State> {
 			// ignore
 		}
 	}
+
 	private onChange(event: ChangeEvent<HTMLInputElement>) {
 		const target = event.currentTarget;
 		switch (target.name) {
@@ -83,6 +87,7 @@ class Login extends Component<Props, State> {
 				return this.setState({password: target.value.trim()});
 		}
 	}
+
 	private onKeyUp(event: KeyboardEvent<HTMLInputElement>) {
 		if (event.keyCode === 13) {
 			event.preventDefault();
@@ -110,9 +115,4 @@ const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 	);
 type ActionList = ReturnType<typeof mapDispatchToProps>;
 
-export default withRouter(
-	connect(
-		mapStateToProps,
-		mapDispatchToProps,
-	)(withTranslation()(Login)),
-);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Login)));

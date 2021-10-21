@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 
 class Broken extends Component {
-	public componentDidMount() {
+	public componentDidMount(): void {
 		throw new Error('Broken: something got broken');
 	}
-	public render() {
+
+	public render(): JSX.Element {
 		return <div />;
 	}
 }

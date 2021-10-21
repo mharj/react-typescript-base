@@ -1,4 +1,4 @@
-import React, {Component, ElementType, ErrorInfo} from 'react';
+import React, {Component, ElementType /* ErrorInfo */} from 'react';
 import {RouteComponentProps, withRouter} from 'react-router';
 
 export interface IErrorProps {
@@ -37,7 +37,7 @@ class ErrorBoundary extends Component<Props, IState> {
 		};
 	}
 
-	public componentDidCatch(error: Error, info: ErrorInfo) {
+	public componentDidCatch(error: Error /*  info: ErrorInfo */) {
 		this.setState({
 			error,
 			hasError: true,

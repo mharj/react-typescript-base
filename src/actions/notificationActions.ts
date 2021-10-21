@@ -3,10 +3,12 @@ import {PUBLIC_VAPID_KEY} from '../env';
 import {ReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
 import {appError /* httpFetch */} from './appActions';
 
-const sendSubscription = (subscription: PushSubscription): ThunkResult<Promise<Action>> => async (dispatch: RootThunkDispatch, getState: () => ReduxState) => {
-	console.log('push API sendSubscription');
-	throw new Error('Push notification client register URL is not configured!');
-	/* return httpFetch('/api/notifications/subscribe', {
+const sendSubscription =
+	(subscription: PushSubscription): ThunkResult<Promise<Action>> =>
+	async (dispatch: RootThunkDispatch, getState: () => ReduxState) => {
+		console.log('push API sendSubscription');
+		throw new Error('Push notification client register URL is not configured!');
+		/* return httpFetch('/api/notifications/subscribe', {
 		// TODO: change to API server to register push clients
 		body: JSON.stringify(subscription),
 		headers: {
@@ -14,7 +16,7 @@ const sendSubscription = (subscription: PushSubscription): ThunkResult<Promise<A
 		},
 		method: 'POST',
 	});*/
-};
+	};
 
 export const doNotificationSubscribe = (): ThunkResult<Promise<Action | void>> => async (dispatch: RootThunkDispatch, getState: () => ReduxState) => {
 	console.log('push API doNotificationSubscribe');
@@ -40,7 +42,7 @@ export const doNotificationSubscribe = (): ThunkResult<Promise<Action | void>> =
 				console.log('Existed push API subscription detected.');
 				return dispatch(sendSubscription(existedSubscription));
 			}
-		} catch (err) {
+		} catch (err: any) {
 			return dispatch(appError(err.message));
 		}
 	} else {

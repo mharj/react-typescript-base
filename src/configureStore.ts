@@ -24,13 +24,15 @@ let store: ReturnType<typeof initStore> | undefined;
 const initStore = () => {
 	return createStore(persistedReducer, initialState, composedEnhancers);
 };
+type InitStoreType = ReturnType<typeof initStore>;
 
 let persistor: ReturnType<typeof initPersist> | undefined;
 const initPersist = (currentStore: ReturnType<typeof initStore>) => {
 	return persistStore(currentStore);
 };
+type InitPersistType = ReturnType<typeof initPersist>;
 
-function setupStore() {
+function setupStore(): {store: InitStoreType; persistor: InitPersistType} {
 	if (!store) {
 		store = initStore();
 	}
@@ -45,7 +47,7 @@ function setupStore() {
  */
 export default setupStore;
 
-export const getStore = () => {
+export const getStore = (): InitStoreType => {
 	if (!store) {
 		store = initStore();
 	}

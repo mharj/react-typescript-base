@@ -91,7 +91,7 @@ class App extends Component<Props> {
 									<button>{t('login')}</button>
 								</Link>
 								<Link to="/secret">
-									<button disabled={isLoggedIn ? false : true}>{t('secret')}</button>
+									<button disabled={!isLoggedIn}>{t('secret')}</button>
 								</Link>
 								<Link to="/broken">
 									<button>{t('broken')}</button>
@@ -123,10 +123,12 @@ class App extends Component<Props> {
 			</Router>
 		);
 	}
+
 	private handleChangeLanguage(event: FormEvent<HTMLButtonElement>) {
 		const target = event.currentTarget;
 		this.props.i18n.changeLanguage(target.value);
 	}
+
 	private async handleNotificationRequest() {
 		try {
 			await this.props.requestNotification();

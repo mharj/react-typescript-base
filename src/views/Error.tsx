@@ -42,7 +42,4 @@ const mapDispatchToProps = (dispatch: RootThunkDispatch) =>
 	);
 type ActionList = ReturnType<typeof mapDispatchToProps>;
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)(withTranslation()(ErrorView));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(ErrorView));

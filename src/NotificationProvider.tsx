@@ -19,7 +19,7 @@ const requestNotification = async (): Promise<void> => {
 			return Promise.resolve();
 		}
 	}
-	return Promise.reject();
+	return Promise.reject(new Error('not granted'));
 };
 
 const initialContext: IWithNotification = {
@@ -46,13 +46,15 @@ export class NotificationProvider extends Component<IProps, IWithNotification> {
 		this.state = initialContext;
 		this.handleRequestNotification = this.handleRequestNotification.bind(this);
 	}
-	public render() {
+
+	public render(): JSX.Element {
 		const contextValue: IWithNotification = {
 			notificationStatus: this.state.notificationStatus,
 			requestNotification: this.handleRequestNotification,
 		};
 		return <Provider value={contextValue}>{this.props.children}</Provider>;
 	}
+
 	private async handleRequestNotification() {
 		try {
 			await requestNotification();

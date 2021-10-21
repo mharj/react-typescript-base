@@ -1,6 +1,5 @@
 import React, {Component, createContext, FunctionComponent, ReactNode} from 'react';
-import {STATUS as WORKER_STATUS} from './serviceWorkerRegistration';
-import {listen} from './serviceWorkerRegistration';
+import {listen, STATUS as WORKER_STATUS} from './serviceWorkerRegistration';
 
 export interface IWithServiceWorker {
 	serviceWorkerState: WORKER_STATUS | undefined;
@@ -42,14 +41,16 @@ export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker>
 		this.getUpdateFunction = this.getUpdateFunction.bind(this);
 		this.getSkipWaitFunction = this.getSkipWaitFunction.bind(this);
 	}
-	public componentDidMount() {
+
+	public componentDidMount(): void {
 		this.props.listener({
 			checkUpdate: this.getUpdateFunction,
 			onStatusUpdate: this.onServiceStateChange,
 			skipWait: this.getSkipWaitFunction,
 		});
 	}
-	public render() {
+
+	public render(): JSX.Element {
 		const contextValue: IWithServiceWorker = {
 			serviceWorkerState: this.state.serviceWorkerState,
 			serviceWorkerUpdate: this.runUpdate,
@@ -57,26 +58,31 @@ export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker>
 		};
 		return <Provider value={contextValue}>{this.props.children}</Provider>;
 	}
+
 	private onServiceStateChange(state: WORKER_STATUS) {
 		this.setState({
 			serviceWorkerState: state,
 		});
 	}
+
 	private getUpdateFunction(callback: () => void) {
 		this.setState({
 			serviceWorkerUpdate: callback,
 		});
 	}
+
 	private getSkipWaitFunction(callback: () => void) {
 		this.setState({
 			serviceWorkerSkipWait: callback,
 		});
 	}
+
 	private runUpdate() {
 		if (this.state.serviceWorkerUpdate) {
 			this.state.serviceWorkerUpdate();
 		}
 	}
+
 	private skipWait() {
 		if (this.state.serviceWorkerSkipWait) {
 			this.state.serviceWorkerSkipWait();

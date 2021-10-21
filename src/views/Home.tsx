@@ -14,7 +14,8 @@ class Home extends React.Component<Props> {
 			console.log('async promise done');
 		});
 	}
-	public render() {
+
+	public render(): JSX.Element {
 		const {t, todo} = this.props;
 		return (
 			<div>

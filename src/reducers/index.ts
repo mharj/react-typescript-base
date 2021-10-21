@@ -36,7 +36,7 @@ export const useSelector: TypedUseSelectorHook<ReduxState> = useReduxSelector;
  * const dispatch = useThunkDispatch();
  * dispatch(someThunkAction());
  */
-export const useThunkDispatch = () => useDispatch<RootThunkDispatch>();
+export const useThunkDispatch = (): RootThunkDispatch => useDispatch<RootThunkDispatch>();
 
 export type ReduxState = ReturnType<typeof rootReducer>;
 
