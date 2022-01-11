@@ -1,36 +1,35 @@
 import {Action} from 'redux';
 import {RootThunkDispatch, ThunkResult} from '../reducers';
 
+// async functions
+export function isJson(res: Response) {
+	return res.headers.get('Content-type')?.startsWith('application/json');
+}
+
 export const handleJsonResponse =
-	<T>(res: Response | undefined, unAuthorizedAction?: () => Action): ThunkResult<Promise<T | undefined>> =>
-	async (dispatch: RootThunkDispatch) => {
+	<T>(res: Response | undefined, unAuthorizedAction?: () => Action): ThunkResult<Promise<T> | undefined> =>
+	(dispatch: RootThunkDispatch) => {
 		if (!res) {
-			return undefined;
-		}
-		let payload: T | undefined;
-		if (res.ok === true && res.headers.get('Content-Length') !== '0') {
-			if (res.headers.get('Content-Length') === null) {
-				console.warn('fetch response headers missing Content-Length, check server or CORS settings');
-			}
-			try {
-				payload = (await res.json()) as T;
-			} catch (err) {
-				// ignore
-			}
+			return;
 		}
 		switch (res.status) {
 			case 200:
-				return Promise.resolve(payload);
+			case 201:
+				if (!isJson(res)) {
+					throw new Error('not json payload');
+				}
+				return res.json();
+			case 204:
 			case 304:
-				return Promise.resolve(undefined);
+				return;
 			case 401: {
 				if (dispatch && unAuthorizedAction) {
 					dispatch(unAuthorizedAction());
-					return Promise.resolve(undefined);
+					return;
 				}
-				return Promise.reject(new Error('http error: ' + res.status));
+				throw new Error('http error: ' + res.status);
 			}
 			default:
-				return Promise.reject(new Error('http error: ' + res.status));
+				throw new Error('http error: ' + res.status);
 		}
 	};

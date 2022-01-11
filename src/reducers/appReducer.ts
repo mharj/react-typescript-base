@@ -33,6 +33,7 @@ interface IState {
 	error: string | undefined;
 	isLoading: boolean;
 	isLoggedIn: boolean;
+	_persist: any;
 }
 
 /**
@@ -42,6 +43,7 @@ export const initialState: IState = {
 	error: undefined,
 	isLoading: false,
 	isLoggedIn: false,
+	_persist: undefined,
 };
 
 /**

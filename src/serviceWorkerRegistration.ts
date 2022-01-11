@@ -1,4 +1,5 @@
 /* eslint-disable sonarjs/cognitive-complexity */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
@@ -30,15 +31,13 @@ type Config = {
 interface Listen {
 	onStatusUpdate?: (status: STATUS) => void;
 	checkUpdate?: (callback: () => void) => void;
-	skipWait?: (callback: () => void) => void;
 }
 
 let onStatusUpdate: ((status: STATUS) => void) | undefined;
 let checkUpdate: ((callback: () => void) => void) | undefined;
-let skipWait: ((callback: () => void) => void) | undefined;
 
 let lastStatus: STATUS | undefined;
-function statusUdate(status: STATUS) {
+function statusUpdate(status: STATUS) {
 	lastStatus = status;
 	if (onStatusUpdate) {
 		onStatusUpdate(lastStatus);
@@ -48,7 +47,6 @@ function statusUdate(status: STATUS) {
 export function listen(config: Listen): void {
 	onStatusUpdate = config.onStatusUpdate;
 	checkUpdate = config.checkUpdate;
-	skipWait = config.skipWait;
 	// listen goes later than register, notify UI with last status
 	if (onStatusUpdate && lastStatus) {
 		onStatusUpdate(lastStatus);
@@ -56,10 +54,17 @@ export function listen(config: Listen): void {
 }
 // end listen setup
 
+let currentRegistration: ServiceWorkerRegistration | undefined;
+
+export function skipWait() {
+	currentRegistration?.installing?.postMessage({type: 'SKIP_WAITING'});
+}
+
 function registerValidSW(swUrl: string, config?: Config) {
 	navigator.serviceWorker
 		.register(swUrl)
 		.then((registration) => {
+			currentRegistration = registration;
 			registration.onupdatefound = () => {
 				const installingWorker = registration.installing;
 				if (installingWorker == null) {
@@ -72,21 +77,19 @@ function registerValidSW(swUrl: string, config?: Config) {
 							// but the previous service worker will still serve the older
 							// content until all client tabs are closed.
 							console.log('New content is available and will be used when all tabs for this page are closed. See https://cra.link/PWA.');
-							statusUdate(installingWorker.state);
+							statusUpdate(installingWorker.state);
+
 							// Execute callback
 							if (config && config.onUpdate) {
 								config.onUpdate(registration);
 							}
-							// automatically skipWait and start activate
-							// console.log('skipWaiting');
-							// registration.waiting?.postMessage({type: 'SKIP_WAITING'});
 						} else {
 							// At this point, everything has been precached.
 							// It's the perfect time to display a
 							// "Content is cached for offline use." message.
 							console.log('Content is cached for offline use.');
 
-							statusUdate('loaded');
+							statusUpdate('loaded');
 
 							// Execute callback
 							if (config && config.onSuccess) {
@@ -94,7 +97,7 @@ function registerValidSW(swUrl: string, config?: Config) {
 							}
 						}
 					} else {
-						statusUdate(installingWorker.state);
+						statusUpdate(installingWorker.state);
 					}
 				};
 			};
@@ -105,16 +108,10 @@ function registerValidSW(swUrl: string, config?: Config) {
 					// update status
 					const installingWorker = registration.installing;
 					if (installingWorker) {
-						statusUdate(installingWorker.state);
+						statusUpdate(installingWorker.state);
 					}
 					console.log('running serviceWorker update');
 					registration.update();
-				});
-			}
-			if (skipWait) {
-				skipWait(() => {
-					console.log('skip wait');
-					registration.waiting?.postMessage({type: 'SKIP_WAITING'});
 				});
 			}
 		})
@@ -144,16 +141,17 @@ function checkValidServiceWorker(swUrl: string, config?: Config) {
 			}
 		})
 		.catch(() => {
-			statusUdate('offline');
+			statusUpdate('offline');
 			console.log('No internet connection found. App is running in offline mode.');
 		});
 }
 
-export function unregister(): void {
+export function unregister() {
 	if ('serviceWorker' in navigator) {
 		navigator.serviceWorker.ready
 			.then((registration) => {
 				registration.unregister();
+				currentRegistration = undefined;
 			})
 			.catch((error) => {
 				console.error(error.message);
@@ -190,6 +188,6 @@ export function register(config?: Config): void {
 			}
 		});
 	} else {
-		statusUdate('serviceWorker' in navigator ? 'development' : 'no_worker');
+		statusUpdate('serviceWorker' in navigator ? 'development' : 'no_worker');
 	}
 }

@@ -1,40 +1,27 @@
 import React, {Component, ElementType /* ErrorInfo */} from 'react';
-import {RouteComponentProps, withRouter} from 'react-router';
 
 export interface IErrorProps {
 	error: undefined | Error;
+	onClear: () => void;
 }
 
-export type Props = RouteComponentProps & {
+export type Props = {
 	onError: ElementType<IErrorProps>;
 };
 
 interface IState {
 	error: Error | undefined;
 	hasError: boolean;
-	location: any;
 }
 
 class ErrorBoundary extends Component<Props, IState> {
-	public static getDerivedStateFromProps(props: Props, state: IState) {
-		if (props.history.location !== state.location) {
-			return {
-				error: null,
-				hasError: false,
-				location: props.history.location,
-			};
-		} else {
-			return null;
-		}
-	}
-
 	constructor(props: Props) {
 		super(props);
 		this.state = {
 			error: undefined,
 			hasError: false,
-			location: props.history.location,
 		};
+		this.handleClear = this.handleClear.bind(this);
 	}
 
 	public componentDidCatch(error: Error /*  info: ErrorInfo */) {
@@ -47,9 +34,16 @@ class ErrorBoundary extends Component<Props, IState> {
 	public render() {
 		const ErrorView = this.props.onError;
 		if (this.state.hasError) {
-			return <ErrorView error={this.state.error} />;
+			return <ErrorView error={this.state.error} onClear={this.handleClear} />;
 		}
 		return this.props.children;
 	}
+
+	private handleClear() {
+		this.setState({
+			error: undefined,
+			hasError: false,
+		});
+	}
 }
-export default withRouter(ErrorBoundary);
+export default ErrorBoundary;

@@ -20,6 +20,7 @@ export type DemoAction = ISetValue;
  */
 interface IState {
 	todo: IToDo | undefined;
+	_persist: any;
 }
 
 /**
@@ -27,6 +28,7 @@ interface IState {
  */
 export const initialState: IState = {
 	todo: undefined,
+	_persist: undefined,
 };
 
 // TODO interface

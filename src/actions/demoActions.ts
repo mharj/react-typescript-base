@@ -1,6 +1,6 @@
 import {handleJsonResponse} from '.';
 import {cacheMatch, cacheStore, isOnline} from '../lib/commonCache';
-import {httpFetch} from '../lib/httpInstance';
+import {httpFetch} from '../lib/httpFetch';
 import {RootThunkDispatch, ThunkResult} from '../reducers';
 import {DemoAction, IToDo} from '../reducers/demoReducer';
 import {appError, appLogout} from './appActions';

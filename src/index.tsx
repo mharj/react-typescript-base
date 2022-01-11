@@ -1,5 +1,3 @@
-import 'react-app-polyfill/ie9';
-import 'react-app-polyfill/stable'; // tslint:disable-next-line
 import {register, listen} from './serviceWorkerRegistration';
 import React, {Suspense} from 'react';
 import './index.css';
@@ -17,7 +15,7 @@ Promise.all([
 	import('./reportWebVitals' /* webpackChunkName: "web-vitals", webpackPreload: true */),
 	import('cross-fetch/polyfill' /* webpackChunkName: "fetch", webpackPreload: true */),
 	import('./i18n' /* webpackChunkName: "i18n", webpackPreload: true */),
-	import('./views/Error' /* webpackChunkName: "error-view", webpackPreload: true */),
+	import('./views/ErrorView' /* webpackChunkName: "error-view", webpackPreload: true */),
 	import('./components/ErrorBoundary' /* webpackChunkName: "error-boundary-component", webpackPreload: true */),
 ]).then((loaded) => {
 	const [configureStore, ReactDOM, Redux, Persist, AppModule, reportWebVitals] = loaded;

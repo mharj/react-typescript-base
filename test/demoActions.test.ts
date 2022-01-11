@@ -6,7 +6,7 @@ import 'cross-fetch/polyfill';
 import 'mocha';
 import {Dispatch} from 'redux';
 import * as demo from '../src/actions/demoActions';
-import {createTestStore} from '../src/configureTestStore';
+import {createTestStore} from './lib/configureTestStore';
 
 chai.use(chaiAsPromised);
 
