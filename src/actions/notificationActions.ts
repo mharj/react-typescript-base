@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Action} from 'redux';
 import {PUBLIC_VAPID_KEY} from '../env';
+import {isError} from '../lib/errorUtil';
 import {ReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
-import {appError /* httpFetch */} from './appActions';
+import {setError /* httpFetch */} from './appActions';
 
 const sendSubscription =
 	(subscription: PushSubscription): ThunkResult<Promise<Action>> =>
@@ -43,8 +44,8 @@ export const doNotificationSubscribe = (): ThunkResult<Promise<Action | void>> =
 				console.log('Existed push API subscription detected.');
 				return dispatch(sendSubscription(existedSubscription));
 			}
-		} catch (err: any) {
-			return dispatch(appError(err.message));
+		} catch (err: unknown) {
+			return dispatch(setError(err));
 		}
 	} else {
 		return Promise.resolve();

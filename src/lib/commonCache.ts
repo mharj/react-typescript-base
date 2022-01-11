@@ -1,10 +1,13 @@
+interface CacheOptions extends CacheQueryOptions {
+	ifNoneMatch?: boolean;
+}
 /**
  * cacheMatch
  * @param req
  * @param options
  * @throws Error if no cache data and browser is offline
  */
-const getCacheOptions = (data: (CacheQueryOptions & Record<string, any>) | undefined): CacheQueryOptions => {
+const getCacheOptions = (data: CacheOptions | undefined): CacheQueryOptions => {
 	const out: CacheQueryOptions = {};
 	if (data) {
 		if ('ignoreMethod' in data) {
@@ -20,7 +23,7 @@ const getCacheOptions = (data: (CacheQueryOptions & Record<string, any>) | undef
 	return out;
 };
 
-export const cacheMatch = async (req: Request, options?: {ifNoneMatch?: boolean} & CacheQueryOptions, cacheName = 'default'): Promise<Response | undefined> => {
+export const cacheMatch = async (req: Request, options?: CacheOptions, cacheName = 'default'): Promise<Response | undefined> => {
 	if (typeof window !== 'undefined' && window.caches) {
 		const cache = await window.caches.open(cacheName);
 		const resp = await cache.match(req, getCacheOptions(options));

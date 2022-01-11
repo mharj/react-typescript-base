@@ -7,7 +7,7 @@ export function appLoading(isLoading: boolean): AppAction {
 	return {type: 'app/LOADING', isLoading};
 }
 
-export function appError(error: string | undefined): AppAction {
+function appError(error: string | undefined): AppAction {
 	return {type: 'app/ERROR', error};
 }
 
@@ -16,6 +16,19 @@ export function appLogin(isLoggedIn: boolean): AppAction {
 }
 
 export const appLogout: () => AppAction = appLogin.bind(undefined, false);
+
+export function setError(value: unknown) {
+	if (value === undefined) {
+		return appError(undefined);
+	}
+	if (typeof value === 'string') {
+		return appError(value);
+	}
+	if (typeof value === 'object' && value instanceof Error) {
+		return appError(value.message);
+	}
+	return appError(`${value}`);
+}
 
 export const doLogin =
 	(username: string, password: string): ThunkResult<Promise<Action>> =>

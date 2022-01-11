@@ -21,7 +21,10 @@ const ErrorView = React.lazy(() => import('./views/ErrorView' /* webpackChunkNam
 
 const App: React.FC = () => {
 	const {serviceWorkerState, serviceWorkerUpdate} = useServiceWorker();
-	const {t, i18n} = useTranslation();
+	const {
+		t,
+		i18n: {changeLanguage},
+	} = useTranslation();
 	const {notificationStatus, requestNotification} = useNotification();
 	const {error, isLoggedIn, isLoading} = useSelector((state) => ({
 		isLoggedIn: state.app.isLoggedIn,
@@ -35,13 +38,13 @@ const App: React.FC = () => {
 					<img src={logo} className="App-logo" alt="logo" />
 					<h1 className="App-title">Welcome to React</h1>
 				</header>
-				<button value="fi-FI" onClick={({currentTarget}) => i18n.changeLanguage(currentTarget.value)}>
+				<button value="fi-FI" onClick={({currentTarget}) => changeLanguage(currentTarget.value)}>
 					{t('fin')}
 				</button>
-				<button value="en-EN" onClick={({currentTarget}) => i18n.changeLanguage(currentTarget.value)}>
+				<button value="en-EN" onClick={({currentTarget}) => changeLanguage(currentTarget.value)}>
 					{t('eng')}
 				</button>
-				<button value="sv-SV" onClick={({currentTarget}) => i18n.changeLanguage(currentTarget.value)}>
+				<button value="sv-SV" onClick={({currentTarget}) => changeLanguage(currentTarget.value)}>
 					{t('sve')}
 				</button>
 				{notificationStatus === 'default' ? <button onClick={() => requestNotification()}>{t('notification_request')}</button> : null}

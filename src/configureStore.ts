@@ -17,14 +17,18 @@ const persistConfig: PersistConfig<ReduxState> = {
 
 const enhancers: StoreEnhancer[] = [];
 
+interface WindowDevTools extends Window {
+	__REDUX_DEVTOOLS_EXTENSION__?: () => StoreEnhancer;
+}
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 if (process.env.NODE_ENV === 'development' && '__REDUX_DEVTOOLS_EXTENSION__' in window) {
-	const devToolsExtension = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
+	const devToolsExtension = (window as WindowDevTools).__REDUX_DEVTOOLS_EXTENSION__;
 	if (typeof devToolsExtension === 'function') {
 		enhancers.push(devToolsExtension());
 	}
 }
-const composedEnhancers = compose(applyMiddleware(thunk), ...enhancers) as any;
+const composedEnhancers = compose(applyMiddleware(thunk), ...enhancers) as StoreEnhancer;
 
 let store: ReturnType<typeof initStore> | undefined;
 const initStore = () => {

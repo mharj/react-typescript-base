@@ -27,8 +27,8 @@ export const rootReducer = combineReducers({
 /**
  * mapStateToProps hook
  * @example
- * const data = useSelector((state) => ({
- *   qwe: state.demo.todo,
+ * const {todo} = useSelector((state) => ({
+ *   todo: state.demo.todo,
  * }));
  */
 export const useSelector: TypedUseSelectorHook<ReduxState> = useReduxSelector;

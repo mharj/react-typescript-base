@@ -57,7 +57,7 @@ export function listen(config: Listen): void {
 let currentRegistration: ServiceWorkerRegistration | undefined;
 
 export function skipWait() {
-	currentRegistration?.installing?.postMessage({type: 'SKIP_WAITING'});
+	currentRegistration?.waiting?.postMessage({type: 'SKIP_WAITING'});
 }
 
 function registerValidSW(swUrl: string, config?: Config) {
