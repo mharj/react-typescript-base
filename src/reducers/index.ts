@@ -1,6 +1,9 @@
 import {TypedUseSelectorHook, useDispatch, useSelector as useReduxSelector} from 'react-redux';
+import storage from 'redux-persist/lib/storage';
 import {Action, combineReducers} from 'redux';
 import {ThunkAction, ThunkDispatch} from 'redux-thunk';
+import {persistReducer} from 'redux-persist';
+import {getKey} from '../configureStore';
 import * as app from './appReducer';
 import * as demo from './demoReducer';
 
@@ -17,15 +20,15 @@ export const initialState: ReduxState = {
  * Combine all reducers with names
  */
 export const rootReducer = combineReducers({
-	app: app.reducer,
-	demo: demo.reducer,
+	app: persistReducer({key: getKey('app'), storage, blacklist: ['isLoading']}, app.reducer),
+	demo: persistReducer({key: getKey('demo'), storage}, demo.reducer),
 });
 
 /**
  * mapStateToProps hook
  * @example
- * const data = useSelector((state) => ({
- *   qwe: state.demo.todo,
+ * const {todo} = useSelector((state) => ({
+ *   todo: state.demo.todo,
  * }));
  */
 export const useSelector: TypedUseSelectorHook<ReduxState> = useReduxSelector;

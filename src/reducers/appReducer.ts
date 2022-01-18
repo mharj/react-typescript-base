@@ -1,4 +1,5 @@
 import {Action, Reducer} from 'redux';
+import {PersistState} from 'redux-persist';
 import {GlobalAction} from './common';
 
 /**
@@ -33,6 +34,7 @@ interface IState {
 	error: string | undefined;
 	isLoading: boolean;
 	isLoggedIn: boolean;
+	_persist: PersistState;
 }
 
 /**
@@ -42,6 +44,7 @@ export const initialState: IState = {
 	error: undefined,
 	isLoading: false,
 	isLoggedIn: false,
+	_persist: {version: -1, rehydrated: false},
 };
 
 /**

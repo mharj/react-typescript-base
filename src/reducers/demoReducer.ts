@@ -1,4 +1,5 @@
 import {Action, Reducer} from 'redux';
+import {PersistState} from 'redux-persist';
 import {GlobalAction} from './common';
 
 /**
@@ -20,6 +21,7 @@ export type DemoAction = ISetValue;
  */
 interface IState {
 	todo: IToDo | undefined;
+	_persist: PersistState;
 }
 
 /**
@@ -27,6 +29,7 @@ interface IState {
  */
 export const initialState: IState = {
 	todo: undefined,
+	_persist: {version: -1, rehydrated: false},
 };
 
 // TODO interface

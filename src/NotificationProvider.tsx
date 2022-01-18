@@ -1,4 +1,4 @@
-import React, {Component, ComponentClass, createContext, FunctionComponent, ReactNode, StatelessComponent} from 'react';
+import React, {Component, ComponentClass, createContext, FunctionComponent, ReactNode, StatelessComponent, useContext} from 'react';
 
 export interface IWithNotification {
 	notificationStatus: string | undefined;
@@ -28,6 +28,10 @@ const initialContext: IWithNotification = {
 };
 
 const NotificationContext = createContext<IWithNotification>(initialContext);
+
+export const useNotification: () => IWithNotification = () => {
+	return useContext(NotificationContext);
+};
 
 export const NotificationConsumer = NotificationContext.Consumer;
 const Provider = NotificationContext.Provider;

@@ -1,9 +1,10 @@
 import {handleJsonResponse} from '.';
 import {cacheMatch, cacheStore, isOnline} from '../lib/commonCache';
-import {httpFetch} from '../lib/httpInstance';
+import {isError} from '../lib/errorUtil';
+import {httpFetch} from '../lib/httpFetch';
 import {RootThunkDispatch, ThunkResult} from '../reducers';
 import {DemoAction, IToDo} from '../reducers/demoReducer';
-import {appError, appLogout} from './appActions';
+import {setError, appLogout} from './appActions';
 
 // dispatch actions
 function setValueAction(todo: IToDo | undefined): DemoAction {
@@ -15,7 +16,7 @@ function setValueAction(todo: IToDo | undefined): DemoAction {
 
 // thunk async functions
 export const getHome = (): ThunkResult<Promise<void>> => async (dispatch: RootThunkDispatch /* getState: () => ReduxState */) => {
-	dispatch(appError(undefined));
+	dispatch(setError(undefined));
 	try {
 		const headers = new Headers();
 		const req = new Request('https://jsonplaceholder.typicode.com/todos/1', {headers});
@@ -38,8 +39,8 @@ export const getHome = (): ThunkResult<Promise<void>> => async (dispatch: RootTh
 				dispatch(setValueAction(cacheData));
 			}
 		}
-	} catch (err: any) {
-		dispatch(appError(err.message));
+	} catch (err: unknown) {
+		dispatch(setError(err));
 		return Promise.reject(err);
 	}
 };

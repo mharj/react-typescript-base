@@ -3,36 +3,47 @@ import {PersistConfig, persistReducer, persistStore} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 import {initialState, ReduxState, rootReducer} from './reducers';
+import {setupStoreLinks} from './storeLinks';
+
+export function getKey(key: string): string {
+	return 'persist_' + key;
+}
 
 const persistConfig: PersistConfig<ReduxState> = {
-	key: 'root',
+	key: getKey('root'),
 	storage,
+	whitelist: [],
 };
 
 const enhancers: StoreEnhancer[] = [];
 
+interface WindowDevTools extends Window {
+	__REDUX_DEVTOOLS_EXTENSION__?: () => StoreEnhancer;
+}
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 if (process.env.NODE_ENV === 'development' && '__REDUX_DEVTOOLS_EXTENSION__' in window) {
-	const devToolsExtension = (window as any).__REDUX_DEVTOOLS_EXTENSION__;
+	const devToolsExtension = (window as WindowDevTools).__REDUX_DEVTOOLS_EXTENSION__;
 	if (typeof devToolsExtension === 'function') {
 		enhancers.push(devToolsExtension());
 	}
 }
-const composedEnhancers = compose(applyMiddleware(thunk), ...enhancers) as any;
+const composedEnhancers = compose(applyMiddleware(thunk), ...enhancers) as StoreEnhancer;
 
 let store: ReturnType<typeof initStore> | undefined;
 const initStore = () => {
-	return createStore(persistedReducer, initialState, composedEnhancers);
+	const currentStore = createStore(persistedReducer, initialState, composedEnhancers);
+	setupStoreLinks(currentStore);
+	return currentStore;
 };
-type InitStoreType = ReturnType<typeof initStore>;
+export type StoreType = ReturnType<typeof initStore>;
 
 let persistor: ReturnType<typeof initPersist> | undefined;
 const initPersist = (currentStore: ReturnType<typeof initStore>) => {
 	return persistStore(currentStore);
 };
-type InitPersistType = ReturnType<typeof initPersist>;
 
-function setupStore(): {store: InitStoreType; persistor: InitPersistType} {
+function setupStore() {
 	if (!store) {
 		store = initStore();
 	}
@@ -47,7 +58,7 @@ function setupStore(): {store: InitStoreType; persistor: InitPersistType} {
  */
 export default setupStore;
 
-export const getStore = (): InitStoreType => {
+export const getStore = () => {
 	if (!store) {
 		store = initStore();
 	}

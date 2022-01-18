@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+/* eslint-disable prefer-regex-literals */
 /* eslint-disable no-restricted-globals */
 
 // This service worker can be customized!

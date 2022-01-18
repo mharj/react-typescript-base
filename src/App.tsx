@@ -1,88 +1,61 @@
-import React, {Component, FormEvent, Suspense} from 'react';
-import {withTranslation, WithTranslation} from 'react-i18next';
-import {connect} from 'react-redux';
-import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom';
+import React, {Suspense} from 'react';
+import {useTranslation} from 'react-i18next';
+import {Route, Routes} from 'react-router';
+import {HashRouter as Router, Link} from 'react-router-dom';
 import './App.css';
-import PrivateRoute from './components/PrivateRoute';
+import PrivateComponent from './components/PrivateComponent';
 import logo from './logo.svg';
-import {IWithNotification, withNotification} from './NotificationProvider';
-import {ReduxState} from './reducers';
-import {IWithServiceWorker, withServiceWorker} from './ServiceWorkerProvider';
+import {useNotification} from './NotificationProvider';
+import {useServiceWorker} from './ServiceWorkerProvider';
+import {useSelector} from './reducers';
+import {skipWait} from './serviceWorkerRegistration';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // views code split
 const Loading = () => <div>Loading!...</div>;
-const HomeView = React.lazy(() => import('./views/Home' /* webpackChunkName: "home-view" */));
-const LoginView = React.lazy(() => import('./views/Login' /* webpackChunkName: "login-view" */));
-const SecretView = React.lazy(() => import('./views/Secret' /* webpackChunkName: "secret-view" */));
-const BrokenView = React.lazy(() => import('./views/Broken' /* webpackChunkName: "broken-view" */));
-const ErrorView = React.lazy(() => import('./views/Error'));
-const ErrorBoundaryComponent = React.lazy(() => import('./components/ErrorBoundary'));
+const HomeView = React.lazy(() => import('./views/HomeView' /* webpackChunkName: "home-view" */));
+const LoginView = React.lazy(() => import('./views/LoginView' /* webpackChunkName: "login-view" */));
+const SecretView = React.lazy(() => import('./views/SecretView' /* webpackChunkName: "secret-view" */));
+const BrokenView = React.lazy(() => import('./views/BrokenView' /* webpackChunkName: "broken-view" */));
+const ErrorView = React.lazy(() => import('./views/ErrorView' /* webpackChunkName: "error-view" */));
 
-const ErrorBoundary = (props: any) => (
-	<Suspense fallback={<Loading />}>
-		<ErrorBoundaryComponent {...props} />
-	</Suspense>
-);
-
-const Home = () => (
-	<Suspense fallback={<Loading />}>
-		<HomeView />
-	</Suspense>
-);
-
-const Login = () => (
-	<Suspense fallback={<Loading />}>
-		<LoginView />
-	</Suspense>
-);
-
-const Secret = () => (
-	<Suspense fallback={<Loading />}>
-		<SecretView />
-	</Suspense>
-);
-
-const Broken = () => (
-	<Suspense fallback={<Loading />}>
-		<BrokenView />
-	</Suspense>
-);
-
-type Props = WithTranslation & IPropsState & IWithServiceWorker & IWithNotification;
-
-class App extends Component<Props> {
-	constructor(props: Props) {
-		super(props);
-		this.handleChangeLanguage = this.handleChangeLanguage.bind(this);
-		this.handleNotificationRequest = this.handleNotificationRequest.bind(this);
-	}
-
-	public render() {
-		const {notificationStatus, isLoggedIn, t} = this.props;
-		return (
-			<Router>
-				<div className="App">
-					<header className="App-header">
-						<img src={logo} className="App-logo" alt="logo" />
-						<h1 className="App-title">Welcome to React</h1>
-					</header>
-					<button value="fi-FI" onClick={this.handleChangeLanguage}>
-						{t('fin')}
-					</button>
-					<button value="en-EN" onClick={this.handleChangeLanguage}>
-						{t('eng')}
-					</button>
-					<button value="sv-SV" onClick={this.handleChangeLanguage}>
-						{t('sve')}
-					</button>
-					{notificationStatus === 'default' ? <button onClick={this.handleNotificationRequest}>{t('notification_request')}</button> : null}
-					<br />
-					{this.props.isLoading ? 'Fetching API data ..' : ''}
-					<br />
-					{this.props.error ? <h2 style={{color: 'red'}}>Error: {this.props.error}</h2> : null}
-					<br />
-					<div>
-						<ErrorBoundary onError={ErrorView}>
+const App: React.FC = () => {
+	const {serviceWorkerState, serviceWorkerUpdate} = useServiceWorker();
+	const {
+		t,
+		i18n: {changeLanguage},
+	} = useTranslation();
+	const {notificationStatus, requestNotification} = useNotification();
+	const {error, isLoggedIn, isLoading} = useSelector((state) => ({
+		isLoggedIn: state.app.isLoggedIn,
+		isLoading: state.app.isLoading,
+		error: state.app.error,
+	}));
+	return (
+		<Router>
+			<div className="App">
+				<header className="App-header">
+					<img src={logo} className="App-logo" alt="logo" />
+					<h1 className="App-title">Welcome to React</h1>
+				</header>
+				<button value="fi-FI" onClick={({currentTarget}) => changeLanguage(currentTarget.value)}>
+					{t('fin')}
+				</button>
+				<button value="en-EN" onClick={({currentTarget}) => changeLanguage(currentTarget.value)}>
+					{t('eng')}
+				</button>
+				<button value="sv-SV" onClick={({currentTarget}) => changeLanguage(currentTarget.value)}>
+					{t('sve')}
+				</button>
+				{notificationStatus === 'default' ? <button onClick={() => requestNotification()}>{t('notification_request')}</button> : null}
+				<br />
+				{isLoading ? 'Fetching API data ..' : ''}
+				<br />
+				{error ? <h2 style={{color: 'red'}}>Error: {error}</h2> : null}
+				<br />
+				<div>
+					<ErrorBoundary onError={ErrorView}>
+						<>
 							<div>
 								<Link to="/">
 									<button>{t('home')}</button>
@@ -99,53 +72,30 @@ class App extends Component<Props> {
 							</div>
 							<br />
 							<Suspense fallback={<Loading />}>
-								<Switch>
-									<Route exact={true} path="/" component={Home} />
-									<Route exact={true} path="/login" component={Login} />
-									<PrivateRoute isValid={isLoggedIn} failPath="/login" exact={true} path="/secret" component={Secret} />
-									<Route exact={true} path="/broken" component={Broken} />
-									<Route exact={true} path="/_error" component={ErrorView} />
-								</Switch>
+								<Routes>
+									<Route path="/" element={<HomeView />} />
+									<Route path="/login" element={<LoginView />} />
+									<Route path="/secret" element={<PrivateComponent isValid={isLoggedIn} failPath="/login" element={<SecretView />} />} />
+									<Route path="/broken" element={<BrokenView />} />
+									<Route path="/_error" element={<ErrorView error={new Error('demo error')} onClear={() => console.log('reset')} />} />
+								</Routes>
 							</Suspense>
-						</ErrorBoundary>
-					</div>
-					<br />
-					<b>
-						Service Worker status: {this.props.serviceWorkerState} <button onClick={this.props.serviceWorkerUpdate}>Check updates</button>
-						<button onClick={this.props.serviceWorkerSkipWait} disabled={this.props.serviceWorkerState !== 'installed'}>
-							Install new version
-						</button>
-						<button onClick={() => window.location.reload()} disabled={this.props.serviceWorkerState !== 'activated'}>
-							Reload to activate new version
-						</button>
-					</b>
+						</>
+					</ErrorBoundary>
 				</div>
-			</Router>
-		);
-	}
-
-	private handleChangeLanguage(event: FormEvent<HTMLButtonElement>) {
-		const target = event.currentTarget;
-		this.props.i18n.changeLanguage(target.value);
-	}
-
-	private async handleNotificationRequest() {
-		try {
-			await this.props.requestNotification();
-		} catch (err) {
-			// ignore
-		}
-	}
-}
-
-// redux state props
-const mapStateToProps = (state: ReduxState) => {
-	return {
-		error: state.app.error,
-		isLoading: state.app.isLoading,
-		isLoggedIn: state.app.isLoggedIn,
-	};
+				<br />
+				<b>
+					Service Worker status: {serviceWorkerState} <button onClick={() => serviceWorkerUpdate?.()}>Check updates</button>
+					<button onClick={() => skipWait()} disabled={serviceWorkerState !== 'installed'}>
+						Install new version
+					</button>
+					<button onClick={() => window.location.reload()} disabled={serviceWorkerState !== 'activated'}>
+						Reload to activate new version
+					</button>
+				</b>
+			</div>
+		</Router>
+	);
 };
-type IPropsState = ReturnType<typeof mapStateToProps>;
 
-export default connect(mapStateToProps)(withTranslation()(withServiceWorker(withNotification(App))));
+export default App;

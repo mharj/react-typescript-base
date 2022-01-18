@@ -1,10 +1,9 @@
-import React, {Component, createContext, FunctionComponent, ReactNode} from 'react';
+import React, {Component, createContext, FunctionComponent, ReactNode, useContext} from 'react';
 import {listen, STATUS as WORKER_STATUS} from './serviceWorkerRegistration';
 
 export interface IWithServiceWorker {
 	serviceWorkerState: WORKER_STATUS | undefined;
 	serviceWorkerUpdate: (() => void) | undefined;
-	serviceWorkerSkipWait: (() => void) | undefined;
 }
 
 interface IProps {
@@ -15,10 +14,13 @@ interface IProps {
 const initialContext: IWithServiceWorker = {
 	serviceWorkerState: undefined,
 	serviceWorkerUpdate: undefined,
-	serviceWorkerSkipWait: undefined,
 };
 
 const WorkerContext = createContext<IWithServiceWorker>(initialContext);
+
+export const useServiceWorker: () => IWithServiceWorker = () => {
+	return useContext(WorkerContext);
+};
 
 export const ServiceWorkerConsumer = WorkerContext.Consumer;
 const Provider = WorkerContext.Provider;
@@ -37,16 +39,13 @@ export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker>
 		this.state = initialContext;
 		this.onServiceStateChange = this.onServiceStateChange.bind(this);
 		this.runUpdate = this.runUpdate.bind(this);
-		this.skipWait = this.skipWait.bind(this);
 		this.getUpdateFunction = this.getUpdateFunction.bind(this);
-		this.getSkipWaitFunction = this.getSkipWaitFunction.bind(this);
 	}
 
 	public componentDidMount(): void {
 		this.props.listener({
 			checkUpdate: this.getUpdateFunction,
 			onStatusUpdate: this.onServiceStateChange,
-			skipWait: this.getSkipWaitFunction,
 		});
 	}
 
@@ -54,7 +53,6 @@ export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker>
 		const contextValue: IWithServiceWorker = {
 			serviceWorkerState: this.state.serviceWorkerState,
 			serviceWorkerUpdate: this.runUpdate,
-			serviceWorkerSkipWait: this.skipWait,
 		};
 		return <Provider value={contextValue}>{this.props.children}</Provider>;
 	}
@@ -71,21 +69,9 @@ export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker>
 		});
 	}
 
-	private getSkipWaitFunction(callback: () => void) {
-		this.setState({
-			serviceWorkerSkipWait: callback,
-		});
-	}
-
 	private runUpdate() {
 		if (this.state.serviceWorkerUpdate) {
 			this.state.serviceWorkerUpdate();
-		}
-	}
-
-	private skipWait() {
-		if (this.state.serviceWorkerSkipWait) {
-			this.state.serviceWorkerSkipWait();
 		}
 	}
 }
