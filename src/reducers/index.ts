@@ -43,6 +43,20 @@ export const useThunkDispatch = (): RootThunkDispatch => useDispatch<RootThunkDi
 
 export type ReduxState = ReturnType<typeof rootReducer>;
 
+export type RootThunkDispatch = ThunkDispatch<ReduxState, undefined, Action>;
+
+/**
+ * @example
+ * export const someAsyncFunc = (): ThunkResult<Promise<void>> => async (dispatch, getState) => {
+ *
+ *}
+ */
 export type ThunkResult<R> = ThunkAction<R, ReduxState, undefined, Action>;
 
-export type RootThunkDispatch = ThunkDispatch<ReduxState, undefined, Action>;
+/**
+ * @example
+ * export const someAsyncFunc: ThunkFunc<{id: string}, Promise<void>> = ({id}) => async (dispatch, getState) => {
+ *
+ * }
+ */
+export type ThunkFunc<P, R> = (params: P) => ThunkResult<R>;

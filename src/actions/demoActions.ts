@@ -1,21 +1,18 @@
 import {handleJsonResponse} from '.';
 import {cacheMatch, cacheStore, isOnline} from '../lib/commonCache';
-import {isError} from '../lib/errorUtil';
 import {httpFetch} from '../lib/httpFetch';
-import {RootThunkDispatch, ThunkResult} from '../reducers';
+import {ThunkResult} from '../reducers';
 import {DemoAction, IToDo} from '../reducers/demoReducer';
 import {setError, appLogout} from './appActions';
 
 // dispatch actions
-function setValueAction(todo: IToDo | undefined): DemoAction {
-	return {
-		type: 'demo/VALUE',
-		todo,
-	};
-}
+const setValueAction = (todo: IToDo | undefined): DemoAction => ({
+	type: 'demo/VALUE',
+	todo,
+});
 
 // thunk async functions
-export const getHome = (): ThunkResult<Promise<void>> => async (dispatch: RootThunkDispatch /* getState: () => ReduxState */) => {
+export const getHome = (): ThunkResult<Promise<void>> => async (dispatch /* getState */) => {
 	dispatch(setError(undefined));
 	try {
 		const headers = new Headers();

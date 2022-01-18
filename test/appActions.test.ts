@@ -53,15 +53,15 @@ describe('test app actions', () => {
 				expect(getState()).to.containSubset({app: {error: undefined}});
 			});
 			it('should set error message', async () => {
-				dispatch(app.appError('test'));
+				dispatch(app.setError('test'));
 				expect(getState()).to.containSubset({app: {error: 'test'}});
 			});
 			it('should clear error message', async () => {
-				dispatch(app.appError(undefined));
+				dispatch(app.setError(undefined));
 				expect(getState()).to.containSubset({app: {error: undefined}});
 			});
 			it('should check value after reset', async () => {
-				dispatch(app.appError('test'));
+				dispatch(app.setError('test'));
 				expect(getState()).to.containSubset({app: {error: 'test'}});
 				dispatch(global.doReset());
 				expect(getState()).to.containSubset({app: {error: undefined}});

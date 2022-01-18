@@ -3,21 +3,15 @@ import {RootThunkDispatch, ThunkResult} from '../reducers';
 import {AppAction} from '../reducers/appReducer';
 
 // dispatch actions
-export function appLoading(isLoading: boolean): AppAction {
-	return {type: 'app/LOADING', isLoading};
-}
+export const appLoading = (isLoading: boolean): AppAction => ({type: 'app/LOADING', isLoading});
 
-function appError(error: string | undefined): AppAction {
-	return {type: 'app/ERROR', error};
-}
+const appError = (error: string | undefined): AppAction => ({type: 'app/ERROR', error});
 
-export function appLogin(isLoggedIn: boolean): AppAction {
-	return {type: 'app/LOGIN', isLoggedIn};
-}
+export const appLogin = (isLoggedIn: boolean): AppAction => ({type: 'app/LOGIN', isLoggedIn});
 
 export const appLogout: () => AppAction = appLogin.bind(undefined, false);
 
-export function setError(value: unknown) {
+export const setError = (value: unknown) => {
 	if (value === undefined) {
 		return appError(undefined);
 	}
@@ -28,7 +22,7 @@ export function setError(value: unknown) {
 		return appError(value.message);
 	}
 	return appError(`${value}`);
-}
+};
 
 export const doLogin =
 	(username: string, password: string): ThunkResult<Promise<Action>> =>
