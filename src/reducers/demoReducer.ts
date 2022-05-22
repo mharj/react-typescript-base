@@ -1,5 +1,8 @@
 import {Action, Reducer} from 'redux';
-import {PersistState} from 'redux-persist';
+import {persistReducer} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import {getKey} from '../configureStore';
+import {buildReduceConfig, migrateInit} from '../lib/persistUtils';
 import {GlobalAction} from './common';
 
 /**
@@ -21,15 +24,15 @@ export type DemoAction = ISetValue;
  */
 interface IState {
 	todo: IToDo | undefined;
-	_persist: PersistState;
+	_persist: any;
 }
 
 /**
  * Initial redux state
  */
-export const initialState: IState = {
+const initialState: IState = {
 	todo: undefined,
-	_persist: {version: -1, rehydrated: false},
+	_persist: undefined,
 };
 
 // TODO interface
@@ -43,7 +46,7 @@ export interface IToDo {
 /**
  * Reducer
  */
-export const reducer: Reducer<IState, DemoAction | GlobalAction> = (state = initialState, action): IState => {
+const reducer: Reducer<IState, DemoAction | GlobalAction> = (state = initialState, action): IState => {
 	switch (action.type) {
 		case 'demo/VALUE':
 			return {
@@ -56,3 +59,16 @@ export const reducer: Reducer<IState, DemoAction | GlobalAction> = (state = init
 			return state;
 	}
 };
+
+export const reducerConfig = buildReduceConfig<'demo', IState, DemoAction | GlobalAction>(
+	'demo',
+	initialState,
+	persistReducer(
+		{
+			key: getKey('demo'),
+			storage,
+			migrate: migrateInit(initialState),
+		},
+		reducer,
+	),
+);

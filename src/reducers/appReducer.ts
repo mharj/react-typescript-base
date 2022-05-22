@@ -1,5 +1,8 @@
 import {Action, Reducer} from 'redux';
-import {PersistState} from 'redux-persist';
+import {persistReducer} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import {getKey} from '../configureStore';
+import {buildReduceConfig, migrateInit} from '../lib/persistUtils';
 import {GlobalAction} from './common';
 
 /**
@@ -34,23 +37,23 @@ interface IState {
 	error: string | undefined;
 	isLoading: boolean;
 	isLoggedIn: boolean;
-	_persist: PersistState;
+	_persist: any;
 }
 
 /**
  * Initial redux state
  */
-export const initialState: IState = {
+const initialState: IState = {
 	error: undefined,
 	isLoading: false,
 	isLoggedIn: false,
-	_persist: {version: -1, rehydrated: false},
+	_persist: undefined,
 };
 
 /**
  * Reducer
  */
-export const reducer: Reducer<IState, AppAction | GlobalAction> = (state = initialState, action): IState => {
+const reducer: Reducer<IState, AppAction | GlobalAction> = (state = initialState, action): IState => {
 	switch (action.type) {
 		case 'app/LOADING':
 			return {
@@ -73,3 +76,17 @@ export const reducer: Reducer<IState, AppAction | GlobalAction> = (state = initi
 			return state;
 	}
 };
+
+export const reducerConfig = buildReduceConfig<'app', IState, AppAction | GlobalAction>(
+	'app',
+	initialState,
+	persistReducer(
+		{
+			key: getKey('app'),
+			storage,
+			blacklist: ['isLoading', 'error'],
+			migrate: migrateInit(initialState),
+		},
+		reducer,
+	),
+);
