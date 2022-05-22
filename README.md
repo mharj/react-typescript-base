@@ -3,7 +3,6 @@
  - Basic Typescript React base project (I18N, Helmet, HashRouter, redux, persist)
  - Have request cache support for API offline usage for data fetching
  - Redux thunk hook support
-   - NOTE!: Generally don't use hooks on medium or large projects, class is always much more render stable option even with bit more boilerplate code
 
 ## Enable notifications
 

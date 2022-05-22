@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+/* eslint-disable sonarjs/prefer-single-boolean-return */
 /* eslint-disable prefer-regex-literals */
 /* eslint-disable no-restricted-globals */
 

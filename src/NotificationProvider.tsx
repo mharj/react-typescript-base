@@ -1,4 +1,4 @@
-import React, {Component, ComponentClass, createContext, FunctionComponent, ReactNode, StatelessComponent, useContext} from 'react';
+import React, {Component, createContext, FunctionComponent, ReactNode, useContext} from 'react';
 
 export interface IWithNotification {
 	notificationStatus: string | undefined;
@@ -36,9 +36,7 @@ export const useNotification: () => IWithNotification = () => {
 export const NotificationConsumer = NotificationContext.Consumer;
 const Provider = NotificationContext.Provider;
 
-export function withNotification<P extends IWithNotification>(
-	WrappedComponent: ComponentClass<P> | StatelessComponent<P>,
-): FunctionComponent<Omit<P, keyof IWithNotification>> {
+export function withNotification<P extends IWithNotification>(WrappedComponent: React.ComponentType<P>): FunctionComponent<Omit<P, keyof IWithNotification>> {
 	return function Wrapper(props) {
 		return <NotificationConsumer>{(value) => <WrappedComponent {...(props as P)} {...value} />}</NotificationConsumer>;
 	};

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, {Component, ElementType /* ErrorInfo */} from 'react';
 
 export interface IErrorProps {
@@ -7,6 +8,7 @@ export interface IErrorProps {
 
 export type Props = {
 	onError: ElementType<IErrorProps>;
+	children: React.ReactNode;
 };
 
 interface IState {

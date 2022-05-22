@@ -1,5 +1,6 @@
-import React, {Component, createContext, FunctionComponent, ReactNode, useContext} from 'react';
-import {listen, STATUS as WORKER_STATUS} from './serviceWorkerRegistration';
+import React, {createContext, FunctionComponent, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import {STATUS as WORKER_STATUS} from './serviceWorkerRegistration';
 
 export interface IWithServiceWorker {
 	serviceWorkerState: WORKER_STATUS | undefined;
@@ -8,7 +9,6 @@ export interface IWithServiceWorker {
 
 interface IProps {
 	children: ReactNode;
-	listener: typeof listen;
 }
 
 const initialContext: IWithServiceWorker = {
@@ -33,45 +33,17 @@ export function withServiceWorker<P extends IWithServiceWorker>(
 	};
 }
 
-export class ServiceWorkerProvider extends Component<IProps, IWithServiceWorker> {
-	constructor(props: IProps) {
-		super(props);
-		this.state = initialContext;
-		this.onServiceStateChange = this.onServiceStateChange.bind(this);
-		this.runUpdate = this.runUpdate.bind(this);
-		this.getUpdateFunction = this.getUpdateFunction.bind(this);
-	}
-
-	public componentDidMount(): void {
-		this.props.listener({
-			checkUpdate: this.getUpdateFunction,
-			onStatusUpdate: this.onServiceStateChange,
-		});
-	}
-
-	public render(): JSX.Element {
-		const contextValue: IWithServiceWorker = {
-			serviceWorkerState: this.state.serviceWorkerState,
-			serviceWorkerUpdate: this.runUpdate,
-		};
-		return <Provider value={contextValue}>{this.props.children}</Provider>;
-	}
-
-	private onServiceStateChange(state: WORKER_STATUS) {
-		this.setState({
-			serviceWorkerState: state,
-		});
-	}
-
-	private getUpdateFunction(callback: () => void) {
-		this.setState({
-			serviceWorkerUpdate: callback,
-		});
-	}
-
-	private runUpdate() {
-		if (this.state.serviceWorkerUpdate) {
-			this.state.serviceWorkerUpdate();
-		}
-	}
-}
+export const ServiceWorkerProvider: React.FC<IProps> = ({children}) => {
+	const [serviceWorkerState, setServiceWorkerState] = useState<WORKER_STATUS | undefined>();
+	const serviceWorkerUpdate = useCallback(() => {
+		serviceWorkerRegistration.skipWait();
+	}, []);
+	useEffect(() => {
+		serviceWorkerRegistration.register({onStatus: setServiceWorkerState});
+	}, []);
+	const contextValue: IWithServiceWorker = {
+		serviceWorkerState,
+		serviceWorkerUpdate,
+	};
+	return <Provider value={contextValue}>{children}</Provider>;
+};
