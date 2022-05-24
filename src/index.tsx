@@ -18,7 +18,7 @@ Promise.all([
 ]).then((loaded) => {
 	const [configureStore, ReactDOM, Redux, Persist, AppModule, reportWebVitals, Helmet] = loaded;
 	const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-	const {store, persistor} = configureStore.default();
+	const {store, persistor} = configureStore.storeConfiguration;
 	const App = AppModule.default;
 	const HelmetProvider = Helmet.HelmetProvider;
 	root.render(

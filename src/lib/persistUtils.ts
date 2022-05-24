@@ -1,5 +1,10 @@
+import {Slice, SliceCaseReducers} from '@reduxjs/toolkit';
 import {Action, Reducer} from 'redux';
 import {PersistedState, PersistMigrate} from 'redux-persist';
+
+export function getKey(key: string): string {
+	return 'persist_' + key;
+}
 
 export type NamedReducerConfig<T extends string, S, A extends Action = Action> = {
 	initialState: Record<T, S>;
@@ -19,6 +24,20 @@ export function buildReduceConfig<T extends string, S, A extends Action = Action
 		} as Record<T, S>,
 		reducer: {
 			[key]: reducer,
+		} as Record<T, Reducer<S, A>>,
+	};
+}
+
+export function buildSliceConfig<T extends string, S, A extends Action = Action>(
+	slice: Slice<S, SliceCaseReducers<S>, T>,
+	reducer?: Reducer<S, A>,
+): NamedReducerConfig<T, S, A> {
+	return {
+		initialState: {
+			[slice.name]: slice.getInitialState(),
+		} as Record<T, S>,
+		reducer: {
+			[slice.name]: reducer || slice.reducer,
 		} as Record<T, Reducer<S, A>>,
 	};
 }

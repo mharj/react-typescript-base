@@ -1,19 +1,27 @@
-import {applyMiddleware, createStore, Dispatch} from 'redux';
-import {PersistConfig, persistReducer} from 'redux-persist';
+import {configureStore} from '@reduxjs/toolkit';
+import {PersistConfig, persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
-import {resetStore, storage} from './testStore';
+import {getKey} from '../../src/lib/persistUtils';
 import {initialState, ReduxState, rootReducer} from '../../src/reducers';
-import {setupStoreLinks} from '../../src/storeLinks';
 
-const persistConfig: PersistConfig<ReduxState> = {
-	key: 'test_store',
-	storage,
-};
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-export const createTestStore = (): {dispatch: Dispatch<any>; getState: () => any} => {
-	resetStore();
-	const currentStore = createStore(persistedReducer, initialState, applyMiddleware(thunk));
-	setupStoreLinks(currentStore);
-	return currentStore;
-};
+export function createTestStore() {
+	const persistConfig: PersistConfig<ReduxState> = {
+		key: getKey('root'),
+		storage,
+		whitelist: [],
+	};
+	const persistedReducer = persistReducer(persistConfig, rootReducer);
+	const store = configureStore({
+		reducer: persistedReducer,
+		middleware: (getDefaultMiddleware) =>
+			getDefaultMiddleware({
+				serializableCheck: {
+					ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+				},
+			}).concat(thunk),
+		preloadedState: initialState,
+		devTools: false,
+	});
+	return {store, persistor: persistStore(store)};
+}

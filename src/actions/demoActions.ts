@@ -2,18 +2,19 @@ import {handleJsonResponse} from '.';
 import {cacheMatch, cacheStore, isOnline} from '../lib/commonCache';
 import {httpFetch} from '../lib/httpFetch';
 import {ThunkResult} from '../reducers';
-import {DemoAction, IToDo} from '../reducers/demoReducer';
-import {setError, appLogout} from './appActions';
+import {appError, appLogout} from '../reducers/appReducer';
+import {setDemo} from '../reducers/demoReducer';
 
-// dispatch actions
-const setValueAction = (todo: IToDo | undefined): DemoAction => ({
-	type: 'demo/VALUE',
-	todo,
-});
+export interface IToDo {
+	userId: number;
+	id: number;
+	title: string;
+	completed: boolean;
+}
 
 // thunk async functions
 export const getHome = (): ThunkResult<Promise<void>> => async (dispatch /* getState */) => {
-	dispatch(setError(undefined));
+	dispatch(appError(undefined));
 	try {
 		const headers = new Headers();
 		const req = new Request('https://jsonplaceholder.typicode.com/todos/1', {headers});
@@ -25,19 +26,19 @@ export const getHome = (): ThunkResult<Promise<void>> => async (dispatch /* getS
 			const data = await dispatch(handleJsonResponse<IToDo>(res, appLogout));
 			if (data) {
 				// we have new data
-				dispatch(setValueAction(data));
+				dispatch(setDemo(data));
 			} else if (cacheData) {
 				// cached data still valid
-				dispatch(setValueAction(cacheData));
+				dispatch(setDemo(cacheData));
 			}
 		} else {
 			if (cacheData) {
 				// we are offline, use latest data from cache
-				dispatch(setValueAction(cacheData));
+				dispatch(setDemo(cacheData));
 			}
 		}
 	} catch (err: unknown) {
-		dispatch(setError(err));
+		dispatch(appError(err));
 		return Promise.reject(err);
 	}
 };

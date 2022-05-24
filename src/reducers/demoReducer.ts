@@ -1,23 +1,9 @@
-import {Action, Reducer} from 'redux';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {persistReducer} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import {getKey} from '../configureStore';
-import {buildReduceConfig, migrateInit} from '../lib/persistUtils';
-import {GlobalAction} from './common';
-
-/**
- * Redux action type keys
- */
-export type Types = 'demo/VALUE';
-
-/**
- * Action interfaces
- */
-interface ISetValue extends Action<Types> {
-	type: 'demo/VALUE';
-	todo: IToDo | undefined;
-}
-export type DemoAction = ISetValue;
+import {IToDo} from '../actions/demoActions';
+import {buildSliceConfig, getKey, migrateInit} from '../lib/persistUtils';
+import {resetAction} from './common';
 
 /**
  * Redux state interface
@@ -35,40 +21,29 @@ const initialState: IState = {
 	_persist: undefined,
 };
 
-// TODO interface
-export interface IToDo {
-	userId: number;
-	id: number;
-	title: string;
-	completed: boolean;
-}
-
-/**
- * Reducer
- */
-const reducer: Reducer<IState, DemoAction | GlobalAction> = (state = initialState, action): IState => {
-	switch (action.type) {
-		case 'demo/VALUE':
-			return {
-				...state,
-				todo: action.todo,
-			};
-		case 'global/RESET':
-			return initialState;
-		default:
-			return state;
-	}
-};
-
-export const reducerConfig = buildReduceConfig<'demo', IState, DemoAction | GlobalAction>(
-	'demo',
+const slice = createSlice({
+	name: 'demo',
 	initialState,
+	reducers: {
+		setDemo: (state, action: PayloadAction<IToDo>) => {
+			state.todo = action.payload;
+		},
+	},
+	extraReducers: (builder) => {
+		builder.addCase(resetAction, () => initialState);
+	},
+});
+
+export const {setDemo} = slice.actions; // export actions
+
+export const reducerConfig = buildSliceConfig(
+	slice,
 	persistReducer(
 		{
-			key: getKey('demo'),
+			key: getKey(slice.name),
 			storage,
 			migrate: migrateInit(initialState),
 		},
-		reducer,
+		slice.reducer,
 	),
 );

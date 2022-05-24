@@ -1,34 +1,8 @@
-import {Action, Reducer} from 'redux';
 import {persistReducer} from 'redux-persist';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
-import {getKey} from '../configureStore';
-import {buildReduceConfig, migrateInit} from '../lib/persistUtils';
-import {GlobalAction} from './common';
-
-/**
- * Redux action type keys
- */
-export type Types = 'app/ERROR' | 'app/LOADING' | 'app/LOGIN';
-
-/**
- * Action interfaces
- */
-interface IErrorAction extends Action<Types> {
-	type: 'app/ERROR';
-	error: string | undefined;
-}
-
-interface ILoginAction extends Action<Types> {
-	type: 'app/LOGIN';
-	isLoggedIn: boolean;
-}
-
-interface IApplicationLoadingAction extends Action<Types> {
-	type: 'app/LOADING';
-	isLoading: boolean;
-}
-
-export type AppAction = IApplicationLoadingAction | IErrorAction | ILoginAction;
+import {buildSliceConfig, getKey, migrateInit} from '../lib/persistUtils';
+import {resetAction} from './common';
 
 /**
  * Redux state interface
@@ -50,43 +24,51 @@ const initialState: IState = {
 	_persist: undefined,
 };
 
-/**
- * Reducer
- */
-const reducer: Reducer<IState, AppAction | GlobalAction> = (state = initialState, action): IState => {
-	switch (action.type) {
-		case 'app/LOADING':
-			return {
-				...state,
-				isLoading: action.isLoading,
-			};
-		case 'app/ERROR':
-			return {
-				...state,
-				error: action.error,
-			};
-		case 'app/LOGIN':
-			return {
-				...state,
-				isLoggedIn: action.isLoggedIn,
-			};
-		case 'global/RESET':
-			return initialState;
-		default:
-			return state;
-	}
-};
-
-export const reducerConfig = buildReduceConfig<'app', IState, AppAction | GlobalAction>(
-	'app',
+const slice = createSlice({
+	name: 'app',
 	initialState,
+	reducers: {
+		appLoading: (state, action: PayloadAction<boolean>) => {
+			state.isLoading = action.payload;
+		},
+		appLogin: (state, action: PayloadAction<boolean>) => {
+			state.isLoggedIn = action.payload;
+		},
+		appLogout: (state) => {
+			state.isLoggedIn = false;
+		},
+		appError: (state, action: PayloadAction<unknown>) => {
+			if (!action.payload) {
+				state.error = undefined;
+				return;
+			}
+			if (typeof action.payload === 'string') {
+				state.error = action.payload;
+				return;
+			}
+			if (typeof action.payload === 'object' && action.payload instanceof Error) {
+				state.error = action.payload.message;
+				return;
+			}
+			state.error = `${action.payload}`;
+		},
+	},
+	extraReducers: (builder) => {
+		builder.addCase(resetAction, () => initialState);
+	},
+});
+
+export const {appLoading, appLogin, appError, appLogout} = slice.actions; // export actions
+
+export const reducerConfig = buildSliceConfig(
+	slice,
 	persistReducer(
 		{
-			key: getKey('app'),
+			key: getKey(slice.name),
 			storage,
 			blacklist: ['isLoading', 'error'],
 			migrate: migrateInit(initialState),
 		},
-		reducer,
+		slice.reducer,
 	),
 );

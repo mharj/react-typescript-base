@@ -15,9 +15,9 @@ chai.use(chaiSubset);
 let dispatch: Dispatch<any>;
 let getState: () => any;
 const rebuildStorage = () => {
-	const store = createTestStore();
-	dispatch = store.dispatch;
-	getState = store.getState;
+	const config = createTestStore();
+	dispatch = config.store.dispatch;
+	getState = config.store.getState;
 };
 
 describe('test demo actions', () => {

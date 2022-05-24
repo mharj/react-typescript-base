@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {Action} from 'redux';
 import {PUBLIC_VAPID_KEY} from '../env';
-import {isError} from '../lib/errorUtil';
 import {ReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
-import {setError /* httpFetch */} from './appActions';
+import {appError} from '../reducers/appReducer';
 
 const sendSubscription =
 	(subscription: PushSubscription): ThunkResult<Promise<Action>> =>
@@ -45,7 +44,7 @@ export const doNotificationSubscribe = (): ThunkResult<Promise<Action | void>> =
 				return dispatch(sendSubscription(existedSubscription));
 			}
 		} catch (err: unknown) {
-			return dispatch(setError(err));
+			return dispatch(appError(err));
 		}
 	} else {
 		return Promise.resolve();

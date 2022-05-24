@@ -1,4 +1,4 @@
-import {TypedUseSelectorHook, useDispatch, useSelector as useReduxSelector} from 'react-redux';
+import {shallowEqual, TypedUseSelectorHook, useDispatch, useSelector as useReduxSelector} from 'react-redux';
 import {Action, combineReducers} from 'redux';
 import {ThunkAction, ThunkDispatch} from 'redux-thunk';
 import {reducerConfig as appReducerConfig} from './appReducer';
@@ -22,13 +22,22 @@ export const rootReducer = combineReducers({
 });
 
 /**
- * mapStateToProps hook
+ * Redux selector hook
  * @example
- * const {todo} = useSelector((state) => ({
+ * const todo = useSelector((state) => state.demo.todo);
+ */
+export const useSelector: TypedUseSelectorHook<ReduxState> = useReduxSelector;
+
+/**
+ * Redux shallow selector hook
+ * @example
+ * const {todo} = useShallowSelector((state) => ({
  *   todo: state.demo.todo,
  * }));
  */
-export const useSelector: TypedUseSelectorHook<ReduxState> = useReduxSelector;
+export function useShallowSelector<TState = ReduxState, TSelected = unknown>(selector: (state: TState) => TSelected) {
+	return useReduxSelector(selector, shallowEqual);
+}
 
 /**
  * useThunkDispatch hook

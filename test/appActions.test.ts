@@ -5,9 +5,10 @@ import chaiSubset from 'chai-subset';
 import 'cross-fetch/polyfill';
 import 'mocha';
 import {Dispatch} from 'redux';
-import * as app from '../src/actions/appActions';
-import * as global from '../src/actions/globalActions';
+import {appError, appLoading, appLogin, appLogout} from '../src/reducers/appReducer';
+import {doLogin} from '../src/actions/appActions';
 import {createTestStore} from './lib/configureTestStore';
+import {resetAction} from '../src/reducers/common';
 
 chai.use(chaiAsPromised);
 
@@ -16,9 +17,9 @@ chai.use(chaiSubset);
 let dispatch: Dispatch<any>;
 let getState: () => any;
 const rebuildStorage = () => {
-	const store = createTestStore();
-	dispatch = store.dispatch;
-	getState = store.getState;
+	const config = createTestStore();
+	dispatch = config.store.dispatch;
+	getState = config.store.getState;
 };
 
 describe('test app actions', () => {
@@ -31,17 +32,17 @@ describe('test app actions', () => {
 				expect(getState()).to.containSubset({app: {isLoading: false}});
 			});
 			it('should set loading true', async () => {
-				dispatch(app.appLoading(true));
+				dispatch(appLoading(true));
 				expect(getState()).to.containSubset({app: {isLoading: true}});
 			});
 			it('should set loading false', async () => {
-				dispatch(app.appLoading(false));
+				dispatch(appLoading(false));
 				expect(getState()).to.containSubset({app: {isLoading: false}});
 			});
 			it('should check value after reset', async () => {
-				dispatch(app.appLoading(true));
+				dispatch(appLoading(true));
 				expect(getState()).to.containSubset({app: {isLoading: true}});
-				dispatch(global.doReset());
+				dispatch(resetAction());
 				expect(getState()).to.containSubset({app: {isLoading: false}});
 			});
 		});
@@ -53,17 +54,17 @@ describe('test app actions', () => {
 				expect(getState()).to.containSubset({app: {error: undefined}});
 			});
 			it('should set error message', async () => {
-				dispatch(app.setError('test'));
+				dispatch(appError('test'));
 				expect(getState()).to.containSubset({app: {error: 'test'}});
 			});
 			it('should clear error message', async () => {
-				dispatch(app.setError(undefined));
+				dispatch(appError(undefined));
 				expect(getState()).to.containSubset({app: {error: undefined}});
 			});
 			it('should check value after reset', async () => {
-				dispatch(app.setError('test'));
+				dispatch(appError('test'));
 				expect(getState()).to.containSubset({app: {error: 'test'}});
-				dispatch(global.doReset());
+				dispatch(resetAction());
 				expect(getState()).to.containSubset({app: {error: undefined}});
 			});
 		});
@@ -75,17 +76,17 @@ describe('test app actions', () => {
 				expect(getState()).to.containSubset({app: {isLoggedIn: false}});
 			});
 			it('should set login true', async () => {
-				dispatch(app.appLogin(true));
+				dispatch(appLogin(true));
 				expect(getState()).to.containSubset({app: {isLoggedIn: true}});
 			});
 			it('should set login false', async () => {
-				dispatch(app.appLogin(false));
+				dispatch(appLogin(false));
 				expect(getState()).to.containSubset({app: {isLoggedIn: false}});
 			});
 			it('should do logout', async () => {
-				dispatch(app.appLogin(true));
+				dispatch(appLogin(true));
 				expect(getState()).to.containSubset({app: {isLoggedIn: true}});
-				dispatch(app.appLogout());
+				dispatch(appLogout());
 				expect(getState()).to.containSubset({app: {isLoggedIn: false}});
 			});
 		});
@@ -98,17 +99,17 @@ describe('test app actions', () => {
 			it('should do login', async () => {
 				// initial state
 				expect(getState()).to.containSubset({app: {isLoggedIn: false, error: undefined}});
-				await dispatch(app.doLogin('test', 'password'));
+				await dispatch(doLogin('test', 'password'));
 				expect(getState()).to.containSubset({app: {isLoggedIn: true, error: undefined}});
 			});
 			it('should not login with wrong credentials', async () => {
-				await expect(dispatch(app.doLogin('1234', '1234'))).to.be.rejected;
+				await expect(dispatch(doLogin('1234', '1234'))).to.be.rejected;
 				expect(getState()).to.containSubset({app: {isLoggedIn: false, error: 'account or password not match'}});
 			});
 			it('should do logout', async () => {
-				await dispatch(app.doLogin('test', 'password'));
+				await dispatch(doLogin('test', 'password'));
 				expect(getState()).to.containSubset({app: {isLoggedIn: true, error: undefined}});
-				await expect(dispatch(app.doLogout())).to.be.fulfilled;
+				dispatch(appLogout());
 				expect(getState()).to.containSubset({app: {isLoggedIn: false, error: undefined}});
 			});
 		});
