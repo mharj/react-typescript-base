@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Helmet} from 'react-helmet-async';
 import {useTranslation} from 'react-i18next';
-import {getHome} from '../actions/demoActions';
+import {getTodo} from '../actions/demoActions';
 import {useSelector, useThunkDispatch} from '../reducers';
 
 const HomeView: React.FC = () => {
@@ -11,7 +11,7 @@ const HomeView: React.FC = () => {
 		todo: state.demo.todo,
 	}));
 	useEffect(() => {
-		dispatch(getHome());
+		dispatch(getTodo(1));
 	}, [dispatch]);
 	return (
 		<div>

@@ -12,10 +12,10 @@ chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 
 describe('test i18next instance', () => {
-	it('should not found transation key', async () => {
+	it('should not found translation key', async () => {
 		expect(i18next.exists('hello')).to.be.eq(true);
 	});
-	it('should translate helloe', async () => {
+	it('should translate hello', async () => {
 		expect(i18next.t('hello')).to.be.eq('Hello');
 	});
 });

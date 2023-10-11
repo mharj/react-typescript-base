@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import {Action} from 'redux';
 import {PUBLIC_VAPID_KEY} from '../env';
-import {ReduxState, RootThunkDispatch, ThunkResult} from '../reducers';
-import {appError} from '../reducers/appReducer';
+import {ThunkResult} from '../reducers';
+import {appError} from '../reducers/common';
 
 const sendSubscription =
-	(subscription: PushSubscription): ThunkResult<Promise<Action>> =>
-	async (dispatch: RootThunkDispatch, getState: () => ReduxState) => {
+	(_subscription: PushSubscription): ThunkResult<Promise<void>> =>
+	// eslint-disable-next-line require-await
+	async (_dispatch) => {
 		console.log('push API sendSubscription');
 		throw new Error('Push notification client register URL is not configured!');
 		/* return httpFetch('/api/notifications/subscribe', {
@@ -19,8 +18,7 @@ const sendSubscription =
 	}); */
 	};
 
-export const doNotificationSubscribe = (): ThunkResult<Promise<Action | void>> => async (dispatch: RootThunkDispatch, getState: () => ReduxState) => {
-	console.log('push API doNotificationSubscribe');
+export const doNotificationSubscribe = (): ThunkResult<Promise<void>> => async (dispatch) => {
 	if ('serviceWorker' in navigator && Notification.permission === 'granted') {
 		try {
 			if (!PUBLIC_VAPID_KEY) {
@@ -28,25 +26,23 @@ export const doNotificationSubscribe = (): ThunkResult<Promise<Action | void>> =
 			}
 			const registration = await navigator.serviceWorker.ready;
 			if (!registration.pushManager) {
-				console.log('Push manager unavailable.');
-				return Promise.resolve();
+				// Push manager unavailable.
+				return;
 			}
 			const existedSubscription = await registration.pushManager.getSubscription();
 			if (existedSubscription === null) {
-				console.log('No push API subscription detected, make a request.');
+				// No push API subscription detected, make a request.
 				const newSubscription = await registration.pushManager.subscribe({
 					applicationServerKey: PUBLIC_VAPID_KEY,
 					userVisibleOnly: true,
 				});
-				return dispatch(sendSubscription(newSubscription));
+				await dispatch(sendSubscription(newSubscription));
 			} else {
-				console.log('Existed push API subscription detected.');
-				return dispatch(sendSubscription(existedSubscription));
+				// Existed push API subscription detected.
+				await dispatch(sendSubscription(existedSubscription));
 			}
 		} catch (err: unknown) {
-			return dispatch(appError(err));
+			dispatch(appError(err));
 		}
-	} else {
-		return Promise.resolve();
 	}
 };

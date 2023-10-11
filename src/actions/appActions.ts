@@ -1,19 +1,27 @@
-import {Action} from 'redux';
-import {RootThunkDispatch, ThunkResult} from '../reducers';
-import {appError, appLogin} from '../reducers/appReducer';
+import {ThunkResult} from '../reducers';
+import {appLogin} from '../reducers/appReducer';
+import {appError} from '../reducers/common';
 
 export const doLogin =
-	(username: string, password: string): ThunkResult<Promise<Action>> =>
-	(dispatch: RootThunkDispatch) => {
-		dispatch(appError(undefined));
-		if (username === 'test' && password === 'password') {
-			return Promise.resolve(dispatch(appLogin(true)));
-		} else {
-			dispatch(appLogin(false));
-			return Promise.reject(dispatch(appError('account or password not match')));
+	(username: string, password: string): ThunkResult<Promise<boolean>> =>
+	(dispatch) => {
+		let result = false;
+		try {
+			// do async login logic here
+			if (username === 'test' && password === 'password') {
+				result = true;
+			} else {
+				throw new Error('account or password not match');
+			}
+		} catch (err) {
+			dispatch(appError(err));
 		}
+		dispatch(appLogin(result));
+		return Promise.resolve(result);
 	};
 
-export const doLogout = (): ThunkResult<Promise<Action>> => (dispatch: RootThunkDispatch) => {
-	return Promise.resolve(dispatch(appLogin(false)));
+export const doLogout = (): ThunkResult<Promise<void>> => (dispatch) => {
+	// do logout here
+	dispatch(appLogin(false));
+	return Promise.resolve();
 };

@@ -1,10 +1,18 @@
 import {Slice, SliceCaseReducers} from '@reduxjs/toolkit';
 import {Action, Reducer} from 'redux';
-import {PersistedState, PersistMigrate} from 'redux-persist';
+import {PersistedState, PersistMigrate, PersistState, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER} from 'redux-persist';
+import {appError} from '../../reducers/common';
+
+export const ignoredActions = [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, appError.type];
 
 export function getKey(key: string): string {
 	return 'persist_' + key;
 }
+
+export const initialPersistState: PersistState = {
+	version: -1,
+	rehydrated: false,
+};
 
 export type NamedReducerConfig<T extends string, S, A extends Action = Action> = {
 	initialState: Record<T, S>;

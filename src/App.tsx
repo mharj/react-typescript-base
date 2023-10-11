@@ -5,7 +5,6 @@ import {HashRouter as Router, Link} from 'react-router-dom';
 import './App.css';
 import PrivateComponent from './components/PrivateComponent';
 import logo from './logo.svg';
-import {useNotification} from './NotificationProvider';
 import {useServiceWorker} from './ServiceWorkerProvider';
 import {useSelector} from './reducers';
 import {skipWait} from './serviceWorkerRegistration';
@@ -20,17 +19,15 @@ const BrokenView = React.lazy(() => import('./views/BrokenView' /* webpackChunkN
 const ErrorView = React.lazy(() => import('./views/ErrorView' /* webpackChunkName: "error-view" */));
 
 const App: React.FC = () => {
+	const error = useSelector((state) => state.app.error);
+	const isLoggedIn = useSelector((state) => state.app.isLoggedIn);
+	const isLoading = useSelector((state) => state.app.isLoading);
 	const {serviceWorkerState, serviceWorkerUpdate} = useServiceWorker();
 	const {
 		t,
 		i18n: {changeLanguage},
 	} = useTranslation();
-	const {notificationStatus, requestNotification} = useNotification();
-	const {error, isLoggedIn, isLoading} = useSelector((state) => ({
-		isLoggedIn: state.app.isLoggedIn,
-		isLoading: state.app.isLoading,
-		error: state.app.error,
-	}));
+
 	return (
 		<Router>
 			<div className="App">
@@ -47,7 +44,6 @@ const App: React.FC = () => {
 				<button value="sv-SV" onClick={({currentTarget}) => changeLanguage(currentTarget.value)}>
 					{t('sve')}
 				</button>
-				{notificationStatus === 'default' ? <button onClick={() => requestNotification()}>{t('notification_request')}</button> : null}
 				<br />
 				{isLoading ? 'Fetching API data ..' : ''}
 				<br />

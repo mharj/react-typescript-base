@@ -6,14 +6,14 @@ i18next
 	.use(LanguageDetector)
 	.use(initReactI18next)
 	.init({
-		defaultNS: 'translation',
+		defaultNS: 'common',
 		fallbackLng: 'en',
 		interpolation: {
 			escapeValue: false, // not needed for react!!
 			formatSeparator: ',',
 		},
 		keySeparator: false, // we use content as keys
-		ns: ['translation'],
+		ns: ['common'],
 		parseMissingKeyHandler: (key: string) => {
 			return process.env.NODE_ENV === 'development' ? '#' + key + '#' : key;
 		},
@@ -28,7 +28,7 @@ i18next
 					title: 'Title',
 					user_id: 'User ID',
 				},
-				translation: {
+				common: {
 					broken: 'Broken',
 					eng: 'English',
 					example: 'Example',
@@ -52,7 +52,7 @@ i18next
 					title: 'Otsikko',
 					user_id: 'Käyttäjä ID',
 				},
-				translation: {
+				common: {
 					broken: 'Rikki',
 					eng: 'Englanti',
 					example: 'Esimerkki',
@@ -76,7 +76,7 @@ i18next
 					title: 'Titel',
 					user_id: 'Användar ID',
 				},
-				translation: {
+				common: {
 					broken: 'Bruten',
 					eng: 'Engelska',
 					example: 'Exempel',

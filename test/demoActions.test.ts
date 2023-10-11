@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-expressions */
 import * as chai from 'chai';
 import {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -27,9 +29,9 @@ describe('test demo actions', () => {
 		});
 		it('should do getHome', async () => {
 			// initial state
-			expect(getState()).to.containSubset({demo: {todo: undefined}});
-			await dispatch(demo.getHome());
-			expect(getState()).to.containSubset({demo: {todo: {userId: 1, id: 1, title: 'delectus aut autem', completed: false}}});
+			expect(getState().demo.todo).to.be.eql(undefined);
+			await dispatch(demo.getTodo(1));
+			expect(getState().demo.todo).to.be.eql({userId: 1, id: 1, title: 'delectus aut autem', completed: false});
 		});
 	});
 });

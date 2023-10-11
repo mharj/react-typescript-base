@@ -1,8 +1,8 @@
 import {configureStore} from '@reduxjs/toolkit';
-import {PersistConfig, persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER} from 'redux-persist';
+import {PersistConfig, persistReducer, persistStore} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
-import {getKey} from '../../src/lib/persistUtils';
+import {getKey, ignoredActions} from '../../src/lib/persist';
 import {initialState, ReduxState, rootReducer} from '../../src/reducers';
 
 export function createTestStore() {
@@ -17,7 +17,7 @@ export function createTestStore() {
 		middleware: (getDefaultMiddleware) =>
 			getDefaultMiddleware({
 				serializableCheck: {
-					ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+					ignoredActions,
 				},
 			}).concat(thunk),
 		preloadedState: initialState,

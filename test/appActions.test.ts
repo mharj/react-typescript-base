@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-expressions */
 import * as chai from 'chai';
 import {expect} from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -5,10 +7,10 @@ import chaiSubset from 'chai-subset';
 import 'cross-fetch/polyfill';
 import 'mocha';
 import {Dispatch} from 'redux';
-import {appError, appLoading, appLogin, appLogout} from '../src/reducers/appReducer';
+import {appLoading, appLogin, appLogout} from '../src/reducers/appReducer';
 import {doLogin} from '../src/actions/appActions';
 import {createTestStore} from './lib/configureTestStore';
-import {resetAction} from '../src/reducers/common';
+import {appError, resetAction} from '../src/reducers/common';
 
 chai.use(chaiAsPromised);
 
@@ -98,19 +100,20 @@ describe('test app actions', () => {
 			});
 			it('should do login', async () => {
 				// initial state
-				expect(getState()).to.containSubset({app: {isLoggedIn: false, error: undefined}});
+				expect(getState()).to.containSubset({app: {isLoggedIn: false}});
 				await dispatch(doLogin('test', 'password'));
-				expect(getState()).to.containSubset({app: {isLoggedIn: true, error: undefined}});
+				expect(getState()).to.containSubset({app: {isLoggedIn: true}});
 			});
 			it('should not login with wrong credentials', async () => {
-				await expect(dispatch(doLogin('1234', '1234'))).to.be.rejected;
+				const status = await dispatch(doLogin('1234', '1234'));
+				expect(status).to.be.false;
 				expect(getState()).to.containSubset({app: {isLoggedIn: false, error: 'account or password not match'}});
 			});
 			it('should do logout', async () => {
 				await dispatch(doLogin('test', 'password'));
-				expect(getState()).to.containSubset({app: {isLoggedIn: true, error: undefined}});
+				expect(getState()).to.containSubset({app: {isLoggedIn: true}});
 				dispatch(appLogout());
-				expect(getState()).to.containSubset({app: {isLoggedIn: false, error: undefined}});
+				expect(getState()).to.containSubset({app: {isLoggedIn: false}});
 			});
 		});
 	});

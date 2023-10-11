@@ -1,6 +1,5 @@
 import React, {Suspense} from 'react';
 import './index.css';
-import {NotificationProvider} from './NotificationProvider';
 import {ServiceWorkerProvider} from './ServiceWorkerProvider';
 
 Promise.all([
@@ -11,14 +10,13 @@ Promise.all([
 	import('./App' /* webpackChunkName: "app", webpackPreload: true */),
 	import('./reportWebVitals' /* webpackChunkName: "web-vitals", webpackPreload: true */),
 	import('react-helmet-async' /* webpackChunkName: "helmet", webpackPreload: true */),
-	import('cross-fetch/polyfill' /* webpackChunkName: "fetch", webpackPreload: true */),
 	import('./i18n' /* webpackChunkName: "i18n", webpackPreload: true */),
 	import('./views/ErrorView' /* webpackChunkName: "error-view", webpackPreload: true */),
 	import('./components/ErrorBoundary' /* webpackChunkName: "error-boundary-component", webpackPreload: true */),
 ]).then((loaded) => {
 	const [configureStore, ReactDOM, Redux, Persist, AppModule, reportWebVitals, Helmet] = loaded;
 	const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-	const {store, persistor} = configureStore.storeConfiguration;
+	const {store, persistor} = configureStore;
 	const App = AppModule.default;
 	const HelmetProvider = Helmet.HelmetProvider;
 	root.render(
@@ -27,11 +25,9 @@ Promise.all([
 				<Redux.Provider store={store}>
 					<Persist.PersistGate loading={null} persistor={persistor}>
 						<Suspense fallback={<div>Loading</div>}>
-							<NotificationProvider>
-								<HelmetProvider>
-									<App />
-								</HelmetProvider>
-							</NotificationProvider>
+							<HelmetProvider>
+								<App />
+							</HelmetProvider>
 						</Suspense>
 					</Persist.PersistGate>
 				</Redux.Provider>
